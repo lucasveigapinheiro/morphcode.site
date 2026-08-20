@@ -91,7 +91,7 @@ export default function Hero() {
           <EstimateWidget />
         </div>
 
-        <div className="hidden lg:block relative">
+        <div className="relative mt-6 max-w-xs mx-auto sm:max-w-sm lg:mt-0 lg:max-w-none lg:mx-0">
           <motion.div
             drag
             dragConstraints={{ top: -60, bottom: 60, left: -60, right: 60 }}

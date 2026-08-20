@@ -40,6 +40,7 @@ export default function TechStack() {
             <Reveal key={t.name} delay={i * 0.06} className="flex flex-col items-center gap-3">
               <motion.div
                 whileHover={{ y: -8, scale: 1.12 }}
+                whileTap={{ scale: 0.92 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 className="h-16 w-16 rounded-2xl border border-border bg-surface flex items-center justify-center"
               >

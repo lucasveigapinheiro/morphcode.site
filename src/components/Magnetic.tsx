@@ -38,6 +38,7 @@ export default function Magnetic({
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
+      whileTap={{ scale: 0.95 }}
       style={{ x: sx, y: sy }}
       className={className}
     >

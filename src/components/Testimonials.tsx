@@ -44,6 +44,7 @@ export default function Testimonials() {
               <motion.div
                 initial={{ rotate: 0 }}
                 whileHover={{ rotate: 0, y: -4 }}
+                whileTap={{ rotate: 0, scale: 0.97 }}
                 style={{ rotate: t.rotate }}
                 transition={{ type: "spring", stiffness: 250, damping: 18 }}
                 className="rounded-2xl border border-border bg-surface p-6"
