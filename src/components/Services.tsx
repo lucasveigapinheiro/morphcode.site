@@ -46,8 +46,9 @@ export default function Services() {
             <Reveal key={s.title} delay={i * 0.1} className={s.big ? "lg:col-span-2" : "lg:col-span-1"}>
               <motion.div
                 whileHover={{ y: -6 }}
+                whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-full rounded-2xl border border-border bg-surface p-6 hover:border-gold/50 transition-colors"
+                className="h-full rounded-2xl border border-border bg-surface p-6 hover:border-gold/50 active:border-gold/50 transition-colors"
               >
                 <span className="text-gold font-[var(--font-display)] text-lg">{s.icon}</span>
                 <h3 className="mt-5 font-medium">{s.title}</h3>
