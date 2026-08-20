@@ -1,7 +1,7 @@
 const PHONE = "5511930957162";
 
 export function whatsappLink(message: string) {
-  return `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
+  return `https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`;
 }
 
 export const budgetMessage = `Olá, Morph Code! 🚀
