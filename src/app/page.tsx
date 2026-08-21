@@ -20,9 +20,9 @@ export default function Home() {
         <Marquee items={strip} />
         <About />
         <TechStack />
+        <Projects />
         <Services />
         <Testimonials />
-        <Projects />
         <Faq />
         <Contact />
       </main>
