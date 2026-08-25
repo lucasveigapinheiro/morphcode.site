@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 import EstimateWidget from "./EstimateWidget";
+import BackgroundMusic from "./BackgroundMusic";
 
 const words = "Transformamos ideias em soluções digitais que geram resultado real.".split(" ");
 
@@ -21,7 +22,11 @@ export default function Hero() {
         style={{ background: "radial-gradient(circle, var(--gold-light) 0%, transparent 70%)" }}
       />
 
-      <div className="mx-auto max-w-6xl px-6 relative grid lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
+      <div className="mx-auto max-w-6xl px-6 relative flex justify-center">
+        <BackgroundMusic />
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6 relative grid lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center mt-8">
         <div>
           <motion.div
             initial={{ opacity: 0, y: -8, rotate: -6 }}
