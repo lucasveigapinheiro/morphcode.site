@@ -60,6 +60,15 @@ export const projects: Project[] = [
     image: "/projects/orcamento-pessoal-v2.jpg",
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],
   },
+  {
+    title: "GMG Equilíbrio",
+    category: "Landing page",
+    description:
+      "Landing page de vendas para suplemento em cápsulas, com identidade visual sofisticada, seções de ativos, benefícios, depoimentos e oferta — construída pra converter visitantes em compradores.",
+    href: "https://gmg-site-beta.vercel.app/",
+    image: "/projects/gmg-site.jpg",
+    techs: ["HTML5", "Tailwind CSS", "JavaScript"],
+  },
 ];
 
 function ProjectImage({ title, image, delay = 0 }: { title: string; image: string; delay?: number }) {
