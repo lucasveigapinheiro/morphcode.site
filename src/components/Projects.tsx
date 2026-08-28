@@ -47,7 +47,7 @@ export const projects: Project[] = [
     category: "Sistema sob medida",
     description:
       "Painel de gestão para uma clínica estética, com visão geral do dia, cadastro e histórico de pacientes, agenda de consultas e configurações — tudo em uma interface elegante, pensada para o dia a dia da doutora e da recepção.",
-    href: "https://labessie-clinica.vercel.app/",
+    href: "https://paty-clinica.vercel.app/pages/dashboard.html",
     image: "/projects/labessie.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
   },
