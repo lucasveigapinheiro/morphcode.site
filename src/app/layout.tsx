@@ -13,10 +13,22 @@ const sora = Sora({
   subsets: ["latin"],
 });
 
+const title = "Morph Code — Sites e sistemas sob medida para o seu negócio";
+const description =
+  "Desenvolvemos sites, sistemas e automações que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
+
 export const metadata: Metadata = {
-  title: "Morph Code — Sites e sistemas sob medida para o seu negócio",
-  description:
-    "Desenvolvemos sites, sistemas e automações que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.",
+  metadataBase: new URL("https://morphcode.site"),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: "/",
+    siteName: "Morph Code",
+    locale: "pt_BR",
+    type: "website",
+  },
   icons: {
     icon: "/logo.jpeg",
   },

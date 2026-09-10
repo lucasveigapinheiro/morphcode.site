@@ -8,6 +8,7 @@ import Faq from "@/components/Faq";
 import Contact from "@/components/Contact";
 import Marquee from "@/components/Marquee";
 import TechStack from "@/components/TechStack";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 const strip = ["Sites", "Sistemas", "Automação", "Design", "Performance", "Suporte"];
 
@@ -15,7 +16,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main className="pb-20 md:pb-0">
         <Hero />
         <Marquee items={strip} />
         <About />
@@ -26,6 +27,7 @@ export default function Home() {
         <Faq />
         <Contact />
       </main>
+      <WhatsAppFloat />
     </>
   );
 }

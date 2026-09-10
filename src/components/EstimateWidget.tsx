@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { whatsappLink, estimateMessage } from "@/lib/whatsapp";
 
 const data = {
   site: {
@@ -62,6 +63,14 @@ export default function EstimateWidget() {
         >
           <p className="font-[var(--font-display)] text-3xl text-gold">{data[active].time}</p>
           <p className="mt-1 text-sm text-muted max-w-sm">{data[active].desc}</p>
+          <a
+            href={whatsappLink(estimateMessage(data[active].label.toLowerCase()))}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-gold hover:text-gold-light transition-colors"
+          >
+            Pedir orçamento para {data[active].label} →
+          </a>
         </motion.div>
       </AnimatePresence>
     </motion.div>
