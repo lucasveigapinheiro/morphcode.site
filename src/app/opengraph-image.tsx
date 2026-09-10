@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "Morph Code — Sites e sistemas sob medida para o seu negócio";
+export const alt = "Morph Code | Sites e sistemas sob medida para o seu negócio";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

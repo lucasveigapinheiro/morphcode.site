@@ -28,7 +28,7 @@ export const projects: Project[] = [
     title: "Sistema de Ordens de Serviço",
     category: "Sistema sob medida",
     description:
-      "Uma oficina mecânica que ainda controlava tudo no papel e em planilhas soltas. Desenvolvemos um sistema completo de ordens de serviço para organizar entrada de veículos, orçamentos, status de reparo e histórico de clientes em um único lugar — reduzindo retrabalho e dando mais controle ao dono do negócio.",
+      "Uma oficina mecânica que ainda controlava tudo no papel e em planilhas soltas. Desenvolvemos um sistema completo de ordens de serviço para organizar entrada de veículos, orçamentos, status de reparo e histórico de clientes em um único lugar, reduzindo retrabalho e dando mais controle ao dono do negócio.",
     href: "https://lucasveigapinheiro.github.io/sistemaos/",
     image: "/projects/sistema-os.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -37,7 +37,7 @@ export const projects: Project[] = [
     title: "Site para Oficina Mecânica",
     category: "Site institucional",
     description:
-      "Criamos uma vitrine digital para os serviços da oficina, com identidade visual própria e apresentação clara do que é oferecido. O destaque fica para a integração rápida com o botão de WhatsApp, que leva o visitante direto para um orçamento — sem formulários, sem fricção.",
+      "Criamos uma vitrine digital para os serviços da oficina, com identidade visual própria e apresentação clara do que é oferecido. O destaque fica para a integração rápida com o botão de WhatsApp, que leva o visitante direto para um orçamento, sem formulários, sem fricção.",
     href: "https://lucasveigapinheiro.github.io/MecanicaRossi/",
     image: "/projects/mecanica-rossi.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -46,7 +46,7 @@ export const projects: Project[] = [
     title: "Sistema para Clínica Estética",
     category: "Sistema sob medida",
     description:
-      "Painel de gestão para uma clínica estética, com visão geral do dia, cadastro e histórico de pacientes, agenda de consultas e configurações — tudo em uma interface elegante, pensada para o dia a dia da doutora e da recepção.",
+      "Painel de gestão para uma clínica estética, com visão geral do dia, cadastro e histórico de pacientes, agenda de consultas e configurações, tudo em uma interface elegante, pensada para o dia a dia da doutora e da recepção.",
     href: "https://paty-clinica.vercel.app/pages/dashboard.html",
     image: "/projects/labessie.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -55,7 +55,7 @@ export const projects: Project[] = [
     title: "Orçamento Pessoal",
     category: "Aplicativo web",
     description:
-      "Uma planilha de gastos transformada em aplicativo web, com login e cadastro de usuário para manter os dados de cada pessoa separados. Depois de entrar, o usuário acompanha renda prevista e realizada, total de receitas, despesas e saldo final mês a mês — tudo salvo automaticamente.",
+      "Uma planilha de gastos transformada em aplicativo web, com login e cadastro de usuário para manter os dados de cada pessoa separados. Depois de entrar, o usuário acompanha renda prevista e realizada, total de receitas, despesas e saldo final mês a mês, tudo salvo automaticamente.",
     href: "https://lucasveigapinheiro.github.io/planilha-de-gastos",
     image: "/projects/orcamento-pessoal-v2.jpg",
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     title: "GMG Equilíbrio",
     category: "Landing page",
     description:
-      "Landing page de vendas para suplemento em cápsulas, com identidade visual sofisticada, seções de ativos, benefícios, depoimentos e oferta — construída pra converter visitantes em compradores.",
+      "Landing page de vendas para suplemento em cápsulas, com identidade visual sofisticada, seções de ativos, benefícios, depoimentos e oferta, construída pra converter visitantes em compradores.",
     href: "https://gmg-site-beta.vercel.app/",
     image: "/projects/gmg-site.jpg",
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],

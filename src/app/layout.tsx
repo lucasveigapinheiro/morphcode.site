@@ -13,7 +13,7 @@ const sora = Sora({
   subsets: ["latin"],
 });
 
-const title = "Morph Code — Sites e sistemas sob medida para o seu negócio";
+const title = "Morph Code | Sites e sistemas sob medida para o seu negócio";
 const description =
   "Desenvolvemos sites e sistemas que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
 
