@@ -7,7 +7,7 @@ import { whatsappLink, estimateMessage } from "@/lib/whatsapp";
 const data = {
   site: {
     label: "Site",
-    time: "~7 dias",
+    time: "7 dias",
     desc: "Landing pages e sites institucionais, prontos e no ar rápido.",
   },
   sistema: {

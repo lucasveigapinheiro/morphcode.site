@@ -35,7 +35,7 @@ export default function About() {
             </h2>
             <p className="mt-5 text-muted max-w-md">
               Somos uma empresa de desenvolvimento web focada em ajudar negócios a saírem do
-              papel — ou do improviso — com sites e sistemas que realmente funcionam.
+              papel (ou do improviso) com sites e sistemas que realmente funcionam.
             </p>
           </Reveal>
 
