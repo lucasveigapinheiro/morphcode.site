@@ -83,7 +83,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.75 }}
             className="mt-6 max-w-xl text-muted text-base md:text-lg"
           >
-            A Morph Code desenvolve sites, sistemas e automações pensados para o seu negócio
+            A Morph Code desenvolve sites e sistemas pensados para o seu negócio
             crescer com mais estrutura, velocidade e segurança.
           </motion.p>
 

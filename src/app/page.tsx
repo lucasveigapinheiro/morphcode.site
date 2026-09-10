@@ -10,7 +10,7 @@ import Marquee from "@/components/Marquee";
 import TechStack from "@/components/TechStack";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
-const strip = ["Sites", "Sistemas", "Automação", "Design", "Performance", "Suporte"];
+const strip = ["Sites", "Sistemas", "Design", "SEO", "Performance", "Suporte"];
 
 export default function Home() {
   return (

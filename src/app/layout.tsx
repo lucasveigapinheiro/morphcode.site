@@ -15,7 +15,7 @@ const sora = Sora({
 
 const title = "Morph Code — Sites e sistemas sob medida para o seu negócio";
 const description =
-  "Desenvolvemos sites, sistemas e automações que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
+  "Desenvolvemos sites e sistemas que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://morphcode.site"),

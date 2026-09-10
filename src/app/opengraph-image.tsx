@@ -38,7 +38,7 @@ export default async function Image() {
             Sites e sistemas sob medida para o seu negócio
           </div>
           <div style={{ display: "flex", fontSize: 30, color: "#a3a09c" }}>
-            Design, desenvolvimento e automação com alta performance.
+            Design e desenvolvimento com alta performance.
           </div>
         </div>
 
