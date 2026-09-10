@@ -28,8 +28,8 @@ export default async function Image() {
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoSrc} width={96} height={96} style={{ borderRadius: 999 }} alt="" />
-          <div style={{ display: "flex", fontSize: 44, letterSpacing: 2 }}>
-            MORPH<span style={{ color: "#d4a94a" }}>.CODE</span>
+          <div style={{ display: "flex", gap: 14, fontSize: 44, letterSpacing: 2 }}>
+            MORPH<span style={{ color: "#d4a94a" }}>CODE</span>
           </div>
         </div>
 

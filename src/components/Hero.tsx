@@ -6,14 +6,15 @@ import Magnetic from "./Magnetic";
 import EstimateWidget from "./EstimateWidget";
 import BackgroundMusic from "./BackgroundMusic";
 import { useEffect, useState } from "react";
+import { LuCode, LuSmartphone, LuZap } from "react-icons/lu";
 
 const words = "Sites e sistemas sob medida que multiplicam suas vendas.".split(" ");
 const highlight = ["multiplicam", "suas", "vendas."];
 
 const badges = [
-  "⚡ Carregamento em < 1.5s",
-  "📱 100% otimizado para celular",
-  "🔒 Código sob medida, sem templates",
+  { icon: LuZap, label: "Carregamento em < 1.5s" },
+  { icon: LuSmartphone, label: "100% otimizado para celular" },
+  { icon: LuCode, label: "Código sob medida, sem templates" },
 ];
 
 export default function Hero() {
@@ -118,8 +119,11 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 1 }}
             className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted"
           >
-            {badges.map((b) => (
-              <li key={b}>{b}</li>
+            {badges.map(({ icon: Icon, label }) => (
+              <li key={label} className="inline-flex items-center gap-1.5">
+                <Icon className="h-3.5 w-3.5 text-gold" aria-hidden />
+                {label}
+              </li>
             ))}
           </motion.ul>
 

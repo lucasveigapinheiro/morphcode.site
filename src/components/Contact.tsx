@@ -49,7 +49,7 @@ export default function Contact() {
           <div className="flex items-center gap-2.5">
             <Image src="/logo.jpeg" alt="Morph Code" width={28} height={28} className="rounded-full" />
             <span className="font-[var(--font-display)] text-sm tracking-wide">
-              MORPH<span className="text-gold">.CODE</span>
+              MORPH <span className="text-gold">CODE</span>
             </span>
           </div>
           <p className="text-xs text-muted text-center">

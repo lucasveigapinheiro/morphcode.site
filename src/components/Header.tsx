@@ -41,7 +41,7 @@ export default function Header() {
             priority
           />
           <span className="font-[var(--font-display)] text-lg tracking-wide">
-            MORPH<span className="text-gold">.CODE</span>
+            MORPH <span className="text-gold">CODE</span>
           </span>
         </a>
 
