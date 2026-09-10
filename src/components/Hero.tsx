@@ -5,10 +5,29 @@ import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 import EstimateWidget from "./EstimateWidget";
 import BackgroundMusic from "./BackgroundMusic";
+import { useEffect, useState } from "react";
 
-const words = "Transformamos ideias em soluções digitais que geram resultado real.".split(" ");
+const words = "Sites e sistemas sob medida que multiplicam suas vendas.".split(" ");
+const highlight = ["multiplicam", "suas", "vendas."];
+
+const badges = [
+  "⚡ Carregamento em < 1.5s",
+  "📱 100% otimizado para celular",
+  "🔒 Código sob medida, sem templates",
+];
 
 export default function Hero() {
+  // Drag only on devices with a precise pointer; on touch it hijacks page scroll.
+  const [canDrag, setCanDrag] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setCanDrag(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   return (
     <section id="topo" className="relative overflow-hidden pt-36 pb-28 md:pt-44 md:pb-36">
       <motion.div
@@ -49,7 +68,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15 + i * 0.045, ease: [0.22, 1, 0.36, 1] }}
                 className={`inline-block mr-[0.28em] ${
-                  ["soluções", "digitais"].includes(w) ? "gold-gradient-text" : ""
+                  highlight.includes(w) ? "gold-gradient-text" : ""
                 }`}
               >
                 {w}
@@ -93,12 +112,23 @@ export default function Hero() {
             </Magnetic>
           </motion.div>
 
+          <motion.ul
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted"
+          >
+            {badges.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </motion.ul>
+
           <EstimateWidget />
         </div>
 
         <div className="relative mt-6 max-w-xs mx-auto sm:max-w-sm lg:mt-0 lg:max-w-none lg:mx-0">
           <motion.div
-            drag
+            drag={canDrag}
             dragConstraints={{ top: -60, bottom: 60, left: -60, right: 60 }}
             dragElastic={0.5}
             dragTransition={{ bounceStiffness: 250, bounceDamping: 15 }}
@@ -111,7 +141,7 @@ export default function Hero() {
               rotate: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
               y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
             }}
-            className="relative cursor-grab active:cursor-grabbing"
+            className={`relative ${canDrag ? "cursor-grab active:cursor-grabbing" : ""}`}
           >
             <div className="rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 select-none">
               <div className="flex items-center gap-1.5 mb-4">
@@ -142,7 +172,7 @@ export default function Hero() {
               <p className="font-[var(--font-display)] text-lg text-gold">99.9%</p>
             </motion.div>
           </motion.div>
-          <p className="mt-4 text-center text-[11px] text-muted/70">arraste o card ✦</p>
+          {canDrag && <p className="mt-4 text-center text-[11px] text-muted/70">arraste o card ✦</p>}
         </div>
       </div>
     </section>
