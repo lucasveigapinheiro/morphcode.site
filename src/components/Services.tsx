@@ -1,29 +1,49 @@
 "use client";
 
 import { motion } from "motion/react";
+import {
+  LuGauge,
+  LuLayoutDashboard,
+  LuMonitor,
+  LuPenTool,
+  LuRefreshCw,
+  LuServer,
+} from "react-icons/lu";
 import Reveal from "./Reveal";
 
 const services = [
   {
-    icon: "</>",
+    icon: LuMonitor,
     title: "Sites profissionais",
     text: "Landing pages e sites institucionais rápidos, responsivos e otimizados para converter visitantes em clientes.",
     big: true,
   },
   {
-    icon: "{ }",
+    icon: LuLayoutDashboard,
     title: "Sistemas sob medida",
     text: "Plataformas e painéis personalizados para organizar processos e apoiar a operação do seu negócio.",
     big: false,
   },
   {
-    icon: "⚡",
-    title: "Automação inteligente",
-    text: "Integrações que eliminam tarefas manuais e ganham tempo pro que importa.",
+    icon: LuPenTool,
+    title: "Design de interface",
+    text: "Layouts exclusivos e alinhados à sua marca, pensados para uma navegação clara e agradável.",
     big: false,
   },
   {
-    icon: "⤴",
+    icon: LuGauge,
+    title: "SEO e performance",
+    text: "Sites leves e bem estruturados para carregar rápido e aparecer melhor no Google.",
+    big: false,
+  },
+  {
+    icon: LuServer,
+    title: "Hospedagem e domínio",
+    text: "Configuramos domínio, hospedagem e publicação para o seu projeto ir ao ar sem dor de cabeça.",
+    big: false,
+  },
+  {
+    icon: LuRefreshCw,
     title: "Manutenção e evolução",
     text: "Ajustes, melhorias e novas funcionalidades para o seu projeto continuar crescendo com você.",
     big: true,
@@ -50,7 +70,7 @@ export default function Services() {
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="h-full rounded-2xl border border-border bg-surface p-6 hover:border-gold/50 active:border-gold/50 transition-colors"
               >
-                <span className="text-gold font-[var(--font-display)] text-lg">{s.icon}</span>
+                <s.icon className="h-6 w-6 text-gold" aria-hidden />
                 <h3 className="mt-5 font-medium">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{s.text}</p>
               </motion.div>
