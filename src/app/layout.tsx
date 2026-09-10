@@ -18,7 +18,12 @@ const description =
   "Desenvolvemos sites e sistemas que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://morphcode.site"),
+  // Vercel sets this to the production domain (custom domain once one is added).
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000"
+  ),
   title,
   description,
   openGraph: {
