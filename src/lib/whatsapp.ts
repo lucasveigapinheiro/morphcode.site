@@ -9,7 +9,7 @@ export const budgetMessage = `Olá, Morph Code! 🚀
 Quero solicitar um orçamento.
 
 ▪️ Nome:
-▪️ Tipo de projeto (site / sistema / automação):
+▪️ Tipo de projeto (site / sistema):
 ▪️ Prazo desejado:
 ▪️ Breve descrição da ideia:
 
