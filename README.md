@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Morph Code — Site profissional
 
-## Getting Started
+Site da Morph Code, meu estúdio de desenvolvimento web para pequenos negócios. Apresenta serviços, projetos entregues, depoimentos e um orçamento rápido que leva o cliente direto ao WhatsApp.
 
-First, run the development server:
+🔗 **No ar:** [morphcodesite.vercel.app](https://morphcodesite.vercel.app)
+
+## Destaques técnicos
+
+- **Next.js (App Router)** com React 19 e TypeScript
+- **16 componentes reutilizáveis** (Hero, Serviços, Projetos, Stack, Depoimentos, FAQ, Contato e outros)
+- **Calculadora de orçamento** que monta a mensagem e abre o WhatsApp com o pedido pronto
+- **Animações** com Motion: revelação no scroll, botões magnéticos, contador animado, letreiro e brilho que segue o cursor
+- **Imagem Open Graph gerada dinamicamente** (`opengraph-image.tsx`) para compartilhamento em redes sociais
+- Estilização com **Tailwind CSS v4**, layout responsivo mobile-first
+- Qualidade de código com **ESLint**
+- **Deploy contínuo na Vercel** a cada push
+
+## Tecnologias
+
+Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · Motion · React Icons · ESLint · Vercel
+
+## Como rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # ambiente de desenvolvimento em http://localhost:3000
+npm run build   # build de produção
+npm run lint    # análise estática
 ```
 
-🚀 **[Acesse o site rodando ao vivo na Vercel clicando aqui](https://morphcodesite.vercel.app/)**) with your browser to see the result.
+## Estrutura
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/          # layout, página principal, ícone e imagem Open Graph
+  components/   # componentes da página
+  lib/          # utilitários (mensagens do WhatsApp)
+public/         # imagens e arquivos estáticos
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Autor
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Lucas Veiga Pinheiro — [LinkedIn](https://www.linkedin.com/in/lucas-veiga-pinheiro-5001653b0/) · [GitHub](https://github.com/lucasveigapinheiro)
