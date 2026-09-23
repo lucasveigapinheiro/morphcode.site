@@ -61,6 +61,18 @@ export default function Hero() {
             <span className="text-xs text-gold">Disponível para novos projetos</span>
           </motion.div>
 
+          <motion.a
+            href="#produto"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="group mb-7 ml-3 inline-flex items-center gap-2 rounded-full border border-eucalipto bg-eucalipto/20 px-4 py-1.5 text-xs text-foreground transition-colors hover:bg-eucalipto/40"
+          >
+            <span className="rounded-full bg-argila px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">Novo</span>
+            Morph Clínica: sistema para clínicas de estética
+            <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+          </motion.a>
+
           <h1 className="font-[var(--font-display)] text-4xl sm:text-5xl md:text-6xl leading-[1.08] max-w-3xl">
             {words.map((w, i) => (
               <motion.span

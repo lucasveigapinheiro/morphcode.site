@@ -6,6 +6,7 @@ import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 
 const links = [
+  { href: "#produto", label: "Morph Clínica" },
   { href: "#sobre", label: "Sobre" },
   { href: "#servicos", label: "Serviços" },
   { href: "#projetos", label: "Projetos" },

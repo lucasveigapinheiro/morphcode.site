@@ -9,6 +9,7 @@ import Contact from "@/components/Contact";
 import Marquee from "@/components/Marquee";
 import TechStack from "@/components/TechStack";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import ProdutoDestaque from "@/components/clinica/ProdutoDestaque";
 
 const strip = ["Sites", "Sistemas", "Design", "SEO", "Performance", "Suporte"];
 
@@ -19,6 +20,7 @@ export default function Home() {
       <main className="pb-20 md:pb-0">
         <Hero />
         <Marquee items={strip} />
+        <ProdutoDestaque />
         <About />
         <TechStack />
         <Projects />

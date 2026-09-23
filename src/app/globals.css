@@ -9,6 +9,14 @@
   --gold: #d4a94a;
   --gold-light: #e8c876;
   --border: #2a2a2c;
+
+  /* Morph Clínica: identidade do produto (a mesma do sistema) */
+  --eucalipto: #2f5a52;
+  --eucalipto-escuro: #1d3c36;
+  --argila: #c98e73;
+  --nevoa: #d5e4df;
+  --porcelana: #f2f5f3;
+  --grafite: #1e2b28;
 }
 
 @theme inline {
@@ -20,6 +28,12 @@
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
   --color-border: var(--border);
+  --color-eucalipto: var(--eucalipto);
+  --color-eucalipto-escuro: var(--eucalipto-escuro);
+  --color-argila: var(--argila);
+  --color-nevoa: var(--nevoa);
+  --color-porcelana: var(--porcelana);
+  --color-grafite: var(--grafite);
   --font-sans: var(--font-sans);
 }
 
@@ -91,4 +105,21 @@ body {
 
 .animate-float-slower {
   animation: float-slower 13s ease-in-out infinite;
+}
+
+/* Fontes do produto Morph Clínica (carregadas por next/font em src/lib/fontes-clinica.ts) */
+.font-fraunces {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+.font-manrope {
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slower {
+    animation: none;
+  }
 }

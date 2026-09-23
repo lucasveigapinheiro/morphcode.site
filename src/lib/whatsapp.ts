@@ -11,3 +11,9 @@ export function estimateMessage(kind: string) {
 }
 
 export const generalMessage = `Olá, Morph Code! Vim pelo site e gostaria de tirar uma dúvida.`;
+
+export const clinicaMessage = `Olá, Morph Code! Vim pelo site e quero conhecer o Morph Clínica, o sistema para clínicas de estética.`;
+
+export function planoMessage(plano: string) {
+  return `Olá, Morph Code! Vim pelo site e tenho interesse na opção "${plano}" do Morph Clínica.`;
+}
