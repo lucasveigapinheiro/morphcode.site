@@ -495,7 +495,8 @@ export default function ClinicasPage() {
           </div>
           <p className="mt-8 text-center text-xs text-grafite/50">
             {PRODUTO} é um produto <Link href="/" className="underline hover:text-eucalipto">Morph Code</Link> · Lucas Veiga Pinheiro ·
-            (11) 93095-7162 · @morphcode.dev
+            (11) 93095-7162 ·{" "}
+            <a href="mailto:morphcode.dev@gmail.com" className="underline hover:text-eucalipto">morphcode.dev@gmail.com</a> · @morphcode.dev
           </p>
         </section>
       </main>
