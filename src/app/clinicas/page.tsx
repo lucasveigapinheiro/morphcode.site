@@ -13,7 +13,6 @@ import {
   LuLock,
   LuFileText,
   LuArchive,
-  LuSmartphone,
   LuMonitor,
   LuPlus,
 } from "react-icons/lu";
@@ -26,7 +25,6 @@ import {
   DEMO,
   PRODUTO,
   faqClinica,
-  passosImplantacao,
   passosInstalarApp,
   planos,
   telas,
@@ -460,38 +458,6 @@ export default function ClinicasPage() {
                   </div>
                 </Reveal>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Implantação */}
-        <section className="border-t border-grafite/10 bg-white py-24">
-          <div className="mx-auto max-w-6xl px-6">
-            <Reveal className="max-w-2xl">
-              <Eyebrow>Implantação</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Da conversa ao sistema funcionando em poucos dias.</h2>
-            </Reveal>
-            <ol className="relative mt-14 grid gap-10 md:grid-cols-4 md:gap-6">
-              <span aria-hidden className="absolute left-5 right-5 top-5 hidden h-px bg-nevoa md:block" />
-              {passosImplantacao.map((p, i) => (
-                <li key={p.titulo} className="relative">
-                  <Reveal delay={i * 0.08}>
-                    <span className="relative grid h-10 w-10 place-items-center rounded-full bg-eucalipto font-fraunces text-lg text-white ring-8 ring-white">
-                      {i + 1}
-                    </span>
-                    <h3 className="mt-5 text-lg font-bold">{p.titulo}</h3>
-                    <p className="mt-1 text-sm text-grafite/65">{p.texto}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-14 flex items-center gap-4 rounded-3xl bg-porcelana p-6">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-eucalipto text-white">
-                <LuSmartphone className="h-6 w-6" aria-hidden />
-              </span>
-              <p className="text-grafite/75">
-                Funciona no computador, tablet e celular. Não precisa instalar nada: é só abrir o link.
-              </p>
             </div>
           </div>
         </section>

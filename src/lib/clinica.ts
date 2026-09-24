@@ -98,13 +98,6 @@ export const passosInstalarApp = [
   },
 ];
 
-export const passosImplantacao = [
-  { titulo: "Conversa", texto: "Entendemos seus serviços, sua ficha e sua rotina." },
-  { titulo: "Configuração", texto: "Sua marca, cores, serviços e perguntas no sistema." },
-  { titulo: "Treinamento", texto: "1 hora com você e a equipe, no computador e no celular." },
-  { titulo: "Em uso", texto: "Primeiras pacientes com a ficha digital e suporte pelo WhatsApp." },
-];
-
 export const faqClinica = [
   {
     q: "Preciso instalar alguma coisa?",
