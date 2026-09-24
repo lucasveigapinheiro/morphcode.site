@@ -20,8 +20,8 @@ export const telas = {
   assinatura: { src: "/clinicas/telas/assinatura.png", alt: "Assinatura da paciente com o dedo", width: 484, height: 459 },
 } satisfies Record<string, Tela>;
 
-// Slide 11 (depoimento) fica de fora até existir um depoimento real.
-export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12].map((n) => ({
+// O slide 11 traz um depoimento fictício, identificado como tal no próprio slide.
+export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => ({
   src: `/clinicas/slides/slide-${String(n).padStart(2, "0")}.jpg`,
   alt: `Slide ${n} da apresentação do ${PRODUTO}`,
 }));
