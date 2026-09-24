@@ -20,8 +20,8 @@ export const telas = {
   assinatura: { src: "/clinicas/telas/assinatura.png", alt: "Assinatura da paciente com o dedo", width: 484, height: 459 },
 } satisfies Record<string, Tela>;
 
-// O slide 11 traz um depoimento fictício, identificado como tal no próprio slide.
-export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => ({
+// O slide 12 traz um depoimento fictício, identificado como tal no próprio slide.
+export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
   src: `/clinicas/slides/slide-${String(n).padStart(2, "0")}.jpg`,
   alt: `Slide ${n} da apresentação do ${PRODUTO}`,
 }));
@@ -40,19 +40,19 @@ export const planos: Plano[] = [
   {
     id: "mensal",
     nome: "Plano mensal",
-    preco: "R$ 89/mês",
+    preco: "R$ 109/mês",
     detalhe: "+ implantação de R$ 497 (paga uma vez)",
     cta: "Quero o plano mensal",
-    itens: ["Hospedagem e backup", "Suporte pelo WhatsApp", "Atualizações inclusas", "Sem fidelidade: aviso de 30 dias"],
+    itens: ["Hospedagem e backup", "Suporte e atualizações inclusos", "Sem fidelidade: aviso de 30 dias", "Após 36 meses, vira licença"],
     destaque: false,
   },
   {
     id: "licenca",
-    nome: "Licença + 12 meses",
+    nome: "Licença vitalícia",
     preco: "R$ 2.700",
-    detalhe: "à vista ou em 2x · depois R$ 69/mês",
+    detalhe: "à vista ou em 3x · depois R$ 69/mês de hospedagem",
     cta: "Quero a licença",
-    itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Treinamento da equipe", "Menor custo no longo prazo"],
+    itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Licença de uso sem prazo", "Menor custo no longo prazo"],
     destaque: true,
   },
 ];
@@ -79,7 +79,19 @@ export const faqClinica = [
   },
   {
     q: "E se eu quiser sair?",
-    a: "No plano mensal não há fidelidade: é só avisar com 30 dias. Seus dados são seus e você recebe uma cópia completa de tudo, incluindo fichas assinadas e fotos.",
+    a: "No plano mensal não há fidelidade: é só avisar com 30 dias, e o acesso vai até o fim do último mês pago. Seus dados são seus e você recebe uma cópia completa de tudo, incluindo fichas assinadas e fotos.",
+  },
+  {
+    q: "O que é a licença vitalícia?",
+    a: "Você paga R$ 2.700 uma vez (à vista ou em 3x de R$ 900) e ganha o direito de usar o sistema sem prazo, com 12 meses de hospedagem inclusos. Depois, fica só a hospedagem de R$ 69/mês, que mantém o sistema no ar com backup, suporte e atualizações. O sistema continua sendo da Morph Code: a licença é o direito de uso.",
+  },
+  {
+    q: "E se eu atrasar a hospedagem da licença?",
+    a: "O sistema fica suspenso e volta exatamente como estava quando o pagamento é feito, sem precisar comprar a licença de novo. Seus dados continuam guardados e você pode pedir o backup completo a qualquer momento.",
+  },
+  {
+    q: "O plano mensal vira licença?",
+    a: "Sim. Depois de 36 mensalidades pagas, a clínica ganha a licença vitalícia e passa a pagar só a hospedagem de R$ 69/mês.",
   },
   {
     q: "Os lembretes de consulta são automáticos?",

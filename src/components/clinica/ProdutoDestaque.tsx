@@ -53,7 +53,7 @@ export default function ProdutoDestaque() {
           </ul>
 
           <p className="mt-7 text-sm text-muted">
-            A partir de <span className="font-[var(--font-display)] text-2xl text-foreground">R$ 89</span>/mês
+            A partir de <span className="font-[var(--font-display)] text-2xl text-foreground">R$ 109</span>/mês
           </p>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">

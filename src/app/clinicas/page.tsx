@@ -157,7 +157,7 @@ export default function ClinicasPage() {
                 </a>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
-                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 89/mês"].map((t) => (
+                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 109/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
