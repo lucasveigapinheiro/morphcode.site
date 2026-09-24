@@ -64,6 +64,40 @@ export const planos: Plano[] = [
   },
 ];
 
+// Passo a passo para instalar o sistema como aplicativo (PWA).
+export const passosInstalarApp = [
+  {
+    id: "iphone",
+    titulo: "iPhone e iPad",
+    passos: [
+      "Abra o link do sistema no Safari.",
+      "Toque em Compartilhar (o quadrado com a seta para cima).",
+      "Role a lista e toque em “Adicionar à Tela de Início”.",
+      "Toque em “Adicionar”. O ícone da clínica aparece na tela inicial.",
+    ],
+  },
+  {
+    id: "android",
+    titulo: "Android",
+    passos: [
+      "Abra o link do sistema no Chrome.",
+      "Toque em “Instalar aplicativo” no aviso que aparece, ou abra o menu ⋮.",
+      "No menu, toque em “Instalar aplicativo” ou “Adicionar à tela inicial”.",
+      "Confirme em “Instalar”. O ícone da clínica aparece junto com os outros apps.",
+    ],
+  },
+  {
+    id: "computador",
+    titulo: "Computador",
+    passos: [
+      "Abra o sistema no Chrome ou no Edge e faça login.",
+      "Clique no ícone de instalar, no canto direito da barra de endereço.",
+      "Ou, dentro do sistema, vá em Configurações e clique em “Instalar aplicativo”.",
+      "Pronto: o sistema abre em janela própria, pelo menu Iniciar ou pela barra de tarefas.",
+    ],
+  },
+];
+
 export const passosImplantacao = [
   { titulo: "Conversa", texto: "Entendemos seus serviços, sua ficha e sua rotina." },
   { titulo: "Configuração", texto: "Sua marca, cores, serviços e perguntas no sistema." },
@@ -74,7 +108,7 @@ export const passosImplantacao = [
 export const faqClinica = [
   {
     q: "Preciso instalar alguma coisa?",
-    a: "Não. O sistema abre no navegador do computador, do tablet e do celular. A paciente também não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
+    a: "Não. O sistema abre no navegador do computador, do tablet e do celular. Se quiser, você instala como aplicativo em poucos toques, direto do navegador, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
   },
   {
     q: "A ficha assinada no celular tem valor?",

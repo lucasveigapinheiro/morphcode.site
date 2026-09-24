@@ -15,9 +15,10 @@ import {
   LuFileText,
   LuArchive,
   LuSmartphone,
+  LuMonitor,
   LuPlus,
 } from "react-icons/lu";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaAndroid, FaApple, FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
 import SlideCarousel from "@/components/clinica/SlideCarousel";
 import TestePaciente from "@/components/clinica/TestePaciente";
@@ -28,6 +29,7 @@ import {
   PRODUTO,
   faqClinica,
   passosImplantacao,
+  passosInstalarApp,
   planos,
   telas,
   type Tela,
@@ -163,7 +165,7 @@ export default function ClinicasPage() {
                 Ou explore o sistema completo com uma clínica de exemplo <LuArrowRight className="h-4 w-4" aria-hidden />
               </a>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
-                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 109/mês"].map((t) => (
+                {["Funciona no navegador", "Vira app no celular", "A partir de R$ 109/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
@@ -354,6 +356,62 @@ export default function ClinicasPage() {
                 <Moldura tela={telas.editorFicha} className="ml-auto w-[82%]" />
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        {/* Aplicativo */}
+        <section id="aplicativo" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="max-w-2xl">
+              <Eyebrow>Aplicativo</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Instale como aplicativo, sem loja.</h2>
+              <p className="mt-5 text-grafite/70">
+                O sistema vira um app no celular, no tablet e no computador: ícone com a marca da sua clínica na tela inicial,
+                abre em tela cheia, sem a barra do navegador. Não precisa baixar nada da App Store nem da Play Store, e as
+                atualizações chegam sozinhas.
+              </p>
+              <p className="mt-4 inline-flex items-start gap-2 text-sm text-grafite/60">
+                <LuLock className="mt-0.5 h-4 w-4 shrink-0 text-eucalipto" aria-hidden />
+                As fichas e prontuários continuam guardados no servidor, protegidos pelo login. Nada de paciente fica salvo no aparelho.
+              </p>
+            </Reveal>
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              {passosInstalarApp.map((sistema, i) => {
+                const Icone = sistema.id === "iphone" ? FaApple : sistema.id === "android" ? FaAndroid : LuMonitor;
+                return (
+                  <Reveal key={sistema.id} delay={i * 0.08}>
+                    <div className="h-full rounded-[2rem] border border-grafite/10 bg-white p-8 shadow-lg shadow-eucalipto/10">
+                      <div className="flex items-center gap-3">
+                        <span className="grid h-11 w-11 place-items-center rounded-2xl bg-eucalipto text-white">
+                          <Icone className="h-5 w-5" aria-hidden />
+                        </span>
+                        <h3 className="font-fraunces text-2xl">{sistema.titulo}</h3>
+                      </div>
+                      <ol className="mt-6 space-y-4">
+                        {sistema.passos.map((passo, n) => (
+                          <li key={passo} className="flex gap-3 text-[15px] leading-relaxed text-grafite/75">
+                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-eucalipto/10 text-xs font-bold text-eucalipto">
+                              {n + 1}
+                            </span>
+                            <span>{passo}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+            <Reveal className="mt-10 text-center">
+              <a
+                href={DEMO.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-eucalipto hover:underline"
+              >
+                Experimente agora: instale a demonstração no seu celular <LuArrowUpRight className="h-4 w-4" aria-hidden />
+              </a>
+            </Reveal>
           </div>
         </section>
 
