@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   LuArrowRight,
+  LuArrowUpRight,
   LuBellRing,
   LuCalendarCheck,
   LuCamera,
@@ -23,6 +24,7 @@ import TestePaciente from "@/components/clinica/TestePaciente";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import {
   APRESENTACAO_PDF,
+  DEMO,
   PRODUTO,
   faqClinica,
   passosImplantacao,
@@ -108,6 +110,7 @@ export default function ClinicasPage() {
           <nav className="hidden items-center gap-7 text-sm text-grafite/65 md:flex">
             <a href="#como-funciona" className="hover:text-eucalipto">Como funciona</a>
             <a href="#teste" className="hover:text-eucalipto">Teste agora</a>
+            <a href="#demo" className="hover:text-eucalipto">Demonstração</a>
             <a href="#recursos" className="hover:text-eucalipto">Recursos</a>
             <a href="#planos" className="hover:text-eucalipto">Planos</a>
           </nav>
@@ -156,6 +159,9 @@ export default function ClinicasPage() {
                   Testar como paciente <LuArrowRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
+              <a href="#demo" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-eucalipto hover:underline">
+                Ou explore o sistema completo com uma clínica de exemplo <LuArrowRight className="h-4 w-4" aria-hidden />
+              </a>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
                 {["Sem instalar nada", "Funciona no celular", "A partir de R$ 109/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
@@ -237,6 +243,43 @@ export default function ClinicasPage() {
             </Reveal>
             <Reveal delay={0.1} className="mt-14">
               <TestePaciente />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Demonstração */}
+        <section id="demo" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
+            <Reveal>
+              <Eyebrow>Demonstração</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Explore o sistema como se fosse a sua clínica.</h2>
+              <p className="mt-5 text-grafite/70">
+                Uma clínica de exemplo, com pacientes, fichas assinadas, alertas, prontuário e agenda preenchidos. Mexa à
+                vontade: cadastre uma paciente, envie uma ficha de teste para o seu celular e troque as cores da clínica.
+              </p>
+              <p className="mt-4 text-sm text-grafite/55">
+                Clínica e pacientes fictícios. As fichas de teste são apagadas em 24 horas.
+              </p>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="rounded-[2rem] border border-grafite/10 bg-white p-9 shadow-lg shadow-eucalipto/10">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-argila">Acesso livre</p>
+                <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-[15px]">
+                  <dt className="text-grafite/55">Usuário</dt>
+                  <dd className="font-mono font-semibold text-grafite">{DEMO.usuario}</dd>
+                  <dt className="text-grafite/55">Senha</dt>
+                  <dd className="font-mono font-semibold text-grafite">{DEMO.senha}</dd>
+                </dl>
+                <a
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-eucalipto px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-eucalipto/30 transition hover:brightness-110"
+                >
+                  Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                </a>
+                <p className="mt-3 text-center text-xs text-grafite/50">Abre em outra aba. Funciona no computador e no celular.</p>
+              </div>
             </Reveal>
           </div>
         </section>
@@ -483,6 +526,14 @@ export default function ClinicasPage() {
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <BotaoWhats texto="Agendar demonstração" mensagem={clinicaMessage} claro />
+                <a
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  Explorar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                </a>
                 <a
                   href={APRESENTACAO_PDF}
                   download

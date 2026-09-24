@@ -5,6 +5,13 @@ export const PRODUTO = "Morph Clínica";
 
 export const APRESENTACAO_PDF = "/clinicas/apresentacao-morph-clinica.pdf";
 
+// Sistema de demonstração: clínica e pacientes fictícios, login público.
+export const DEMO = {
+  url: "https://morph-clinica-demo.vercel.app/pages/login.html",
+  usuario: "demo",
+  senha: "BellaDemo2026",
+};
+
 export type Tela = { src: string; alt: string; width: number; height: number };
 
 export const telas = {

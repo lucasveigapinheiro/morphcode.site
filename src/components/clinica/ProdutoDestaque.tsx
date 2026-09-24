@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { LuArrowRight, LuCheck, LuDownload } from "react-icons/lu";
+import { LuArrowRight, LuArrowUpRight, LuCheck, LuDownload } from "react-icons/lu";
 import Reveal from "../Reveal";
 import Magnetic from "../Magnetic";
 import SlideCarousel from "./SlideCarousel";
-import { APRESENTACAO_PDF, PRODUTO } from "@/lib/clinica";
+import { APRESENTACAO_PDF, DEMO, PRODUTO } from "@/lib/clinica";
 
 const pontos = [
   "Ficha de anamnese assinada no celular da paciente",
@@ -74,13 +74,23 @@ export default function ProdutoDestaque() {
               </Link>
             </Magnetic>
           </div>
-          <a
-            href={APRESENTACAO_PDF}
-            download
-            className="mt-5 inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-gold"
-          >
-            <LuDownload className="h-3.5 w-3.5" aria-hidden /> Baixar a apresentação em PDF
-          </a>
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+            <a
+              href={DEMO.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-gold"
+            >
+              <LuArrowUpRight className="h-3.5 w-3.5" aria-hidden /> Explorar a demonstração (usuário {DEMO.usuario}, senha {DEMO.senha})
+            </a>
+            <a
+              href={APRESENTACAO_PDF}
+              download
+              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-gold"
+            >
+              <LuDownload className="h-3.5 w-3.5" aria-hidden /> Baixar a apresentação em PDF
+            </a>
+          </div>
         </Reveal>
 
         <Reveal delay={0.15}>
