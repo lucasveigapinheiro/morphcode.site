@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  LuArrowRight,
   LuArrowUpRight,
   LuBellRing,
   LuCalendarCheck,
@@ -21,7 +20,6 @@ import {
 import { FaAndroid, FaApple, FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
 import SlideCarousel from "@/components/clinica/SlideCarousel";
-import TestePaciente from "@/components/clinica/TestePaciente";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import {
   APRESENTACAO_PDF,
@@ -111,7 +109,6 @@ export default function ClinicasPage() {
           </Link>
           <nav className="hidden items-center gap-7 text-sm text-grafite/65 md:flex">
             <a href="#como-funciona" className="hover:text-eucalipto">Como funciona</a>
-            <a href="#teste" className="hover:text-eucalipto">Teste agora</a>
             <a href="#demo" className="hover:text-eucalipto">Demonstração</a>
             <a href="#recursos" className="hover:text-eucalipto">Recursos</a>
             <a href="#planos" className="hover:text-eucalipto">Planos</a>
@@ -155,15 +152,14 @@ export default function ClinicasPage() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <BotaoWhats texto="Quero uma demonstração" mensagem={clinicaMessage} />
                 <a
-                  href="#teste"
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-grafite/20 px-7 py-3.5 text-sm font-semibold text-grafite transition-colors hover:border-eucalipto hover:text-eucalipto"
                 >
-                  Testar como paciente <LuArrowRight className="h-4 w-4" aria-hidden />
+                  Explorar o sistema <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
-              <a href="#demo" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-eucalipto hover:underline">
-                Ou explore o sistema completo com uma clínica de exemplo <LuArrowRight className="h-4 w-4" aria-hidden />
-              </a>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
                 {["Funciona no navegador", "Vira app no celular", "A partir de R$ 109/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
@@ -228,27 +224,6 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Teste interativo */}
-        <section id="teste" className="relative overflow-hidden py-24">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
-            style={{ background: "radial-gradient(circle, var(--nevoa) 0%, transparent 70%)" }}
-          />
-          <div className="relative mx-auto max-w-6xl px-6">
-            <Reveal className="mx-auto max-w-2xl text-center">
-              <Eyebrow>Teste agora</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Responda como paciente. Veja o que a doutora vê.</h2>
-              <p className="mt-4 text-grafite/65">
-                Marque &quot;Sim&quot; em alguma pergunta e acompanhe o alerta chegando ao prontuário, na hora.
-              </p>
-            </Reveal>
-            <Reveal delay={0.1} className="mt-14">
-              <TestePaciente />
-            </Reveal>
-          </div>
-        </section>
-
         {/* Demonstração */}
         <section id="demo" className="border-t border-grafite/10 py-24">
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
@@ -289,30 +264,6 @@ export default function ClinicasPage() {
         {/* Recursos */}
         <section id="recursos" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto max-w-6xl space-y-28 px-6">
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              <Reveal>
-                <Eyebrow>Prontuário</Eyebrow>
-                <h2 className="font-fraunces text-4xl leading-tight">Um prontuário que avisa antes do procedimento.</h2>
-                <ul className="mt-7 space-y-4 text-grafite/75">
-                  {[
-                    ["Alertas automáticos", "alergias, gestação, medicamentos e doenças em destaque."],
-                    ["Evolução de cada atendimento", "produto, lote, validade, dose e região aplicada."],
-                    ["Fotos antes e depois", "só com a autorização da paciente registrada na ficha."],
-                    ["Impressão e PDF", "prontuário completo para imprimir ou arquivar."],
-                  ].map(([t, d]) => (
-                    <li key={t} className="flex gap-3">
-                      <LuCheck className="mt-1 h-4 w-4 shrink-0 text-eucalipto" aria-hidden />
-                      <span><strong className="text-grafite">{t}:</strong> {d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-              <Reveal delay={0.1} className="relative">
-                <Moldura tela={telas.alertas} />
-                <Moldura tela={telas.evolucao} className="relative -mt-16 ml-auto w-[78%]" />
-              </Reveal>
-            </div>
-
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <Reveal delay={0.1} className="order-last lg:order-first">
                 <Moldura tela={telas.agenda} />
