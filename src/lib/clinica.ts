@@ -20,8 +20,8 @@ export const telas = {
   assinatura: { src: "/clinicas/telas/assinatura.png", alt: "Assinatura da paciente com o dedo", width: 484, height: 459 },
 } satisfies Record<string, Tela>;
 
-// Slide 11 (depoimento) fica de fora até existir um depoimento real.
-export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12].map((n) => ({
+// O slide 12 traz um depoimento fictício, identificado como tal no próprio slide.
+export const slides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
   src: `/clinicas/slides/slide-${String(n).padStart(2, "0")}.jpg`,
   alt: `Slide ${n} da apresentação do ${PRODUTO}`,
 }));
@@ -40,7 +40,7 @@ export const planos: Plano[] = [
   {
     id: "mensal",
     nome: "Plano mensal",
-    preco: "R$ 89/mês",
+    preco: "R$ 149/mês",
     detalhe: "+ implantação de R$ 497 (paga uma vez)",
     cta: "Quero o plano mensal",
     itens: ["Hospedagem e backup", "Suporte pelo WhatsApp", "Atualizações inclusas", "Sem fidelidade: aviso de 30 dias"],
@@ -50,7 +50,7 @@ export const planos: Plano[] = [
     id: "licenca",
     nome: "Licença + 12 meses",
     preco: "R$ 2.700",
-    detalhe: "à vista ou em 2x · depois R$ 69/mês",
+    detalhe: "à vista ou em 3x · depois R$ 97/mês de hospedagem",
     cta: "Quero a licença",
     itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Treinamento da equipe", "Menor custo no longo prazo"],
     destaque: true,

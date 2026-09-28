@@ -157,7 +157,7 @@ export default function ClinicasPage() {
                 </a>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
-                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 89/mês"].map((t) => (
+                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 149/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
@@ -495,7 +495,8 @@ export default function ClinicasPage() {
           </div>
           <p className="mt-8 text-center text-xs text-grafite/50">
             {PRODUTO} é um produto <Link href="/" className="underline hover:text-eucalipto">Morph Code</Link> · Lucas Veiga Pinheiro ·
-            (11) 93095-7162 · @morphcode.dev
+            (11) 93095-7162 ·{" "}
+            <a href="mailto:morphcode.dev@gmail.com" className="underline hover:text-eucalipto">morphcode.dev@gmail.com</a> · @morphcode.dev
           </p>
         </section>
       </main>
