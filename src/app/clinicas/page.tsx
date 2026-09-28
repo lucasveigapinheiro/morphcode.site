@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  LuArrowRight,
+  LuArrowUpRight,
   LuBellRing,
   LuCalendarCheck,
   LuCamera,
@@ -13,19 +13,19 @@ import {
   LuLock,
   LuFileText,
   LuArchive,
-  LuSmartphone,
+  LuMonitor,
   LuPlus,
 } from "react-icons/lu";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaAndroid, FaApple, FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
 import SlideCarousel from "@/components/clinica/SlideCarousel";
-import TestePaciente from "@/components/clinica/TestePaciente";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import {
   APRESENTACAO_PDF,
+  DEMO,
   PRODUTO,
   faqClinica,
-  passosImplantacao,
+  passosInstalarApp,
   planos,
   telas,
   type Tela,
@@ -107,7 +107,7 @@ export default function ClinicasPage() {
           </Link>
           <nav className="hidden items-center gap-7 text-sm text-grafite/65 md:flex">
             <a href="#como-funciona" className="hover:text-eucalipto">Como funciona</a>
-            <a href="#teste" className="hover:text-eucalipto">Teste agora</a>
+            <a href="#demo" className="hover:text-eucalipto">Demonstração</a>
             <a href="#recursos" className="hover:text-eucalipto">Recursos</a>
             <a href="#planos" className="hover:text-eucalipto">Planos</a>
           </nav>
@@ -150,14 +150,16 @@ export default function ClinicasPage() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <BotaoWhats texto="Quero uma demonstração" mensagem={clinicaMessage} />
                 <a
-                  href="#teste"
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-grafite/20 px-7 py-3.5 text-sm font-semibold text-grafite transition-colors hover:border-eucalipto hover:text-eucalipto"
                 >
-                  Testar como paciente <LuArrowRight className="h-4 w-4" aria-hidden />
+                  Explorar o sistema <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
-                {["Sem instalar nada", "Funciona no celular", "A partir de R$ 149/mês"].map((t) => (
+                {["Funciona no navegador", "Vira app no celular", "A partir de R$ 149/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
@@ -220,23 +222,39 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Teste interativo */}
-        <section id="teste" className="relative overflow-hidden py-24">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
-            style={{ background: "radial-gradient(circle, var(--nevoa) 0%, transparent 70%)" }}
-          />
-          <div className="relative mx-auto max-w-6xl px-6">
-            <Reveal className="mx-auto max-w-2xl text-center">
-              <Eyebrow>Teste agora</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Responda como paciente. Veja o que a doutora vê.</h2>
-              <p className="mt-4 text-grafite/65">
-                Marque &quot;Sim&quot; em alguma pergunta e acompanhe o alerta chegando ao prontuário, na hora.
+        {/* Demonstração */}
+        <section id="demo" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
+            <Reveal>
+              <Eyebrow>Demonstração</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Explore o sistema como se fosse a sua clínica.</h2>
+              <p className="mt-5 text-grafite/70">
+                Uma clínica de exemplo, com pacientes, fichas assinadas, alertas, prontuário e agenda preenchidos. Mexa à
+                vontade: cadastre uma paciente, envie uma ficha de teste para o seu celular e troque as cores da clínica.
+              </p>
+              <p className="mt-4 text-sm text-grafite/55">
+                Clínica e pacientes fictícios. As fichas de teste são apagadas em 24 horas.
               </p>
             </Reveal>
-            <Reveal delay={0.1} className="mt-14">
-              <TestePaciente />
+            <Reveal delay={0.1}>
+              <div className="rounded-[2rem] border border-grafite/10 bg-white p-9 shadow-lg shadow-eucalipto/10">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-argila">Acesso livre</p>
+                <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-[15px]">
+                  <dt className="text-grafite/55">Usuário</dt>
+                  <dd className="font-mono font-semibold text-grafite">{DEMO.usuario}</dd>
+                  <dt className="text-grafite/55">Senha</dt>
+                  <dd className="font-mono font-semibold text-grafite">{DEMO.senha}</dd>
+                </dl>
+                <a
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-eucalipto px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-eucalipto/30 transition hover:brightness-110"
+                >
+                  Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                </a>
+                <p className="mt-3 text-center text-xs text-grafite/50">Abre em outra aba. Funciona no computador e no celular.</p>
+              </div>
             </Reveal>
           </div>
         </section>
@@ -244,30 +262,6 @@ export default function ClinicasPage() {
         {/* Recursos */}
         <section id="recursos" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto max-w-6xl space-y-28 px-6">
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              <Reveal>
-                <Eyebrow>Prontuário</Eyebrow>
-                <h2 className="font-fraunces text-4xl leading-tight">Um prontuário que avisa antes do procedimento.</h2>
-                <ul className="mt-7 space-y-4 text-grafite/75">
-                  {[
-                    ["Alertas automáticos", "alergias, gestação, medicamentos e doenças em destaque."],
-                    ["Evolução de cada atendimento", "produto, lote, validade, dose e região aplicada."],
-                    ["Fotos antes e depois", "só com a autorização da paciente registrada na ficha."],
-                    ["Impressão e PDF", "prontuário completo para imprimir ou arquivar."],
-                  ].map(([t, d]) => (
-                    <li key={t} className="flex gap-3">
-                      <LuCheck className="mt-1 h-4 w-4 shrink-0 text-eucalipto" aria-hidden />
-                      <span><strong className="text-grafite">{t}:</strong> {d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-              <Reveal delay={0.1} className="relative">
-                <Moldura tela={telas.alertas} />
-                <Moldura tela={telas.evolucao} className="relative -mt-16 ml-auto w-[78%]" />
-              </Reveal>
-            </div>
-
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <Reveal delay={0.1} className="order-last lg:order-first">
                 <Moldura tela={telas.agenda} />
@@ -311,6 +305,62 @@ export default function ClinicasPage() {
                 <Moldura tela={telas.editorFicha} className="ml-auto w-[82%]" />
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        {/* Aplicativo */}
+        <section id="aplicativo" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="max-w-2xl">
+              <Eyebrow>Aplicativo</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Instale como aplicativo, sem loja.</h2>
+              <p className="mt-5 text-grafite/70">
+                O sistema vira um app no celular, no tablet e no computador: ícone com a marca da sua clínica na tela inicial,
+                abre em tela cheia, sem a barra do navegador. Não precisa baixar nada da App Store nem da Play Store, e as
+                atualizações chegam sozinhas.
+              </p>
+              <p className="mt-4 inline-flex items-start gap-2 text-sm text-grafite/60">
+                <LuLock className="mt-0.5 h-4 w-4 shrink-0 text-eucalipto" aria-hidden />
+                As fichas e prontuários continuam guardados no servidor, protegidos pelo login. Nada de paciente fica salvo no aparelho.
+              </p>
+            </Reveal>
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              {passosInstalarApp.map((sistema, i) => {
+                const Icone = sistema.id === "iphone" ? FaApple : sistema.id === "android" ? FaAndroid : LuMonitor;
+                return (
+                  <Reveal key={sistema.id} delay={i * 0.08}>
+                    <div className="h-full rounded-[2rem] border border-grafite/10 bg-white p-8 shadow-lg shadow-eucalipto/10">
+                      <div className="flex items-center gap-3">
+                        <span className="grid h-11 w-11 place-items-center rounded-2xl bg-eucalipto text-white">
+                          <Icone className="h-5 w-5" aria-hidden />
+                        </span>
+                        <h3 className="font-fraunces text-2xl">{sistema.titulo}</h3>
+                      </div>
+                      <ol className="mt-6 space-y-4">
+                        {sistema.passos.map((passo, n) => (
+                          <li key={passo} className="flex gap-3 text-[15px] leading-relaxed text-grafite/75">
+                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-eucalipto/10 text-xs font-bold text-eucalipto">
+                              {n + 1}
+                            </span>
+                            <span>{passo}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+            <Reveal className="mt-10 text-center">
+              <a
+                href={DEMO.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-eucalipto hover:underline"
+              >
+                Experimente agora: instale a demonstração no seu celular <LuArrowUpRight className="h-4 w-4" aria-hidden />
+              </a>
+            </Reveal>
           </div>
         </section>
 
@@ -412,38 +462,6 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Implantação */}
-        <section className="border-t border-grafite/10 bg-white py-24">
-          <div className="mx-auto max-w-6xl px-6">
-            <Reveal className="max-w-2xl">
-              <Eyebrow>Implantação</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Da conversa ao sistema funcionando em poucos dias.</h2>
-            </Reveal>
-            <ol className="relative mt-14 grid gap-10 md:grid-cols-4 md:gap-6">
-              <span aria-hidden className="absolute left-5 right-5 top-5 hidden h-px bg-nevoa md:block" />
-              {passosImplantacao.map((p, i) => (
-                <li key={p.titulo} className="relative">
-                  <Reveal delay={i * 0.08}>
-                    <span className="relative grid h-10 w-10 place-items-center rounded-full bg-eucalipto font-fraunces text-lg text-white ring-8 ring-white">
-                      {i + 1}
-                    </span>
-                    <h3 className="mt-5 text-lg font-bold">{p.titulo}</h3>
-                    <p className="mt-1 text-sm text-grafite/65">{p.texto}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-14 flex items-center gap-4 rounded-3xl bg-porcelana p-6">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-eucalipto text-white">
-                <LuSmartphone className="h-6 w-6" aria-hidden />
-              </span>
-              <p className="text-grafite/75">
-                Funciona no computador, tablet e celular. Não precisa instalar nada: é só abrir o link.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* Dúvidas */}
         <section className="py-24">
           <div className="mx-auto max-w-3xl px-6">
@@ -483,6 +501,14 @@ export default function ClinicasPage() {
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <BotaoWhats texto="Agendar demonstração" mensagem={clinicaMessage} claro />
+                <a
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  Explorar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                </a>
                 <a
                   href={APRESENTACAO_PDF}
                   download

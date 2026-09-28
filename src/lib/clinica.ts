@@ -5,6 +5,13 @@ export const PRODUTO = "Morph Clínica";
 
 export const APRESENTACAO_PDF = "/clinicas/apresentacao-morph-clinica.pdf";
 
+// Sistema de demonstração: clínica e pacientes fictícios, login público.
+export const DEMO = {
+  url: "https://morph-clinica-demo.vercel.app/pages/login.html",
+  usuario: "demo",
+  senha: "BellaDemo2026",
+};
+
 export type Tela = { src: string; alt: string; width: number; height: number };
 
 export const telas = {
@@ -43,31 +50,58 @@ export const planos: Plano[] = [
     preco: "R$ 149/mês",
     detalhe: "+ implantação de R$ 497 (paga uma vez)",
     cta: "Quero o plano mensal",
-    itens: ["Hospedagem e backup", "Suporte pelo WhatsApp", "Atualizações inclusas", "Sem fidelidade: aviso de 30 dias"],
+    itens: ["Hospedagem e backup", "Suporte e atualizações inclusos", "Sem fidelidade: aviso de 30 dias", "Após 36 meses, vira licença"],
     destaque: false,
   },
   {
     id: "licenca",
-    nome: "Licença + 12 meses",
+    nome: "Licença vitalícia",
     preco: "R$ 2.700",
     detalhe: "à vista ou em 3x · depois R$ 97/mês de hospedagem",
     cta: "Quero a licença",
-    itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Treinamento da equipe", "Menor custo no longo prazo"],
+    itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Licença de uso sem prazo", "Menor custo no longo prazo"],
     destaque: true,
   },
 ];
 
-export const passosImplantacao = [
-  { titulo: "Conversa", texto: "Entendemos seus serviços, sua ficha e sua rotina." },
-  { titulo: "Configuração", texto: "Sua marca, cores, serviços e perguntas no sistema." },
-  { titulo: "Treinamento", texto: "1 hora com você e a equipe, no computador e no celular." },
-  { titulo: "Em uso", texto: "Primeiras pacientes com a ficha digital e suporte pelo WhatsApp." },
+// Passo a passo para instalar o sistema como aplicativo (PWA).
+export const passosInstalarApp = [
+  {
+    id: "iphone",
+    titulo: "iPhone e iPad",
+    passos: [
+      "Abra o link do sistema no Safari.",
+      "Toque em Compartilhar (o quadrado com a seta para cima).",
+      "Role a lista e toque em “Adicionar à Tela de Início”.",
+      "Toque em “Adicionar”. O ícone da clínica aparece na tela inicial.",
+    ],
+  },
+  {
+    id: "android",
+    titulo: "Android",
+    passos: [
+      "Abra o link do sistema no Chrome.",
+      "Toque em “Instalar aplicativo” no aviso que aparece, ou abra o menu ⋮.",
+      "No menu, toque em “Instalar aplicativo” ou “Adicionar à tela inicial”.",
+      "Confirme em “Instalar”. O ícone da clínica aparece junto com os outros apps.",
+    ],
+  },
+  {
+    id: "computador",
+    titulo: "Computador",
+    passos: [
+      "Abra o sistema no Chrome ou no Edge e faça login.",
+      "Clique no ícone de instalar, no canto direito da barra de endereço.",
+      "Ou, dentro do sistema, vá em Configurações e clique em “Instalar aplicativo”.",
+      "Pronto: o sistema abre em janela própria, pelo menu Iniciar ou pela barra de tarefas.",
+    ],
+  },
 ];
 
 export const faqClinica = [
   {
     q: "Preciso instalar alguma coisa?",
-    a: "Não. O sistema abre no navegador do computador, do tablet e do celular. A paciente também não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
+    a: "Não. O sistema abre no navegador do computador, do tablet e do celular. Se quiser, você instala como aplicativo em poucos toques, direto do navegador, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
   },
   {
     q: "A ficha assinada no celular tem valor?",
@@ -79,7 +113,19 @@ export const faqClinica = [
   },
   {
     q: "E se eu quiser sair?",
-    a: "No plano mensal não há fidelidade: é só avisar com 30 dias. Seus dados são seus e você recebe uma cópia completa de tudo, incluindo fichas assinadas e fotos.",
+    a: "No plano mensal não há fidelidade: é só avisar com 30 dias, e o acesso vai até o fim do último mês pago. Seus dados são seus e você recebe uma cópia completa de tudo, incluindo fichas assinadas e fotos.",
+  },
+  {
+    q: "O que é a licença vitalícia?",
+    a: "Você paga R$ 2.700 uma vez (à vista ou em 3x de R$ 900) e ganha o direito de usar o sistema sem prazo, com 12 meses de hospedagem inclusos. Depois, fica só a hospedagem de R$ 97/mês, que mantém o sistema no ar com backup, suporte e atualizações. O sistema continua sendo da Morph Code: a licença é o direito de uso.",
+  },
+  {
+    q: "E se eu atrasar a hospedagem da licença?",
+    a: "O sistema fica suspenso e volta exatamente como estava quando o pagamento é feito, sem precisar comprar a licença de novo. Seus dados continuam guardados e você pode pedir o backup completo a qualquer momento.",
+  },
+  {
+    q: "O plano mensal vira licença?",
+    a: "Sim. Depois de 36 mensalidades pagas, a clínica ganha a licença vitalícia e passa a pagar só a hospedagem de R$ 97/mês.",
   },
   {
     q: "Os lembretes de consulta são automáticos?",

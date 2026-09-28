@@ -1,5 +1,7 @@
 # Morph Code — Site profissional
 
+![Morph Code — site no ar](public/morphcode-preview.jpg)
+
 Site da Morph Code, meu estúdio de desenvolvimento web para pequenos negócios. Apresenta serviços, projetos entregues, depoimentos e um orçamento rápido que leva o cliente direto ao WhatsApp.
 
 🔗 **No ar:** [morphcodesite.vercel.app](https://morphcodesite.vercel.app)
