@@ -50,7 +50,7 @@ export const planos: Plano[] = [
     preco: "R$ 149/mês",
     detalhe: "+ implantação de R$ 497 (paga uma vez)",
     cta: "Quero o plano mensal",
-    itens: ["Hospedagem e backup", "Suporte e atualizações inclusos", "Sem fidelidade: aviso de 30 dias", "Após 36 meses, vira licença"],
+    itens: ["Hospedagem e backup", "Suporte e atualizações inclusos", "Sem fidelidade: aviso de 30 dias", "Após 48 meses, vira licença"],
     destaque: false,
   },
   {
@@ -125,7 +125,7 @@ export const faqClinica = [
   },
   {
     q: "O plano mensal vira licença?",
-    a: "Sim. Depois de 36 mensalidades pagas, a clínica ganha a licença vitalícia e passa a pagar só a hospedagem de R$ 97/mês.",
+    a: "Sim. Depois de 48 mensalidades pagas, a clínica ganha a licença vitalícia e passa a pagar só a hospedagem de R$ 97/mês.",
   },
   {
     q: "Os lembretes de consulta são automáticos?",
