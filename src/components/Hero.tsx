@@ -48,25 +48,12 @@ export default function Hero() {
 
       <div className="mx-auto max-w-6xl px-6 relative grid lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center mt-8">
         <div>
-          <motion.div
-            initial={{ opacity: 0, y: -8, rotate: -6 }}
-            animate={{ opacity: 1, y: 0, rotate: -3 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 mb-7 -ml-1"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-            </span>
-            <span className="text-xs text-gold">Disponível para novos projetos</span>
-          </motion.div>
-
           <motion.a
             href="#produto"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="group mb-7 ml-3 inline-flex items-center gap-2 rounded-full border border-eucalipto bg-eucalipto/20 px-4 py-1.5 text-xs text-foreground transition-colors hover:bg-eucalipto/40"
+            className="group mb-7 inline-flex items-center gap-2 rounded-full border border-eucalipto bg-eucalipto/20 px-4 py-1.5 text-xs text-foreground transition-colors hover:bg-eucalipto/40"
           >
             <span className="rounded-full bg-argila px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">Novo</span>
             Morph Clínica: sistema para clínicas de estética
