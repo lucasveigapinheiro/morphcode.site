@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { SiHtml5, SiCss, SiJavascript, SiTailwindcss } from "react-icons/si";
@@ -71,10 +72,28 @@ export const projects: Project[] = [
   },
 ];
 
+// Arrastar a imagem só com mouse. No celular o toque precisa rolar a página.
+const MOUSE_FINO = "(hover: hover) and (pointer: fine)";
+
+function assinarMouseFino(avisar: () => void) {
+  const mq = window.matchMedia(MOUSE_FINO);
+  mq.addEventListener("change", avisar);
+  return () => mq.removeEventListener("change", avisar);
+}
+
+function useMouseFino() {
+  return useSyncExternalStore(
+    assinarMouseFino,
+    () => window.matchMedia(MOUSE_FINO).matches,
+    () => false,
+  );
+}
+
 function ProjectImage({ title, image, delay = 0 }: { title: string; image: string; delay?: number }) {
+  const arrastavel = useMouseFino();
   return (
     <motion.div
-      drag
+      drag={arrastavel}
       dragConstraints={{ top: -40, bottom: 40, left: -40, right: 40 }}
       dragElastic={0.5}
       dragTransition={{ bounceStiffness: 250, bounceDamping: 15 }}
@@ -88,7 +107,7 @@ function ProjectImage({ title, image, delay = 0 }: { title: string; image: strin
         rotate: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: delay + 0.8 },
         y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: delay + 0.8 },
       }}
-      className="relative aspect-video w-full cursor-grab active:cursor-grabbing select-none"
+      className={`relative aspect-video w-full select-none ${arrastavel ? "cursor-grab active:cursor-grabbing" : ""}`}
     >
       <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border bg-surface-2 shadow-2xl shadow-black/40">
         <Image
