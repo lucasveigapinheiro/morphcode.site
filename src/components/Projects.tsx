@@ -26,6 +26,15 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: "2B Estética Automotiva",
+    category: "Site institucional",
+    description:
+      "Site para uma estética automotiva da Zona Norte de São Paulo que atende de carros populares a Porsche e Ferrari. Mostramos os serviços, os carros que já passaram pelo box, as avaliações do Google e as dúvidas frequentes, com orçamento direto pelo WhatsApp. Fizemos também o domínio próprio, o SEO local e a indexação no Google, para o negócio aparecer para quem busca na região.",
+    href: "https://2bestéticaautomotiva.com.br/",
+    image: "/projects/2b-estetica.jpg",
+    techs: ["HTML5", "CSS3", "JavaScript"],
+  },
+  {
     title: "Sistema de Ordens de Serviço",
     category: "Sistema sob medida",
     description:
