@@ -9,7 +9,6 @@ const links = [
   { href: "#produto", label: "Morph Clínica" },
   { href: "#projetos", label: "Projetos" },
   { href: "#servicos", label: "Serviços" },
-  { href: "#sobre", label: "Sobre" },
   { href: "#duvidas", label: "Dúvidas" },
   { href: "#contato", label: "Contato" },
 ];

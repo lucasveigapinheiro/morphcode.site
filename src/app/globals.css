@@ -471,7 +471,7 @@ h1 {
   .glass-card {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background: linear-gradient(145deg, rgba(36, 36, 38, 0.92), rgba(20, 20, 22, 0.92));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
   }
 
   .grain {

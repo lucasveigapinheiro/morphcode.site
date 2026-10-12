@@ -5,17 +5,11 @@ import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 import ParticleField from "./ParticleField";
 import HeroScene from "./HeroScene";
-import { LuArrowDown, LuClock, LuCode, LuSmartphone } from "react-icons/lu";
+import { LuArrowDown } from "react-icons/lu";
 
 const lineA = "Seu site profissional".split(" ");
 const lineB = "no ar em cerca de".split(" ");
 const lineC = "7 dias.".split(" ");
-
-const badges = [
-  { icon: LuClock, label: "Pronto em 7 dias, em média" },
-  { icon: LuSmartphone, label: "Feito para o celular" },
-  { icon: LuCode, label: "Design sob medida, sem templates" },
-];
 
 function Words({ words, start, className = "" }: { words: string[]; start: number; className?: string }) {
   return (
@@ -103,20 +97,6 @@ export default function Hero() {
               </a>
             </Magnetic>
           </motion.div>
-
-          <motion.ul
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
-            className="mt-8 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[11px] text-muted"
-          >
-            {badges.map(({ icon: Icon, label }) => (
-              <li key={label} className="inline-flex items-center gap-1.5">
-                <Icon className="h-3.5 w-3.5 text-gold" aria-hidden />
-                {label}
-              </li>
-            ))}
-          </motion.ul>
         </div>
 
         <HeroScene />

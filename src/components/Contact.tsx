@@ -11,7 +11,7 @@ export default function Contact() {
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[420px] w-[640px] rounded-full opacity-10 blur-3xl"
         style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
-      <div className="hud-frame glass-strong relative mx-auto max-w-4xl rounded-3xl px-6 py-16 text-center md:py-20">
+      <div className="hud-frame glass-strong relative mx-auto w-[calc(100%-4rem)] max-w-3xl rounded-3xl px-5 py-12 text-center md:w-full md:px-6 md:py-20">
         <Reveal>
           <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4">Contato</p>
           <h2 className="font-[var(--font-display)] text-3xl md:text-5xl leading-tight">

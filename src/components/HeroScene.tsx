@@ -109,7 +109,7 @@ export default function HeroScene() {
       </div>
 
       {/* Painéis de vidro com conteúdo real */}
-      <div data-depth="-18" className="absolute -left-2 bottom-[2%] z-10 w-[44%] sm:-left-6">
+      <div data-depth="-18" className="absolute -left-1 bottom-[2%] z-10 w-[58%] sm:-left-6 sm:w-[44%]">
         <div className="hs-card hs-float-b glass rounded-xl p-2.5">
           <div className="relative aspect-[16/10] overflow-hidden rounded-lg">
             <Image
@@ -121,7 +121,7 @@ export default function HeroScene() {
               priority
             />
           </div>
-          <p className="mt-2 px-1 font-mono text-[10px] text-muted">2B Estética Automotiva · no ar</p>
+          <p className="mt-2 truncate px-1 font-mono text-[10px] text-muted"><span className="sm:hidden">2B Estética · no ar</span><span className="hidden sm:inline">2B Estética Automotiva · no ar</span></p>
         </div>
       </div>
 
