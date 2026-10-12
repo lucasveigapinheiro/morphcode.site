@@ -13,13 +13,15 @@ type Props = {
   /** Mostra o brilho de vidro e o halo atrás do logo. */
   glow?: boolean;
   label?: string;
+  /** Chamado quando o dedo segura o logo no toque (para esconder a dica "aperte e segure"). */
+  onPress?: () => void;
 };
 
 /**
  * Logo da Morph Code redesenhado em SVG para poder animar cada parte.
  * Hover: o anel gira, os colchetes </> se abrem e o M recebe um pulso de luz.
  */
-export default function MorphLogo({ className = "", tilt = false, glow = true, label = "Morph Code" }: Props) {
+export default function MorphLogo({ className = "", tilt = false, glow = true, label = "Morph Code", onPress }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
 
@@ -68,7 +70,10 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
         if (halo) hover.to(halo, { opacity: 1, scale: 1.25 }, 0);
         if (sheen) hover.fromTo(sheen, { xPercent: -140 }, { xPercent: 140, duration: 1.1, ease: "power2.inOut" }, 0);
 
-        const enter = contextSafe(() => hover.timeScale(1).play());
+        const enter = contextSafe((e?: Event) => {
+          hover.timeScale(1).play();
+          if (e && (e as PointerEvent).pointerType === "touch") onPress?.();
+        });
         const leave = contextSafe(() => hover.timeScale(1.4).reverse());
         el.addEventListener("pointerenter", enter);
         el.addEventListener("pointerleave", leave);
@@ -107,7 +112,7 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
         };
       });
     },
-    { scope: root, dependencies: [tilt] }
+    { scope: root, dependencies: [tilt, onPress] }
   );
 
   return (
@@ -116,6 +121,8 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
       className={`relative isolate [perspective:900px] ${className}`}
       role="img"
       aria-label={label}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{ touchAction: "pan-y", WebkitTouchCallout: "none", WebkitUserSelect: "none", userSelect: "none" }}
     >
       {glow && (
         <div

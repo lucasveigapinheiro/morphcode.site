@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { LuFingerprint } from "react-icons/lu";
 import MorphLogo from "./MorphLogo";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -16,6 +17,8 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  */
 export default function HeroScene() {
   const root = useRef<HTMLDivElement>(null);
+  // Dica "aperte e segure" some depois que a pessoa já segurou o logo uma vez.
+  const [seguro, setSeguro] = useState(false);
 
   useGSAP(
     (_c, contextSafe) => {
@@ -104,9 +107,17 @@ export default function HeroScene() {
           style={{ background: "conic-gradient(from 210deg, transparent 0 55%, rgba(232,200,118,0.28) 72%, transparent 86%)", mask: "radial-gradient(circle, transparent 62%, #000 63%)", WebkitMask: "radial-gradient(circle, transparent 62%, #000 63%)" }}
         />
         <div className="absolute inset-[6%]">
-          <MorphLogo tilt className="h-full w-full cursor-pointer rounded-full outline-offset-4" label="Logo da Morph Code" />
+          <MorphLogo tilt onPress={() => setSeguro(true)} className="h-full w-full cursor-pointer rounded-full outline-offset-4" label="Logo da Morph Code" />
         </div>
       </div>
+
+      {/* Dica para telas de toque */}
+      {!seguro && (
+        <p className="hs-hint pointer-events-none absolute left-1/2 top-[3%] z-20 hidden -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-black/40 px-3 py-1.5 font-mono text-[11px] text-nevoa [@media(hover:none)]:inline-flex">
+          <LuFingerprint className="h-3.5 w-3.5 animate-pulse text-gold" aria-hidden />
+          Aperte e segure a logo
+        </p>
+      )}
 
       {/* Painéis de vidro com conteúdo real */}
       <div data-depth="-18" className="absolute -left-1 bottom-[2%] z-10 w-[58%] sm:-left-6 sm:w-[44%]">
