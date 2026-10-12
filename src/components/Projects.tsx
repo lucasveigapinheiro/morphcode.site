@@ -155,6 +155,7 @@ function ProjectImage({ title, image }: { title: string; image: string }) {
             fill
             draggable={false}
             className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            quality={90}
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         </div>
@@ -267,7 +268,7 @@ function ProjetosPinados() {
           className="pj-panel absolute inset-0 flex items-center justify-center px-3 pb-28 pt-28 md:px-6 md:pb-20 md:pt-44"
           aria-label={`Projeto ${i + 1} de ${total}: ${p.title}`}
         >
-          <div className="glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
+          <div className="pj-card glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
             <div>
               <p className="font-mono text-xs uppercase tracking-wide text-gold">{p.category}</p>
               <h3 className="mt-1 font-[var(--font-display)] text-xl lg:mt-2 lg:text-3xl xl:text-4xl">{p.title}</h3>
@@ -305,11 +306,11 @@ function ProjetosPinados() {
             </div>
 
             {/* O site se constrói: esqueleto, linha de varredura e a captura real */}
-            <div className="pj-frame hud-frame relative order-first aspect-[2/1] w-full lg:order-none lg:aspect-video">
+            <div className="pj-frame hud-frame relative order-first aspect-[16/10] w-full lg:order-none lg:aspect-video">
               <div className="glass relative h-full w-full overflow-hidden rounded-xl p-1.5">
                 <div className="relative h-full w-full overflow-hidden rounded-lg bg-surface-2">
                   <div className="pj-shot absolute inset-0 will-change-[clip-path,filter,transform]">
-                    <Image src={p.image} alt={p.title} fill priority={i === 0} draggable={false} className="object-cover object-top" sizes="55vw" />
+                    <Image src={p.image} alt={p.title} fill priority={i === 0} draggable={false} className="object-cover object-top" quality={90} sizes="(max-width: 1023px) 100vw, 55vw" />
                   </div>
                   <div aria-hidden className="pj-skeleton pointer-events-none absolute inset-0 p-[4%]">
                     <div className="pj-sk flex items-center justify-between">
@@ -341,7 +342,7 @@ function ProjetosPinados() {
                     className="pj-scan pointer-events-none absolute inset-x-0 top-0 h-[2px] opacity-0"
                     style={{ background: "linear-gradient(90deg, transparent, #e8c876 20%, #fff 50%, #e8c876 80%, transparent)", boxShadow: "0 0 18px 4px rgba(232,200,118,0.65), 0 -26px 60px 10px rgba(212,169,74,0.18)" }}
                   />
-                  <span className="pj-live absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-[#25d366]/40 bg-black/50 px-3 py-1 font-mono text-[10px] text-[#7dffa8] opacity-0 backdrop-blur">
+                  <span className="pj-live absolute bottom-3 right-3 inline-flex lg:bottom-auto lg:right-4 lg:top-4 items-center gap-1.5 rounded-full border border-[#25d366]/40 bg-black/50 px-3 py-1 font-mono text-[10px] text-[#7dffa8] opacity-0 backdrop-blur">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#25d366] shadow-[0_0_8px_#25d366]" /> no ar
                   </span>
                 </div>
@@ -381,7 +382,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 40%, var(--background) 100%)" }} />
       </div>
 
-      <div className="glass-strong relative w-full max-w-6xl rounded-3xl p-4 lg:p-8 xl:p-10">
+      <div className="pj-card glass-strong relative w-full max-w-6xl rounded-3xl p-4 lg:p-8 xl:p-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
@@ -401,7 +402,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
             <li key={p.title}>
               <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-3">
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-surface-2">
-                  <Image src={p.image} alt={p.title} fill sizes="25vw" draggable={false} className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
+                  <Image src={p.image} alt={p.title} fill sizes="(max-width: 1023px) 50vw, 33vw" quality={90} draggable={false} className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
                 </div>
                 <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
                 <p className="mt-1 font-[var(--font-display)] text-base">{p.title}</p>

@@ -384,3 +384,73 @@ h1 {
     grid-template-rows: 1fr;
   }
 }
+
+/* Celular: molduras mais minimalistas (sem cantos de HUD, sem vidro em volta, cantos menos redondos) */
+@media (max-width: 1023px) {
+  .hud-frame::before,
+  .hud-frame::after {
+    display: none;
+  }
+
+  .pj-card {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .pj-frame .glass {
+    padding: 0;
+    border-radius: 0.5rem;
+    border-color: rgba(255, 255, 255, 0.1);
+    background: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .pj-frame .glass > div {
+    border-radius: 0.5rem;
+  }
+
+  .glass-card {
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.025);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
+  .glass-strong.rounded-3xl {
+    border-radius: 1rem;
+  }
+}
+
+/* Rolagem lateral sem barra visível */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Alinha o primeiro cartão com o conteúdo centralizado de 72rem */
+@media (min-width: 1200px) {
+  .pr-track {
+    padding-inline: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
+    scroll-padding-inline: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
+  }
+}
+
+.pr-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
