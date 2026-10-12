@@ -503,3 +503,10 @@ h1 {
     line-height: 1.6;
   }
 }
+
+/* Arrastando com o mouse: sem encaixe nem rolagem suave, para o cartão acompanhar a mão */
+.pr-track-resumo.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}

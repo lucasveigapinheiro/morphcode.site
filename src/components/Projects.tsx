@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { LuCheck } from "react-icons/lu";
+import { LuArrowLeft, LuArrowRight, LuCheck } from "react-icons/lu";
 import { SiHtml5, SiCss, SiJavascript, SiTailwindcss } from "react-icons/si";
 import type { IconType } from "react-icons";
 import Reveal from "./Reveal";
@@ -373,6 +373,79 @@ function ProjetosPinados() {
 
 /* ---------- Resumo: aparece depois que a história foi vista, para voltar sem rolar tudo de novo ---------- */
 function ProjetosResumo({ onRever }: { onRever: () => void }) {
+  const track = useRef<HTMLUListElement>(null);
+  const [progresso, setProgresso] = useState(0);
+  const [inicio, setInicio] = useState(true);
+  const [fim, setFim] = useState(false);
+
+  // Progresso da rolagem lateral, estado das setas e arrastar com o mouse.
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    const atualizar = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setProgresso(max > 0 ? el.scrollLeft / max : 1);
+      setInicio(el.scrollLeft <= 4);
+      setFim(max <= 4 || el.scrollLeft >= max - 4);
+    };
+    atualizar();
+    el.addEventListener("scroll", atualizar, { passive: true });
+    window.addEventListener("resize", atualizar);
+
+    let down = false;
+    let moveu = false;
+    let startX = 0;
+    let startLeft = 0;
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      down = true;
+      moveu = false;
+      startX = e.clientX;
+      startLeft = el.scrollLeft;
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5 && !moveu) {
+        moveu = true;
+        el.classList.add("is-dragging");
+      }
+      if (moveu) el.scrollLeft = startLeft - dx;
+    };
+    const onUp = () => {
+      down = false;
+      el.classList.remove("is-dragging");
+    };
+    // Depois de arrastar, o clique não pode abrir o projeto por engano.
+    const onClick = (e: MouseEvent) => {
+      if (moveu) {
+        e.preventDefault();
+        e.stopPropagation();
+        moveu = false;
+      }
+    };
+    el.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    el.addEventListener("click", onClick, true);
+    return () => {
+      el.removeEventListener("scroll", atualizar);
+      window.removeEventListener("resize", atualizar);
+      el.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      el.removeEventListener("click", onClick, true);
+    };
+  }, []);
+
+  const mover = (dir: 1 | -1) => {
+    const el = track.current;
+    if (!el) return;
+    const card = el.querySelector("li");
+    const passo = card ? card.getBoundingClientRect().width + 16 : 340;
+    el.scrollBy({ left: dir * passo, behavior: "smooth" });
+  };
+
   return (
     <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pb-28 pt-24 md:pb-16 md:pt-28">
       <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
@@ -386,49 +459,78 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         <div className="flex flex-col items-center gap-5 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-2 font-[var(--font-display)] text-3xl xl:text-3xl">Alguns projetos no ar</h2>
+            <h2 className="mt-2 font-[var(--font-display)] text-3xl">Alguns projetos no ar</h2>
           </div>
-          <button
-            type="button"
-            onClick={onRever}
-            className="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-foreground transition-colors hover:border-gold/60 hover:text-gold"
-          >
-            Rever como foram construídos
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onRever}
+              className="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-foreground transition-colors hover:border-gold/60 hover:text-gold"
+            >
+              Rever como foram construídos
+            </button>
+            <div className="hidden gap-2 lg:flex">
+              <button
+                type="button"
+                onClick={() => mover(-1)}
+                disabled={inicio}
+                aria-label="Projeto anterior"
+                className="glass grid h-11 w-11 place-items-center rounded-full text-foreground transition-colors hover:border-gold/60 disabled:opacity-30"
+              >
+                <LuArrowLeft className="h-4 w-4" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => mover(1)}
+                disabled={fim}
+                aria-label="Próximo projeto"
+                className="glass grid h-11 w-11 place-items-center rounded-full text-foreground transition-colors hover:border-gold/60 disabled:opacity-30"
+              >
+                <LuArrowRight className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Celular: carrossel lateral, um projeto grande por vez */}
-        <ul className="no-scrollbar -mx-6 mt-9 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[10vw] pb-2 lg:hidden">
+        {/* Carrossel lateral: toque no celular; setas ou arrastar com o mouse no computador */}
+        <ul
+          ref={track}
+          tabIndex={0}
+          aria-label="Projetos, role para o lado"
+          className="no-scrollbar pr-track-resumo -mx-6 mt-9 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[10vw] pb-2 lg:mx-0 lg:mt-8 lg:px-0"
+        >
           {projects.map((p) => (
-            <li key={p.title} className="w-[80vw] shrink-0 snap-center sm:w-[55vw]">
-              <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-4">
+            <li key={p.title} className="w-[80vw] shrink-0 snap-center sm:w-[55vw] lg:w-[360px] lg:snap-start">
+              <a href={p.href} target="_blank" rel="noopener noreferrer" draggable={false} className="glass-card group block p-4">
                 <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
-                  <Image src={p.image} alt={p.title} fill sizes="80vw" quality={90} draggable={false} className="object-cover object-top" />
+                  <Image
+                    src={p.image}
+                    alt={p.title}
+                    fill
+                    sizes="(max-width: 1023px) 80vw, 360px"
+                    quality={90}
+                    draggable={false}
+                    className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                  />
                 </div>
                 <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
                 <p className="mt-1 font-[var(--font-display)] text-lg leading-snug">{p.title}</p>
-                <p className="mt-3 text-xs text-muted">Ver projeto completo →</p>
+                <p className="mt-3 text-xs text-muted transition-colors group-hover:text-gold">Ver projeto completo →</p>
               </a>
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-center font-mono text-[11px] text-muted lg:hidden">Deslize para ver os outros →</p>
 
-        {/* Computador: grade 3 x 2 */}
-        <ul className="mt-8 hidden grid-cols-3 gap-5 lg:grid">
-          {projects.map((p) => (
-            <li key={p.title}>
-              <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-3">
-                <div className="relative aspect-video overflow-hidden rounded-lg bg-surface-2">
-                  <Image src={p.image} alt={p.title} fill sizes="33vw" quality={90} draggable={false} className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
-                </div>
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
-                <p className="mt-1 font-[var(--font-display)] text-base">{p.title}</p>
-                <p className="mt-1 text-xs text-muted transition-colors group-hover:text-gold">Ver projeto completo →</p>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-4 h-[3px] overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full origin-left rounded-full bg-gradient-to-r from-gold to-gold-light"
+            style={{ transform: `scaleX(${Math.max(0.12, progresso)})`, transition: "transform 0.2s" }}
+          />
+        </div>
+        <p className="mt-3 text-center font-mono text-[11px] text-muted">
+          <span className="lg:hidden">Deslize para ver os outros →</span>
+          <span className="hidden lg:inline">Use as setas ou arraste para o lado →</span>
+        </p>
       </div>
     </div>
   );
