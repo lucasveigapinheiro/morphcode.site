@@ -1,10 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { LuArrowRight, LuArrowUpRight, LuCheck, LuDownload } from "react-icons/lu";
 import Reveal from "../Reveal";
 import Magnetic from "../Magnetic";
 import SlideCarousel from "./SlideCarousel";
+import GlassBubble from "./GlassBubble";
 import { APRESENTACAO_PDF, DEMO, PRODUTO } from "@/lib/clinica";
 
 const pontos = [
@@ -15,8 +17,9 @@ const pontos = [
 ];
 
 export default function ProdutoDestaque() {
+  const root = useRef<HTMLElement>(null);
   return (
-    <section id="produto" className="section-border relative overflow-hidden py-24 md:py-32">
+    <section ref={root} id="produto" className="section-border relative overflow-hidden py-24 md:py-32">
       <div
         aria-hidden
         className="pointer-events-none absolute -left-40 top-10 h-[520px] w-[520px] rounded-full opacity-30 blur-3xl"
@@ -28,13 +31,15 @@ export default function ProdutoDestaque() {
         style={{ background: "radial-gradient(circle, var(--argila) 0%, transparent 70%)" }}
       />
 
+      <GlassBubble rootRef={root} />
+
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <Reveal>
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-gold">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-eucalipto bg-eucalipto/30 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-nevoa">
             Produto principal
           </p>
           <h2 className="font-[var(--font-display)] text-3xl leading-tight md:text-5xl">
-            <span className="gold-gradient-text">{PRODUTO}</span>: o sistema que tira a ficha de anamnese do papel.
+            <span className="clinic-gradient-text">{PRODUTO}</span>: o sistema que tira a ficha de anamnese do papel.
           </h2>
           <p className="mt-5 max-w-lg text-muted">
             Feito para clínicas de estética: a paciente preenche e assina pelo celular, e a doutora vê os riscos
@@ -60,7 +65,7 @@ export default function ProdutoDestaque() {
             <Magnetic strength={0.25}>
               <Link
                 href="/clinicas"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-medium text-background transition-colors hover:bg-gold-light"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-eucalipto px-7 py-3.5 text-sm font-medium text-white transition-[background-color,box-shadow] hover:bg-[#3b7165] hover:shadow-[0_0_30px_rgba(95,160,145,0.45)]"
               >
                 Conhecer o sistema <LuArrowRight className="h-4 w-4" aria-hidden />
               </Link>
@@ -68,7 +73,7 @@ export default function ProdutoDestaque() {
             <Magnetic strength={0.25}>
               <Link
                 href="/clinicas#planos"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-gold"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-eucalipto px-7 py-3.5 text-sm font-medium text-nevoa transition-colors hover:border-nevoa hover:bg-eucalipto/20"
               >
                 Ver planos
               </Link>
@@ -79,14 +84,14 @@ export default function ProdutoDestaque() {
               href={DEMO.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-gold"
+              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
             >
               <LuArrowUpRight className="h-3.5 w-3.5" aria-hidden /> Explorar a demonstração (usuário {DEMO.usuario}, senha {DEMO.senha})
             </a>
             <a
               href={APRESENTACAO_PDF}
               download
-              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-gold"
+              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
             >
               <LuDownload className="h-3.5 w-3.5" aria-hidden /> Baixar a apresentação em PDF
             </a>

@@ -25,11 +25,11 @@ const items = [
 
 export default function About() {
   return (
-    <section id="sobre" className="section-border py-24">
+    <section id="sobre" className="section-border py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid md:grid-cols-2 gap-12">
           <Reveal>
-            <p className="text-xs tracking-[0.25em] text-gold uppercase mb-4">Sobre a Morph Code</p>
+            <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4">Sobre a Morph Code</p>
             <h2 className="font-[var(--font-display)] text-3xl md:text-4xl leading-tight">
               Grandes negócios não nascem prontos. Eles são construídos com tecnologia.
             </h2>
@@ -39,12 +39,13 @@ export default function About() {
             </p>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-10">
+          <div className="grid sm:grid-cols-2 gap-4">
             {items.map((item, i) => (
               <Reveal key={item.title} delay={i * 0.08}>
-                <p className="font-[var(--font-display)] text-3xl text-gold/25 mb-2">{item.n}</p>
-                <h3 className="font-medium text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm text-muted leading-relaxed">{item.text}</p>
+                <div className="glass-card h-full p-6">
+                  <h3 className="font-medium text-foreground">{item.title}</h3>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">{item.text}</p>
+                </div>
               </Reveal>
             ))}
           </div>

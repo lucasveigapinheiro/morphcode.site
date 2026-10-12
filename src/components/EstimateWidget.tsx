@@ -8,7 +8,7 @@ const data = {
   site: {
     label: "Site",
     time: "7 dias",
-    desc: "Landing pages e sites institucionais, prontos e no ar rápido.",
+    desc: "Landing pages e sites institucionais, no ar rápido.",
   },
   sistema: {
     label: "Sistema",
@@ -36,6 +36,7 @@ export default function EstimateWidget() {
           <button
             key={key}
             onClick={() => setActive(key)}
+            aria-pressed={active === key}
             className="relative px-5 py-2 text-sm font-medium"
           >
             {active === key && (

@@ -11,14 +11,14 @@ export default function Contact() {
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[420px] w-[640px] rounded-full opacity-10 blur-3xl"
         style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
-      <div className="mx-auto max-w-4xl px-6 text-center relative">
+      <div className="hud-frame glass-strong relative mx-auto max-w-4xl rounded-3xl px-6 py-16 text-center md:py-20">
         <Reveal>
-          <p className="text-xs tracking-[0.25em] text-gold uppercase mb-4">Contato</p>
+          <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4">Contato</p>
           <h2 className="font-[var(--font-display)] text-3xl md:text-5xl leading-tight">
-            Vamos transformar sua ideia em <span className="gold-gradient-text">resultado?</span>
+            Quer o seu site no ar em <span className="gold-gradient-text">7 dias?</span>
           </h2>
           <p className="mt-5 text-muted max-w-md mx-auto">
-            Fale com a Morph Code agora mesmo e receba uma proposta sob medida para o seu projeto.
+            Conte pelo WhatsApp o que o seu negócio faz. Você recebe o valor e o prazo, sem compromisso.
           </p>
         </Reveal>
 
@@ -28,15 +28,15 @@ export default function Contact() {
               href={whatsappLink(budgetMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-8 py-3.5 text-sm font-medium text-background hover:bg-gold-light transition-colors"
+              className="btn-shine inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-8 py-3.5 text-sm font-medium text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_32px_rgba(212,169,74,0.45)]"
             >
-              Chamar no WhatsApp
+              Pedir orçamento no WhatsApp
             </a>
           </Magnetic>
           <Magnetic strength={0.2}>
             <a
               href="mailto:morphcode.dev@gmail.com"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-8 py-3.5 text-sm font-medium hover:border-gold transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-8 py-3.5 text-sm font-medium hover:border-gold transition-colors"
             >
               morphcode.dev@gmail.com
             </a>

@@ -5,6 +5,10 @@ import Reveal from "./Reveal";
 
 const faqs = [
   {
+    q: "Quanto custa um site?",
+    a: "O valor depende do que você precisa, como número de páginas, textos e fotos. Você conta o seu projeto pelo WhatsApp e recebe o valor e o prazo antes de fechar, sem compromisso.",
+  },
+  {
     q: "Quanto tempo leva para desenvolver um site?",
     a: "Em média, 7 dias para um site institucional ou landing page. Sistemas mais complexos, com integrações e funcionalidades personalizadas, levam de 2 a 3 semanas. O prazo exato é sempre alinhado no início do projeto.",
   },
@@ -30,20 +34,21 @@ export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="duvidas" className="section-border py-24">
+    <section id="duvidas" className="section-border py-28">
       <div className="mx-auto max-w-3xl px-6">
-        <p className="text-xs tracking-[0.25em] text-gold uppercase mb-4 text-center">Dúvidas frequentes</p>
+        <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4 text-center">Dúvidas frequentes</p>
         <h2 className="font-[var(--font-display)] text-3xl md:text-4xl text-center">
           Perguntas que recebemos com frequência
         </h2>
 
-        <div className="mt-12 divide-y divide-border border-t border-b border-border">
+        <div className="glass-card mt-12 divide-y divide-white/10 px-6 hover:!translate-y-0">
           {faqs.map((item, i) => {
             const isOpen = open === i;
             return (
               <Reveal as="div" delay={i * 0.05} key={item.q}>
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
+                  aria-expanded={isOpen}
                   className="w-full flex items-center justify-between gap-4 py-5 text-left"
                 >
                   <span className="font-medium text-sm md:text-base">{item.q}</span>
@@ -56,7 +61,7 @@ export default function Faq() {
                   </span>
                 </button>
                 <div
-                  className={`grid transition-all duration-200 ease-in-out ${
+                  className={`grid transition-[grid-template-rows,padding] duration-200 ease-in-out ${
                     isOpen ? "grid-rows-[1fr] pb-5" : "grid-rows-[0fr]"
                   }`}
                   style={{ display: "grid" }}

@@ -1,77 +1,36 @@
 "use client";
 
 import { motion } from "motion/react";
-import {
-  LuGauge,
-  LuLayoutDashboard,
-  LuMonitor,
-  LuPenTool,
-  LuRefreshCw,
-  LuServer,
-} from "react-icons/lu";
+import { LuLayoutDashboard, LuMonitor, LuPenTool, LuServer } from "react-icons/lu";
 import Reveal from "./Reveal";
 
 const services = [
-  {
-    icon: LuMonitor,
-    title: "Sites profissionais",
-    text: "Landing pages e sites institucionais rápidos, responsivos e otimizados para converter visitantes em clientes.",
-    big: true,
-  },
-  {
-    icon: LuLayoutDashboard,
-    title: "Sistemas sob medida",
-    text: "Plataformas e painéis personalizados para organizar processos e apoiar a operação do seu negócio.",
-    big: false,
-  },
-  {
-    icon: LuPenTool,
-    title: "Design de interface",
-    text: "Layouts exclusivos e alinhados à sua marca, pensados para uma navegação clara e agradável.",
-    big: false,
-  },
-  {
-    icon: LuGauge,
-    title: "SEO e performance",
-    text: "Sites leves e bem estruturados para carregar rápido e aparecer melhor no Google.",
-    big: false,
-  },
-  {
-    icon: LuServer,
-    title: "Hospedagem e domínio",
-    text: "Configuramos domínio, hospedagem e publicação para o seu projeto ir ao ar sem dor de cabeça.",
-    big: false,
-  },
-  {
-    icon: LuRefreshCw,
-    title: "Manutenção e evolução",
-    text: "Ajustes, melhorias e novas funcionalidades para o seu projeto continuar crescendo com você.",
-    big: true,
-  },
+  { icon: LuMonitor, title: "Sites profissionais", text: "Landing pages e sites institucionais, rápidos e feitos para o celular." },
+  { icon: LuLayoutDashboard, title: "Sistemas sob medida", text: "Painéis e plataformas para organizar a operação do seu negócio." },
+  { icon: LuPenTool, title: "Design e SEO", text: "Layout exclusivo da sua marca, estruturado para aparecer no Google." },
+  { icon: LuServer, title: "Domínio e suporte", text: "Hospedagem, publicação e ajustes depois da entrega." },
 ];
 
 export default function Services() {
   return (
-    <section id="servicos" className="section-border py-24 bg-surface/40">
+    <section id="servicos" className="section-border py-20 bg-surface/30">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <p className="text-xs tracking-[0.25em] text-gold uppercase mb-4">O que fazemos</p>
-          <h2 className="font-[var(--font-display)] text-3xl md:text-4xl max-w-xl">
-            Serviços pensados para o crescimento do seu negócio
-          </h2>
+          <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-3">O que fazemos</p>
+          <h2 className="font-[var(--font-display)] text-3xl md:text-4xl max-w-xl">Do design ao site no ar</h2>
         </Reveal>
 
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {services.map((s, i) => (
-            <Reveal key={s.title} delay={i * 0.1} className={s.big ? "lg:col-span-2" : "lg:col-span-1"}>
+            <Reveal key={s.title} delay={i * 0.1} className="h-full">
               <motion.div
                 whileHover={{ y: -6 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="h-full rounded-2xl border border-border bg-surface p-6 hover:border-gold/50 active:border-gold/50 transition-colors"
+                className="glass-card group h-full p-5"
               >
-                <s.icon className="h-6 w-6 text-gold" aria-hidden />
-                <h3 className="mt-5 font-medium">{s.title}</h3>
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-gold/25 bg-gold/10 transition-colors group-hover:bg-gold/20"><s.icon className="h-5 w-5 text-gold" aria-hidden /></span>
+                <h3 className="mt-4 font-medium">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{s.text}</p>
               </motion.div>
             </Reveal>

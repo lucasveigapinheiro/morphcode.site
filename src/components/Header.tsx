@@ -1,15 +1,15 @@
 "use client";
 
-import Image from "next/image";
+import MorphLogo from "./MorphLogo";
 import { useEffect, useState } from "react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 
 const links = [
   { href: "#produto", label: "Morph Clínica" },
-  { href: "#sobre", label: "Sobre" },
-  { href: "#servicos", label: "Serviços" },
   { href: "#projetos", label: "Projetos" },
+  { href: "#servicos", label: "Serviços" },
+  { href: "#sobre", label: "Sobre" },
   { href: "#duvidas", label: "Dúvidas" },
   { href: "#contato", label: "Contato" },
 ];
@@ -28,19 +28,12 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
-        scrolled ? "bg-background/90 backdrop-blur border-b border-border" : "bg-transparent"
+        scrolled ? "bg-background/60 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10" : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-6xl px-6 h-18 py-3 flex items-center justify-between">
         <a href="#topo" className="flex items-center gap-2.5">
-          <Image
-            src="/logo.jpeg"
-            alt="Morph Code"
-            width={36}
-            height={36}
-            className="rounded-full"
-            priority
-          />
+          <MorphLogo glow={false} className="h-10 w-10 shrink-0" label="Morph Code" />
           <span className="font-[var(--font-display)] text-lg tracking-wide">
             MORPH <span className="text-gold">CODE</span>
           </span>
@@ -51,10 +44,10 @@ export default function Header() {
             <a
               key={l.href}
               href={l.href}
-              className="relative hover:text-foreground transition-colors group"
+              className="relative py-1 hover:text-foreground transition-colors group"
             >
               {l.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-[width] duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
@@ -64,7 +57,7 @@ export default function Header() {
             href={whatsappLink(budgetMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-medium text-background hover:bg-gold-light transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-background hover:bg-gold-light transition-colors"
           >
             Pedir orçamento
           </a>
@@ -73,7 +66,9 @@ export default function Header() {
         <button
           onClick={() => setOpen((v) => !v)}
           className="md:hidden text-foreground p-2"
-          aria-label="Abrir menu"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={open}
+          aria-controls="menu-mobile"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
             {open ? (
@@ -86,7 +81,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border bg-background px-6 py-4 flex flex-col gap-4">
+        <div id="menu-mobile" className="md:hidden border-t border-border bg-background px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
             <a
               key={l.href}
@@ -101,7 +96,7 @@ export default function Header() {
             href={whatsappLink(budgetMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-medium text-background"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-background"
           >
             Pedir orçamento
           </a>

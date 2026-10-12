@@ -3,111 +3,103 @@
 import { motion } from "motion/react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
-import EstimateWidget from "./EstimateWidget";
-import BackgroundMusic from "./BackgroundMusic";
-import { useEffect, useState } from "react";
-import { LuCode, LuSmartphone, LuZap } from "react-icons/lu";
+import ParticleField from "./ParticleField";
+import HeroScene from "./HeroScene";
+import { LuArrowDown, LuClock, LuCode, LuSmartphone } from "react-icons/lu";
 
-const words = "Sites e sistemas sob medida que multiplicam suas vendas.".split(" ");
-const highlight = ["multiplicam", "suas", "vendas."];
+const lineA = "Seu site profissional".split(" ");
+const lineB = "no ar em cerca de".split(" ");
+const lineC = "7 dias.".split(" ");
 
 const badges = [
-  { icon: LuZap, label: "Carregamento em < 1.5s" },
-  { icon: LuSmartphone, label: "100% otimizado para celular" },
-  { icon: LuCode, label: "Código sob medida, sem templates" },
+  { icon: LuClock, label: "Pronto em 7 dias, em média" },
+  { icon: LuSmartphone, label: "Feito para o celular" },
+  { icon: LuCode, label: "Design sob medida, sem templates" },
 ];
 
-export default function Hero() {
-  // Drag only on devices with a precise pointer; on touch it hijacks page scroll.
-  const [canDrag, setCanDrag] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const update = () => setCanDrag(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
+function Words({ words, start, className = "" }: { words: string[]; start: number; className?: string }) {
   return (
-    <section id="topo" className="relative overflow-hidden pt-36 pb-28 md:pt-44 md:pb-36">
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 right-[-8%] h-[480px] w-[480px] rounded-full opacity-25 blur-3xl animate-float-slow"
-        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
-      />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute top-[280px] left-[-6%] h-[320px] w-[320px] rounded-full opacity-10 blur-3xl animate-float-slower"
-        style={{ background: "radial-gradient(circle, var(--gold-light) 0%, transparent 70%)" }}
-      />
+    <span className="block">
+      {words.map((w, i) => (
+        <motion.span
+          key={`${w}-${i}`}
+          initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.7, delay: start + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+          className={`inline-block mr-[0.25em] ${className}`}
+        >
+          {w}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
 
-      <div className="mx-auto max-w-6xl px-6 relative flex justify-center">
-        <BackgroundMusic />
-      </div>
+export default function Hero() {
+  return (
+    <section id="topo" className="relative isolate overflow-hidden pt-28 pb-20 md:pt-32 lg:min-h-[100svh] lg:pb-12">
+      {/* Fundo: grade em perspectiva, partículas e brilho dourado */}
+      <div aria-hidden className="hud-grid absolute inset-0 -z-10" />
+      <ParticleField className="absolute inset-0 -z-10 h-full w-full opacity-70" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-[-10%] -z-10 h-[620px] w-[620px] rounded-full opacity-25 blur-3xl animate-float-slow"
+        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 68%)" }}
+      />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
 
-      <div className="mx-auto max-w-6xl px-6 relative grid lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center mt-8">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:min-h-[calc(100svh-10rem)] lg:grid-cols-[1fr_1fr]">
         <div>
           <motion.a
             href="#produto"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="group mb-7 inline-flex items-center gap-2 rounded-full border border-eucalipto bg-eucalipto/20 px-4 py-1.5 text-xs text-foreground transition-colors hover:bg-eucalipto/40"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="glass group mb-8 inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-xs text-foreground transition-colors hover:border-gold/60"
           >
             <span className="rounded-full bg-argila px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">Novo</span>
-            Morph Clínica: sistema para clínicas de estética
+            Morph Clínica: sistema para clínicas de estética, a partir de R$ 149/mês
             <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
           </motion.a>
 
-          <h1 className="font-[var(--font-display)] text-4xl sm:text-5xl md:text-6xl leading-[1.08] max-w-3xl">
-            {words.map((w, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.15 + i * 0.045, ease: [0.22, 1, 0.36, 1] }}
-                className={`inline-block mr-[0.28em] ${
-                  highlight.includes(w) ? "gold-gradient-text" : ""
-                }`}
-              >
-                {w}
-              </motion.span>
-            ))}
+          <h1 className="font-[var(--font-display)] text-[2.4rem] leading-[1.06] sm:text-5xl lg:text-[3.1rem] xl:text-[3.4rem]">
+            <Words words={lineA} start={0.2} className="font-light text-foreground/65" />
+            <Words words={lineB} start={0.5} className="font-semibold text-foreground" />
+            <Words words={lineC} start={0.8} className="font-semibold gold-gradient-text" />
           </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.75 }}
-            className="mt-6 max-w-xl text-muted text-base md:text-lg"
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="mt-7 max-w-lg font-mono text-[13px] leading-relaxed text-muted sm:text-sm"
           >
-            A Morph Code desenvolve sites e sistemas pensados para o seu negócio
-            crescer com mais estrutura, velocidade e segurança.
+            Site para o seu negócio aparecer no Google e receber pedidos de orçamento pelo
+            WhatsApp. Você fala direto com quem faz o site, do briefing à entrega.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-10 flex flex-col sm:flex-row gap-4"
+            transition={{ duration: 0.6, delay: 1.15 }}
+            className="mt-9 flex flex-col gap-3 sm:flex-row"
           >
-            <Magnetic strength={0.25}>
+            <Magnetic strength={0.2}>
               <a
                 href={whatsappLink(budgetMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-medium text-background hover:bg-gold-light transition-colors"
+                className="btn-shine inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-6 py-3.5 text-sm font-medium text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_32px_rgba(212,169,74,0.45)]"
               >
-                Solicitar orçamento no WhatsApp
+                Pedir orçamento no WhatsApp
               </a>
             </Magnetic>
-            <Magnetic strength={0.25}>
+            <Magnetic strength={0.2}>
               <a
                 href="#projetos"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-medium text-foreground hover:border-gold transition-colors"
+                className="glass inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-gold/60"
               >
-                Ver projetos
+                Ver projetos reais
               </a>
             </Magnetic>
           </motion.div>
@@ -115,8 +107,8 @@ export default function Hero() {
           <motion.ul
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted"
+            transition={{ duration: 0.6, delay: 1.3 }}
+            className="mt-8 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[11px] text-muted"
           >
             {badges.map(({ icon: Icon, label }) => (
               <li key={label} className="inline-flex items-center gap-1.5">
@@ -125,59 +117,18 @@ export default function Hero() {
               </li>
             ))}
           </motion.ul>
-
-          <EstimateWidget />
         </div>
 
-        <div className="relative mt-6 max-w-xs mx-auto sm:max-w-sm lg:mt-0 lg:max-w-none lg:mx-0">
-          <motion.div
-            drag={canDrag}
-            dragConstraints={{ top: -60, bottom: 60, left: -60, right: 60 }}
-            dragElastic={0.5}
-            dragTransition={{ bounceStiffness: 250, bounceDamping: 15 }}
-            whileDrag={{ scale: 1.04, rotate: 0, cursor: "grabbing" }}
-            initial={{ opacity: 0, scale: 0.92, rotate: 4 }}
-            animate={{ opacity: 1, scale: 1, rotate: [3, 1, 3], y: [0, -14, 0] }}
-            transition={{
-              opacity: { duration: 0.8, delay: 0.4 },
-              scale: { duration: 0.8, delay: 0.4 },
-              rotate: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
-              y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
-            }}
-            className={`relative ${canDrag ? "cursor-grab active:cursor-grabbing" : ""}`}
-          >
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 select-none">
-              <div className="flex items-center gap-1.5 mb-4">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-              </div>
-              <pre className="text-[11px] leading-relaxed text-muted overflow-hidden">
-                <code>
-<span className="text-gold">const</span> projeto = {"{"}
-  {"\n"}  cliente: <span className="text-gold-light">&quot;seu-negocio&quot;</span>,
-  {"\n"}  stack: [<span className="text-gold-light">&quot;next&quot;</span>, <span className="text-gold-light">&quot;design&quot;</span>],
-  {"\n"}  resultado: <span className="text-gold-light">&quot;mais clientes&quot;</span>,
-  {"\n"}{"}"};{"\n\n"}
-<span className="text-gold">function</span> deploy() {"{"}
-  {"\n"}  <span className="text-gold">return</span> <span className="text-gold-light">&quot;✔ no ar&quot;</span>;
-  {"\n"}{"}"}
-                </code>
-              </pre>
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 10, rotate: 8 }}
-              animate={{ opacity: 1, y: 0, rotate: -6 }}
-              transition={{ duration: 0.7, delay: 0.9 }}
-              className="absolute -bottom-6 -left-8 rounded-xl border border-gold/30 bg-background px-4 py-3 shadow-xl pointer-events-none select-none"
-            >
-              <p className="text-xs text-muted">Uptime</p>
-              <p className="font-[var(--font-display)] text-lg text-gold">99.9%</p>
-            </motion.div>
-          </motion.div>
-          {canDrag && <p className="mt-4 text-center text-[11px] text-muted/70">arraste o card ✦</p>}
-        </div>
+        <HeroScene />
       </div>
+
+      <a
+        href="#produto"
+        aria-label="Rolar para o próximo bloco"
+        className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-2 font-mono text-[11px] text-muted transition-colors hover:text-gold lg:flex"
+      >
+        <LuArrowDown className="h-3.5 w-3.5 animate-bounce" aria-hidden /> role
+      </a>
     </section>
   );
 }

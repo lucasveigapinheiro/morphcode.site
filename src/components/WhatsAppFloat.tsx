@@ -8,7 +8,7 @@ export default function WhatsAppFloat() {
         href={whatsappLink(budgetMessage)}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 text-sm font-medium text-background shadow-xl shadow-black/40 active:bg-gold-light transition-colors"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-gold px-6 py-3.5 text-sm font-medium text-background shadow-xl shadow-black/40 active:bg-gold-light transition-colors"
       >
         <FaWhatsapp className="h-5 w-5" aria-hidden />
         Falar no WhatsApp

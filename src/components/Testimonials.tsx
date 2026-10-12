@@ -29,7 +29,7 @@ export default function Testimonials() {
     <section className="section-border py-24">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <p className="text-xs tracking-[0.25em] text-gold uppercase mb-4">Depoimentos</p>
+          <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4">Depoimentos</p>
           <div className="flex items-baseline justify-between flex-wrap gap-2">
             <h2 className="font-[var(--font-display)] text-3xl md:text-4xl max-w-xl">
               O que dizem sobre a Morph Code

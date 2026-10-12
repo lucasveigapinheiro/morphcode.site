@@ -1,21 +1,33 @@
-import type { Metadata } from "next";
-import { Inter, Sora } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import CursorGlow from "@/components/CursorGlow";
+import MotionProvider from "@/components/MotionProvider";
+import Spotlight from "@/components/Spotlight";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const sora = Sora({
+const display = Space_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
 });
 
-const title = "Morph Code | Sites e sistemas sob medida para o seu negócio";
+const mono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+});
+
+const title = "Site profissional no ar em cerca de 7 dias | Morph Code";
 const description =
-  "Desenvolvemos sites e sistemas que transformam ideias em resultado real. Design e desenvolvimento sob medida para o seu negócio.";
+  "Site profissional para o seu negócio aparecer no Google e receber orçamentos pelo WhatsApp. Pronto em 7 dias, em média.";
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   // Vercel sets this to the production domain (custom domain once one is added).
@@ -43,12 +55,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${inter.variable} ${sora.variable} h-full antialiased`}
+      className={`${inter.variable} ${display.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+        <a
+          href="#conteudo"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-background"
+        >
+          Ir para o conteúdo
+        </a>
+        <ScrollProgress />
+        <Spotlight />
         <div className="grain" />
-        <CursorGlow />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
