@@ -372,3 +372,15 @@ h1 {
   backdrop-filter: blur(2px) saturate(170%) brightness(1.15);
   -webkit-backdrop-filter: blur(2px) saturate(170%) brightness(1.15);
 }
+
+/* Celular: só a etapa atual mostra o texto, para o cartão caber na tela */
+@media (max-width: 1023px) {
+  .pj-step.is-done .pj-txt {
+    grid-template-rows: 0fr;
+  }
+
+  .pj-step.is-on .pj-txt,
+  .pj-step:last-child.is-done .pj-txt {
+    grid-template-rows: 1fr;
+  }
+}

@@ -55,9 +55,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="glass group mb-8 inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-xs text-foreground transition-colors hover:border-gold/60"
+            className="glass group mb-8 inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-xs text-foreground hover:border-[#5fa091]! hover:bg-[#2f5a52]/85! hover:text-white hover:shadow-[0_0_28px_rgba(95,160,145,0.45)]!"
           >
-            <span className="rounded-full bg-argila px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">Novo</span>
+            <span className="rounded-full bg-[#3f8577] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white transition-colors duration-300 group-hover:bg-[#5fa091]">Novo</span>
             Morph Clínica: sistema para clínicas de estética, a partir de R$ 149/mês
             <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
           </motion.a>

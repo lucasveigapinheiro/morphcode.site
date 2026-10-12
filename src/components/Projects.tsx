@@ -19,6 +19,8 @@ const TECH_ICONS: Record<string, { Icon: IconType; color: string }> = {
 };
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+// No celular a barra de endereço do navegador some e volta ao rolar; sem isso a seção fixa "treme".
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export type Project = {
   title: string;
@@ -132,8 +134,8 @@ const etapasPorProjeto: Record<string, string[]> = {
 // O scrollytelling conta a história dos três primeiros; o resumo mostra todos.
 const HISTORIA = projects.slice(0, 3);
 
-// Versão fixa só no desktop e sem "reduzir movimento"; no resto, lista simples.
-const QUERY_PINADO = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+// Scrollytelling em qualquer tela; com "reduzir movimento" ativo, cai na lista simples.
+const QUERY_PINADO = "(prefers-reduced-motion: no-preference)";
 
 function assinar(avisar: () => void) {
   const mq = window.matchMedia(QUERY_PINADO);
@@ -247,13 +249,13 @@ function ProjetosPinados() {
       </div>
 
       {/* Cabeçalho da seção e contador */}
-      <div className="absolute inset-x-0 top-24 z-20">
-        <div className="mx-auto flex max-w-6xl items-end justify-between px-6">
-          <div>
+      <div className="absolute inset-x-0 top-20 z-20 md:top-24">
+        <div className="mx-auto flex max-w-6xl items-end justify-between px-4 md:px-6">
+          <div className="hidden md:block">
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-1 font-[var(--font-display)] text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
+            <h2 className="mt-1 font-[var(--font-display)] text-lg md:text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
           </div>
-          <p className="font-mono text-sm text-muted">
+          <p className="ml-auto font-mono text-sm text-muted">
             <span className="pj-count text-2xl text-foreground">01</span> / {String(total).padStart(2, "0")}
           </p>
         </div>
@@ -262,15 +264,15 @@ function ProjetosPinados() {
       {HISTORIA.map((p, i) => (
         <article
           key={p.title}
-          className="pj-panel absolute inset-0 flex items-center justify-center px-6 pb-20 pt-44"
+          className="pj-panel absolute inset-0 flex items-center justify-center px-3 pb-28 pt-28 md:px-6 md:pb-20 md:pt-44"
           aria-label={`Projeto ${i + 1} de ${total}: ${p.title}`}
         >
-          <div className="glass-strong grid w-full max-w-6xl grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] items-center gap-10 rounded-3xl p-8 xl:p-10">
+          <div className="glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
             <div>
               <p className="font-mono text-xs uppercase tracking-wide text-gold">{p.category}</p>
-              <h3 className="mt-2 font-[var(--font-display)] text-3xl xl:text-4xl">{p.title}</h3>
+              <h3 className="mt-1 font-[var(--font-display)] text-xl lg:mt-2 lg:text-3xl xl:text-4xl">{p.title}</h3>
 
-              <ol className="mt-6 space-y-3">
+              <ol className="mt-3 space-y-2 lg:mt-6 lg:space-y-3">
                 {ETAPAS.map((nome, k) => (
                   <li key={nome} className="pj-step flex gap-4 opacity-35">
                     <span className="pj-dot mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/20 font-mono text-[10px] text-muted transition-colors duration-300">
@@ -287,21 +289,23 @@ function ProjetosPinados() {
                 ))}
               </ol>
 
-              <div className="mt-6 h-[3px] w-full overflow-hidden rounded-full bg-white/10">
+              <div className="mt-3 h-[3px] w-full overflow-hidden rounded-full bg-white/10 lg:mt-6">
                 <div
                   className="pj-bar h-full origin-left rounded-full bg-gradient-to-r from-gold to-gold-light shadow-[0_0_12px_rgba(212,169,74,0.7)]"
                   style={{ transform: "scaleX(0)" }}
                 />
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-5">
+              <div className="mt-3 flex flex-wrap items-center gap-5 lg:mt-6">
                 <VerProjeto href={p.href} />
-                <Techs techs={p.techs} />
+                <div className="hidden lg:block">
+                  <Techs techs={p.techs} />
+                </div>
               </div>
             </div>
 
             {/* O site se constrói: esqueleto, linha de varredura e a captura real */}
-            <div className="pj-frame hud-frame relative aspect-video w-full">
+            <div className="pj-frame hud-frame relative order-first aspect-[2/1] w-full lg:order-none lg:aspect-video">
               <div className="glass relative h-full w-full overflow-hidden rounded-xl p-1.5">
                 <div className="relative h-full w-full overflow-hidden rounded-lg bg-surface-2">
                   <div className="pj-shot absolute inset-0 will-change-[clip-path,filter,transform]">
@@ -348,8 +352,8 @@ function ProjetosPinados() {
       ))}
 
       {/* Trilho inferior: um segmento por projeto */}
-      <div className="absolute inset-x-0 bottom-8 z-20">
-        <div className="mx-auto flex max-w-6xl gap-2 px-6">
+      <div className="absolute inset-x-0 bottom-4 z-20 md:bottom-8">
+        <div className="mx-auto flex max-w-6xl gap-2 px-4 md:px-6">
           {HISTORIA.map((p, i) => (
             <div key={p.title} className="flex-1">
               <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
@@ -369,7 +373,7 @@ function ProjetosPinados() {
 /* ---------- Resumo: aparece depois que a história foi vista, para voltar sem rolar tudo de novo ---------- */
 function ProjetosResumo({ onRever }: { onRever: () => void }) {
   return (
-    <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pb-16 pt-28">
+    <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-3 pb-16 pt-24 md:px-6 md:pt-28">
       <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
         <div className="absolute h-[78vmin] w-[78vmin] rounded-full opacity-[0.08] mix-blend-screen">
           <Image src="/logo.jpeg" alt="" fill sizes="80vmin" className="object-contain" draggable={false} />
@@ -377,7 +381,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 40%, var(--background) 100%)" }} />
       </div>
 
-      <div className="glass-strong relative w-full max-w-6xl rounded-3xl p-8 xl:p-10">
+      <div className="glass-strong relative w-full max-w-6xl rounded-3xl p-4 lg:p-8 xl:p-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
@@ -392,7 +396,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
           </button>
         </div>
 
-        <ul className="mt-8 grid grid-cols-3 gap-5">
+        <ul className="mt-6 grid grid-cols-2 gap-3 lg:mt-8 lg:grid-cols-3 lg:gap-5">
           {projects.map((p) => (
             <li key={p.title}>
               <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-3">
@@ -415,8 +419,8 @@ export default function Projects() {
   const root = useRef<HTMLElement>(null);
   const pinado = useSyncExternalStore(assinar, lerPinado, () => false);
   const [concluido, setConcluido] = useState(false);
-  // Quanto a rolagem fixa media (px); usado para recuar a rolagem quando a seção encolhe.
-  const ajuste = useRef(0);
+  // Altura da seção antes de virar resumo (px); serve para recuar a rolagem na troca.
+  const alturaAntes = useRef(0);
 
   useGSAP(
     () => {
@@ -425,9 +429,10 @@ export default function Projects() {
         // Recalcula os outros gatilhos e SÓ DEPOIS recua a rolagem: o refresh restauraria a posição
         // antiga e jogaria o leitor para o fim da página.
         ScrollTrigger.refresh();
-        if (ajuste.current) {
-          window.scrollTo(0, Math.max(0, window.scrollY - ajuste.current));
-          ajuste.current = 0;
+        if (alturaAntes.current && root.current) {
+          const encolheu = alturaAntes.current - root.current.offsetHeight;
+          alturaAntes.current = 0;
+          if (encolheu > 0) window.scrollTo(0, Math.max(0, window.scrollY - encolheu));
           ScrollTrigger.update();
         }
         return;
@@ -521,10 +526,9 @@ export default function Projects() {
         start: "bottom 75%",
         onEnter: () => {
           // Desfaz o "pin" do GSAP ANTES do React trocar o conteúdo (senão o React não acha o nó).
-          const dist = st ? st.end - st.start : 0;
+          alturaAntes.current = root.current?.offsetHeight ?? 0;
           st?.kill(true);
           tl.kill();
-          ajuste.current = dist;
           setConcluido(true);
         },
       });
