@@ -496,3 +496,10 @@ h1 {
     display: none;
   }
 }
+
+/* Celular: leitura confortável nos cartões de projeto */
+@media (max-width: 1023px) {
+  .pj-step .pj-txt p {
+    line-height: 1.6;
+  }
+}

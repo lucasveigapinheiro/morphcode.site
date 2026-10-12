@@ -251,13 +251,13 @@ function ProjetosPinados() {
 
       {/* Cabeçalho da seção e contador */}
       <div className="absolute inset-x-0 top-20 z-20 md:top-24">
-        <div className="mx-auto flex max-w-6xl items-end justify-between px-4 md:px-6">
-          <div className="hidden md:block">
+        <div className="mx-auto flex max-w-6xl items-end justify-between px-6">
+          <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-1 font-[var(--font-display)] text-lg md:text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
+            <h2 className="mt-1 hidden font-[var(--font-display)] text-lg md:block md:text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
           </div>
           <p className="ml-auto font-mono text-sm text-muted">
-            <span className="pj-count text-2xl text-foreground">01</span> / {String(total).padStart(2, "0")}
+            <span className="pj-count text-lg text-foreground md:text-2xl">01</span> / {String(total).padStart(2, "0")}
           </p>
         </div>
       </div>
@@ -265,7 +265,7 @@ function ProjetosPinados() {
       {HISTORIA.map((p, i) => (
         <article
           key={p.title}
-          className="pj-panel absolute inset-0 flex items-center justify-center px-3 pb-28 pt-28 md:px-6 md:pb-20 md:pt-44"
+          className="pj-panel absolute inset-0 flex items-center justify-center px-6 pb-28 pt-32 md:pb-20 md:pt-44"
           aria-label={`Projeto ${i + 1} de ${total}: ${p.title}`}
         >
           <div className="pj-card glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
@@ -297,7 +297,7 @@ function ProjetosPinados() {
                 />
               </div>
 
-              <div className="mt-3 flex flex-wrap items-center gap-5 lg:mt-6">
+              <div className="mt-3 hidden flex-wrap items-center gap-5 lg:mt-6 lg:flex">
                 <VerProjeto href={p.href} />
                 <div className="hidden lg:block">
                   <Techs techs={p.techs} />
@@ -354,7 +354,7 @@ function ProjetosPinados() {
 
       {/* Trilho inferior: um segmento por projeto */}
       <div className="absolute inset-x-0 bottom-4 z-20 md:bottom-8">
-        <div className="mx-auto flex max-w-6xl gap-2 px-4 md:px-6">
+        <div className="mx-auto flex max-w-6xl gap-2 px-6">
           {HISTORIA.map((p, i) => (
             <div key={p.title} className="flex-1">
               <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
@@ -374,7 +374,7 @@ function ProjetosPinados() {
 /* ---------- Resumo: aparece depois que a história foi vista, para voltar sem rolar tudo de novo ---------- */
 function ProjetosResumo({ onRever }: { onRever: () => void }) {
   return (
-    <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-3 pb-16 pt-24 md:px-6 md:pt-28">
+    <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pb-28 pt-24 md:pb-16 md:pt-28">
       <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
         <div className="absolute h-[78vmin] w-[78vmin] rounded-full opacity-[0.08] mix-blend-screen">
           <Image src="/logo.jpeg" alt="" fill sizes="80vmin" className="object-contain" draggable={false} />
@@ -382,27 +382,45 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 40%, var(--background) 100%)" }} />
       </div>
 
-      <div className="pj-card glass-strong relative w-full max-w-6xl rounded-3xl p-4 lg:p-8 xl:p-10">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="pj-card glass-strong relative w-full max-w-6xl rounded-3xl lg:p-8 xl:p-10">
+        <div className="flex flex-col items-start gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-1 font-[var(--font-display)] text-2xl xl:text-3xl">Alguns projetos no ar</h2>
+            <h2 className="mt-2 font-[var(--font-display)] text-3xl xl:text-3xl">Alguns projetos no ar</h2>
           </div>
           <button
             type="button"
             onClick={onRever}
-            className="rounded-lg border border-white/15 px-4 py-2 text-sm text-foreground transition-colors hover:border-gold/60 hover:text-gold"
+            className="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-foreground transition-colors hover:border-gold/60 hover:text-gold"
           >
             Rever como foram construídos
           </button>
         </div>
 
-        <ul className="mt-6 grid grid-cols-2 gap-3 lg:mt-8 lg:grid-cols-3 lg:gap-5">
+        {/* Celular: carrossel lateral, um projeto grande por vez */}
+        <ul className="no-scrollbar -mx-6 mt-9 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 [scroll-padding-inline:1.5rem] lg:hidden">
+          {projects.map((p) => (
+            <li key={p.title} className="w-[80%] shrink-0 snap-start sm:w-[55%]">
+              <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-4">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
+                  <Image src={p.image} alt={p.title} fill sizes="80vw" quality={90} draggable={false} className="object-cover object-top" />
+                </div>
+                <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
+                <p className="mt-1 font-[var(--font-display)] text-lg leading-snug">{p.title}</p>
+                <p className="mt-3 text-xs text-muted">Ver projeto completo →</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 font-mono text-[11px] text-muted lg:hidden">Deslize para ver os outros →</p>
+
+        {/* Computador: grade 3 x 2 */}
+        <ul className="mt-8 hidden grid-cols-3 gap-5 lg:grid">
           {projects.map((p) => (
             <li key={p.title}>
               <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-3">
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-surface-2">
-                  <Image src={p.image} alt={p.title} fill sizes="(max-width: 1023px) 50vw, 33vw" quality={90} draggable={false} className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
+                  <Image src={p.image} alt={p.title} fill sizes="33vw" quality={90} draggable={false} className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
                 </div>
                 <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
                 <p className="mt-1 font-[var(--font-display)] text-base">{p.title}</p>
