@@ -251,12 +251,12 @@ function ProjetosPinados() {
 
       {/* Cabeçalho da seção e contador */}
       <div className="absolute inset-x-0 top-20 z-20 md:top-24">
-        <div className="mx-auto flex max-w-6xl items-end justify-between px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-6 text-center md:items-end md:justify-between md:text-left">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
             <h2 className="mt-1 hidden font-[var(--font-display)] text-lg md:block md:text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
           </div>
-          <p className="ml-auto font-mono text-sm text-muted">
+          <p className="font-mono text-sm text-muted md:ml-auto">
             <span className="pj-count text-lg text-foreground md:text-2xl">01</span> / {String(total).padStart(2, "0")}
           </p>
         </div>
@@ -265,15 +265,15 @@ function ProjetosPinados() {
       {HISTORIA.map((p, i) => (
         <article
           key={p.title}
-          className="pj-panel absolute inset-0 flex items-center justify-center px-6 pb-28 pt-32 md:pb-20 md:pt-44"
+          className="pj-panel absolute inset-0 flex items-center justify-center px-6 pb-28 pt-36 md:pb-20 md:pt-44"
           aria-label={`Projeto ${i + 1} de ${total}: ${p.title}`}
         >
           <div className="pj-card glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
-            <div>
+            <div className="text-center lg:text-left">
               <p className="font-mono text-xs uppercase tracking-wide text-gold">{p.category}</p>
               <h3 className="mt-1 font-[var(--font-display)] text-xl lg:mt-2 lg:text-3xl xl:text-4xl">{p.title}</h3>
 
-              <ol className="mt-3 space-y-2 lg:mt-6 lg:space-y-3">
+              <ol className="mx-auto mt-3 max-w-xs space-y-2 text-left lg:mx-0 lg:mt-6 lg:max-w-none lg:space-y-3">
                 {ETAPAS.map((nome, k) => (
                   <li key={nome} className="pj-step flex gap-4 opacity-35">
                     <span className="pj-dot mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/20 font-mono text-[10px] text-muted transition-colors duration-300">
@@ -383,7 +383,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
       </div>
 
       <div className="pj-card glass-strong relative w-full max-w-6xl rounded-3xl lg:p-8 xl:p-10">
-        <div className="flex flex-col items-start gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col items-center gap-5 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
             <h2 className="mt-2 font-[var(--font-display)] text-3xl xl:text-3xl">Alguns projetos no ar</h2>
@@ -398,9 +398,9 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         </div>
 
         {/* Celular: carrossel lateral, um projeto grande por vez */}
-        <ul className="no-scrollbar -mx-6 mt-9 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 [scroll-padding-inline:1.5rem] lg:hidden">
+        <ul className="no-scrollbar -mx-6 mt-9 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[10vw] pb-2 lg:hidden">
           {projects.map((p) => (
-            <li key={p.title} className="w-[80%] shrink-0 snap-start sm:w-[55%]">
+            <li key={p.title} className="w-[80vw] shrink-0 snap-center sm:w-[55vw]">
               <a href={p.href} target="_blank" rel="noopener noreferrer" className="glass-card group block p-4">
                 <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
                   <Image src={p.image} alt={p.title} fill sizes="80vw" quality={90} draggable={false} className="object-cover object-top" />
@@ -412,7 +412,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
             </li>
           ))}
         </ul>
-        <p className="mt-3 font-mono text-[11px] text-muted lg:hidden">Deslize para ver os outros →</p>
+        <p className="mt-3 text-center font-mono text-[11px] text-muted lg:hidden">Deslize para ver os outros →</p>
 
         {/* Computador: grade 3 x 2 */}
         <ul className="mt-8 hidden grid-cols-3 gap-5 lg:grid">
