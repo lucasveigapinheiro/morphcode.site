@@ -28,7 +28,7 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
-        scrolled ? "bg-background/60 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10" : "bg-transparent"
+        scrolled ? "bg-background/95 border-b border-white/10 md:bg-background/60 md:backdrop-blur-xl md:backdrop-saturate-150" : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-6xl px-6 h-18 py-3 flex items-center justify-between">

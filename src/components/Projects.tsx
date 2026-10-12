@@ -240,7 +240,7 @@ function ProjetosPinados() {
         <div className="pj-logo-far absolute h-[78vmin] w-[78vmin] rounded-full opacity-[0.1] mix-blend-screen">
           <Image src="/logo.jpeg" alt="" fill sizes="80vmin" className="object-contain" draggable={false} />
         </div>
-        <div className="pj-logo-near absolute -right-[8vmin] bottom-[-14vmin] h-[46vmin] w-[46vmin] rounded-full opacity-[0.16] mix-blend-screen">
+        <div className="pj-logo-near hidden lg:block absolute -right-[8vmin] bottom-[-14vmin] h-[46vmin] w-[46vmin] rounded-full opacity-[0.16] mix-blend-screen">
           <Image src="/logo.jpeg" alt="" fill sizes="50vmin" className="object-contain" draggable={false} />
         </div>
         <div
@@ -386,7 +386,7 @@ function ProjetosResumo({ onRever }: { onRever: () => void }) {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-1 font-[var(--font-display)] text-2xl xl:text-3xl">Todos os projetos no ar</h2>
+            <h2 className="mt-1 font-[var(--font-display)] text-2xl xl:text-3xl">Alguns projetos no ar</h2>
           </div>
           <button
             type="button"
@@ -447,6 +447,10 @@ export default function Projects() {
       const segs = stage.querySelectorAll(".pj-seg");
       const labels = stage.querySelectorAll(".pj-seg-label");
 
+      // Celular e telas de toque: revelação leve (só recorte + opacidade). Filtros como blur e
+      // grayscale animados a cada quadro derrubam o FPS nesses aparelhos.
+      const leve = window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
+
       gsap.set(panels, { autoAlpha: 0 });
       gsap.set(panels[0], { autoAlpha: 1 });
 
@@ -457,7 +461,7 @@ export default function Projects() {
           start: "top top",
           end: () => `+=${Math.round(window.innerHeight * 1.25 * count)}`,
           pin: true,
-          scrub: 0.7,
+          scrub: leve ? 0.3 : 0.7,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -499,8 +503,12 @@ export default function Projects() {
           .fromTo(q(".pj-scan"), { opacity: 1, y: 0 }, { opacity: 1, y: () => frame.clientHeight, duration: d * 0.55 }, b + d * 0.3)
           .fromTo(
             shot,
-            { clipPath: "inset(0 0 100% 0)", filter: "blur(12px) grayscale(1) brightness(0.75)", scale: 1.07, transformOrigin: "50% 0%" },
-            { clipPath: "inset(0 0 0% 0)", filter: "blur(0px) grayscale(0) brightness(1)", scale: 1, duration: d * 0.6 },
+            leve
+              ? { clipPath: "inset(0 0 100% 0)", opacity: 0.55 }
+              : { clipPath: "inset(0 0 100% 0)", filter: "blur(12px) grayscale(1) brightness(0.75)", scale: 1.07, transformOrigin: "50% 0%" },
+            leve
+              ? { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: d * 0.6 }
+              : { clipPath: "inset(0 0 0% 0)", filter: "blur(0px) grayscale(0) brightness(1)", scale: 1, duration: d * 0.6 },
             b + d * 0.3
           )
           .fromTo(q(".pj-skeleton"), { opacity: 1 }, { opacity: 0, duration: d * 0.4 }, b + d * 0.45)

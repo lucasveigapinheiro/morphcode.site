@@ -355,6 +355,7 @@ h1 {
 }
 
 .clinic-bubble {
+  display: none;
   border: 1px solid rgba(255, 255, 255, 0.38);
   background:
     radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.12) 22%, transparent 38%),
@@ -453,4 +454,45 @@ h1 {
   cursor: grabbing;
   scroll-snap-type: none;
   scroll-behavior: auto;
+}
+
+/* Bolha de vidro só com mouse */
+@media (hover: hover) and (pointer: fine) {
+  .clinic-bubble {
+    display: block;
+  }
+}
+
+/* Desempenho no celular (meta: 60 fps): sem desfoque de fundo, sem sobreposição de ruído e
+   sem brilhos desfocados animados. O visual é o mesmo, só mais barato de pintar. */
+@media (max-width: 1023px), (hover: none) {
+  .glass,
+  .glass-strong,
+  .glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: linear-gradient(145deg, rgba(36, 36, 38, 0.92), rgba(20, 20, 22, 0.92));
+  }
+
+  .grain {
+    display: none;
+  }
+
+  .animate-float-slow,
+  .animate-float-slower {
+    animation: none;
+  }
+
+  .blur-3xl {
+    filter: none !important;
+  }
+
+  .clinic-bubble {
+    display: none !important;
+  }
+
+  /* O brilho do cursor não existe no toque */
+  .glass-card::before {
+    display: none;
+  }
 }

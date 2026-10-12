@@ -28,13 +28,14 @@ export default function ParticleField({ className = "" }: { className?: string }
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const pequena = window.innerWidth < 768;
+      dpr = Math.min(window.devicePixelRatio || 1, pequena ? 1.5 : 2);
       w = r.width;
       h = r.height;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round(Math.min(90, Math.max(28, (w * h) / 16000)));
+      const count = pequena ? 20 : Math.round(Math.min(90, Math.max(28, (w * h) / 16000)));
       pts = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
