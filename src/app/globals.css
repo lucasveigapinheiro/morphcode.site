@@ -85,15 +85,6 @@ h1 {
   color: #0a0a0a;
 }
 
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-}
 
 @keyframes marquee {
   from {
@@ -474,9 +465,6 @@ h1 {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
   }
 
-  .grain {
-    display: none;
-  }
 
   .animate-float-slow,
   .animate-float-slower {

@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
-import ParticleField from "./ParticleField";
 import HeroScene from "./HeroScene";
 import { LuArrowDown } from "react-icons/lu";
 
@@ -34,7 +33,6 @@ export default function Hero() {
     <section id="topo" className="relative isolate overflow-hidden pt-28 pb-20 md:pt-32 lg:min-h-[100svh] lg:pb-12">
       {/* Fundo: grade em perspectiva, partículas e brilho dourado */}
       <div aria-hidden className="hud-grid absolute inset-0 -z-10" />
-      <ParticleField className="absolute inset-0 -z-10 h-full w-full opacity-70" />
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 left-[-10%] -z-10 h-[620px] w-[620px] rounded-full opacity-25 blur-3xl animate-float-slow"

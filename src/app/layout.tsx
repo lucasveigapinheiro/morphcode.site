@@ -66,7 +66,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <ScrollProgress />
         <Spotlight />
-        <div className="grain" />
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
