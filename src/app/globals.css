@@ -273,70 +273,6 @@ h1 {
   }
 }
 
-/* Etapas do processo na seção de projetos */
-.pj-step {
-  transition: opacity 0.3s;
-}
-
-.pj-step.is-on,
-.pj-step.is-done {
-  opacity: 1;
-}
-
-.pj-step.is-on .pj-dot {
-  border-color: var(--gold);
-  color: var(--gold);
-  box-shadow: 0 0 14px rgba(212, 169, 74, 0.45);
-}
-
-.pj-step.is-done .pj-dot {
-  border-color: var(--gold);
-  background: var(--gold);
-  color: #0a0a0a;
-}
-
-.pj-step.is-done .pj-num {
-  display: none;
-}
-
-.pj-step.is-done .pj-check {
-  display: block;
-}
-
-/* Scrollytelling: o texto de cada etapa só se abre quando a rolagem chega nela */
-.pj-txt {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.pj-step.is-on .pj-txt,
-.pj-step.is-done .pj-txt {
-  grid-template-rows: 1fr;
-}
-
-/* Entrada suave do resumo de projetos */
-@keyframes pj-fade {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.pj-fade {
-  animation: pj-fade 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pj-fade {
-    animation: none;
-  }
-}
-
 /* Morph Clínica: texto em degradê verde-névoa e a bolha de vidro que segue o mouse */
 .clinic-gradient-text {
   background: linear-gradient(90deg, #eaf3f0, #9fd1c4 55%, #c98e73);
@@ -365,47 +301,11 @@ h1 {
   -webkit-backdrop-filter: blur(2px) saturate(170%) brightness(1.15);
 }
 
-/* Celular: só a etapa atual mostra o texto, para o cartão caber na tela */
-@media (max-width: 1023px) {
-  .pj-step.is-done .pj-txt {
-    grid-template-rows: 0fr;
-  }
-
-  .pj-step.is-on .pj-txt,
-  .pj-step:last-child.is-done .pj-txt {
-    grid-template-rows: 1fr;
-  }
-}
-
 /* Celular: molduras mais minimalistas (sem cantos de HUD, sem vidro em volta, cantos menos redondos) */
 @media (max-width: 1023px) {
   .hud-frame::before,
   .hud-frame::after {
     display: none;
-  }
-
-  .pj-card {
-    background: none;
-    border: 0;
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  .pj-frame .glass {
-    padding: 0;
-    border-radius: 0.5rem;
-    border-color: rgba(255, 255, 255, 0.1);
-    background: none;
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  .pj-frame .glass > div {
-    border-radius: 0.5rem;
   }
 
   .glass-card {
@@ -485,16 +385,48 @@ h1 {
   }
 }
 
-/* Celular: leitura confortável nos cartões de projeto */
-@media (max-width: 1023px) {
-  .pj-step .pj-txt p {
-    line-height: 1.6;
-  }
+/* Projetos: painel e cartões em relevo suave (neumorfismo escuro). O cartão alterna entre
+   "afundado" e "erguido" trocando a opacidade de duas camadas de sombra, sem animar box-shadow. */
+.nm-panel {
+  background: linear-gradient(160deg, #171717, #0f0f0f 70%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    -16px -16px 44px rgba(255, 255, 255, 0.018),
+    30px 44px 100px -24px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Arrastando com o mouse: sem encaixe nem rolagem suave, para o cartão acompanhar a mão */
-.pr-track-resumo.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  scroll-behavior: auto;
+.nm-card {
+  position: relative;
+  border-radius: 1.25rem;
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.nm-raised,
+.nm-pressed {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.nm-raised {
+  box-shadow:
+    -6px -6px 16px rgba(255, 255, 255, 0.025),
+    14px 18px 34px -6px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.nm-pressed {
+  opacity: 0;
+  box-shadow:
+    inset 8px 10px 20px rgba(0, 0, 0, 0.7),
+    inset -5px -5px 14px rgba(255, 255, 255, 0.03);
+}
+
+.nm-tab {
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }

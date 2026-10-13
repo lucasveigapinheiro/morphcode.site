@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 import HeroScene from "./HeroScene";
+import CursorLens from "./CursorLens";
 import { LuArrowDown } from "react-icons/lu";
 
 const lineA = "Seu site profissional".split(" ");
@@ -31,13 +32,14 @@ function Words({ words, start, className = "" }: { words: string[]; start: numbe
 export default function Hero() {
   return (
     <section id="topo" className="relative isolate overflow-hidden pt-28 pb-20 md:pt-32 lg:min-h-[100svh] lg:pb-12">
-      {/* Fundo: grade em perspectiva, partículas e brilho dourado */}
+      {/* Fundo: grade em perspectiva, brilho dourado e a lente que segue o mouse */}
       <div aria-hidden className="hud-grid absolute inset-0 -z-10" />
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 left-[-10%] -z-10 h-[620px] w-[620px] rounded-full opacity-25 blur-3xl animate-float-slow"
         style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 68%)" }}
       />
+      <CursorLens className="-z-10" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:min-h-[calc(100svh-10rem)] lg:grid-cols-[1fr_1fr]">

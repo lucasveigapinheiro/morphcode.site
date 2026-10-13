@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { LuArrowLeft, LuArrowRight, LuCheck } from "react-icons/lu";
 import { SiHtml5, SiCss, SiJavascript, SiTailwindcss } from "react-icons/si";
 import type { IconType } from "react-icons";
 import Reveal from "./Reveal";
-import Magnetic from "./Magnetic";
+import CursorLens from "./CursorLens";
+import GlassLogo from "./GlassLogo";
 
 const TECH_ICONS: Record<string, { Icon: IconType; color: string }> = {
   HTML5: { Icon: SiHtml5, color: "#E34F26" },
@@ -19,8 +19,6 @@ const TECH_ICONS: Record<string, { Icon: IconType; color: string }> = {
 };
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
-// No celular a barra de endereço do navegador some e volta ao rolar; sem isso a seção fixa "treme".
-ScrollTrigger.config({ ignoreMobileResize: true });
 
 export type Project = {
   title: string;
@@ -36,7 +34,7 @@ export const projects: Project[] = [
     title: "2B Estética Automotiva",
     category: "Site institucional",
     description:
-      "Site para uma estética automotiva da Zona Norte de São Paulo que atende de carros populares a Porsche e Ferrari. Mostramos os serviços, os carros que já passaram pelo box, as avaliações do Google e as dúvidas frequentes, com orçamento direto pelo WhatsApp. Fizemos também o domínio próprio, o SEO local e a indexação no Google, para o negócio aparecer para quem busca na região.",
+      "Estética automotiva da Zona Norte de São Paulo. Orçamento direto pelo WhatsApp, domínio próprio e SEO local para aparecer para quem busca na região.",
     href: "https://2bestéticaautomotiva.com.br/",
     image: "/projects/2b-estetica.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -44,8 +42,7 @@ export const projects: Project[] = [
   {
     title: "GMG Equilíbrio",
     category: "Landing page",
-    description:
-      "Landing page de vendas para suplemento em cápsulas, com identidade visual sofisticada, seções de ativos, benefícios, depoimentos e oferta, construída pra converter visitantes em compradores.",
+    description: "Landing page de vendas para suplemento em cápsulas, com ativos, benefícios, depoimentos e oferta.",
     href: "https://gmg-site-beta.vercel.app/",
     image: "/projects/gmg-site.jpg",
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],
@@ -54,7 +51,7 @@ export const projects: Project[] = [
     title: "Sistema de Ordens de Serviço",
     category: "Sistema sob medida",
     description:
-      "Uma oficina mecânica que ainda controlava tudo no papel e em planilhas soltas. Desenvolvemos um sistema completo de ordens de serviço para organizar entrada de veículos, orçamentos, status de reparo e histórico de clientes em um único lugar, reduzindo retrabalho e dando mais controle ao dono do negócio.",
+      "Uma oficina que controlava tudo no papel. Agora entrada de veículos, orçamentos, status de reparo e histórico de clientes ficam em um só lugar.",
     href: "https://lucasveigapinheiro.github.io/sistemaos/",
     image: "/projects/sistema-os.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -62,8 +59,7 @@ export const projects: Project[] = [
   {
     title: "Site para Oficina Mecânica",
     category: "Site institucional",
-    description:
-      "Criamos uma vitrine digital para os serviços da oficina, com identidade visual própria e apresentação clara do que é oferecido. O destaque fica para a integração rápida com o botão de WhatsApp, que leva o visitante direto para um orçamento, sem formulários, sem fricção.",
+    description: "Vitrine digital da oficina, com identidade visual própria e um botão de WhatsApp que leva direto ao orçamento.",
     href: "https://lucasveigapinheiro.github.io/MecanicaRossi/",
     image: "/projects/mecanica-rossi.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -71,8 +67,7 @@ export const projects: Project[] = [
   {
     title: "Sistema para Clínica Estética",
     category: "Sistema sob medida",
-    description:
-      "Painel de gestão para uma clínica estética, com visão geral do dia, cadastro e histórico de pacientes, agenda de consultas e configurações, tudo em uma interface elegante, pensada para o dia a dia da doutora e da recepção.",
+    description: "Painel de gestão com agenda de consultas, cadastro e histórico de pacientes, pensado para a doutora e a recepção.",
     href: "https://paty-clinica.vercel.app/pages/dashboard.html",
     image: "/projects/labessie.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
@@ -80,594 +75,153 @@ export const projects: Project[] = [
   {
     title: "Orçamento Pessoal",
     category: "Aplicativo web",
-    description:
-      "Uma planilha de gastos transformada em aplicativo web, com login e cadastro de usuário para manter os dados de cada pessoa separados. Depois de entrar, o usuário acompanha renda prevista e realizada, total de receitas, despesas e saldo final mês a mês, tudo salvo automaticamente.",
+    description: "Uma planilha de gastos que virou aplicativo web, com login, receitas, despesas e saldo mês a mês salvos automaticamente.",
     href: "https://lucasveigapinheiro.github.io/planilha-de-gastos",
     image: "/projects/orcamento-pessoal-v2.jpg",
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],
   },
 ];
 
-
-// Etapas do processo de cada projeto. Todo o texto vem da descrição real do projeto.
-const ETAPAS = ["Briefing", "Estrutura", "Design", "No ar"] as const;
-
-const etapasPorProjeto: Record<string, string[]> = {
-  "2B Estética Automotiva": [
-    "Estética automotiva da Zona Norte de São Paulo, que atende de carros populares a Porsche e Ferrari.",
-    "Serviços, carros que já passaram pelo box, avaliações do Google e dúvidas frequentes.",
-    "Orçamento direto pelo WhatsApp, em cada parte da página.",
-    "Domínio próprio, SEO local e indexação no Google para aparecer para quem busca na região.",
-  ],
-  "Sistema de Ordens de Serviço": [
-    "Uma oficina mecânica que controlava tudo no papel e em planilhas soltas.",
-    "Entrada de veículos, orçamentos, status de reparo e histórico de clientes.",
-    "Tudo reunido em um único lugar.",
-    "Menos retrabalho e mais controle para o dono do negócio.",
-  ],
-  "Site para Oficina Mecânica": [
-    "Uma vitrine digital para os serviços da oficina.",
-    "Apresentação clara do que a oficina oferece.",
-    "Identidade visual própria para a marca da oficina.",
-    "Botão de WhatsApp que leva o visitante direto ao orçamento, sem formulários.",
-  ],
-  "Sistema para Clínica Estética": [
-    "Painel de gestão para uma clínica estética.",
-    "Visão geral do dia, cadastro e histórico de pacientes, agenda de consultas e configurações.",
-    "Interface elegante, pensada para o dia a dia.",
-    "Feito para a doutora e para a recepção.",
-  ],
-  "Orçamento Pessoal": [
-    "Uma planilha de gastos que virou aplicativo web.",
-    "Login e cadastro de usuário, para manter os dados de cada pessoa separados.",
-    "Renda prevista e realizada, total de receitas, despesas e saldo final, mês a mês.",
-    "Tudo salvo automaticamente.",
-  ],
-  "GMG Equilíbrio": [
-    "Landing page de vendas para suplemento em cápsulas.",
-    "Seções de ativos, benefícios, depoimentos e oferta.",
-    "Identidade visual sofisticada.",
-    "Construída para converter visitantes em compradores.",
-  ],
-};
-
-// O scrollytelling conta a história dos três primeiros; o resumo mostra todos.
-const HISTORIA = projects.slice(0, 3);
-
-// Scrollytelling em qualquer tela; com "reduzir movimento" ativo, cai na lista simples.
-const QUERY_PINADO = "(prefers-reduced-motion: no-preference)";
-
-function assinar(avisar: () => void) {
-  const mq = window.matchMedia(QUERY_PINADO);
-  mq.addEventListener("change", avisar);
-  return () => mq.removeEventListener("change", avisar);
-}
-const lerPinado = () => window.matchMedia(QUERY_PINADO).matches;
-
-function ProjectImage({ title, image }: { title: string; image: string }) {
-  return (
-    <div className="hud-frame group relative aspect-video w-full">
-      <div className="glass relative h-full w-full overflow-hidden rounded-xl p-1.5">
-        <div className="relative h-full w-full overflow-hidden rounded-lg bg-surface-2">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            draggable={false}
-            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-            quality={90}
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function VerProjeto({ href }: { href: string }) {
-  return (
-    <Magnetic strength={0.2} className="inline-block">
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn-shine inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-7 py-3 text-sm font-medium text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_28px_rgba(212,169,74,0.4)]"
-      >
-        Ver projeto completo
-      </a>
-    </Magnetic>
-  );
-}
-
 function Techs({ techs }: { techs: string[] }) {
   return (
-    <div className="flex flex-wrap items-center gap-4">
+    <ul className="flex items-center gap-2.5" aria-label="Tecnologias">
       {techs.map((tech) => {
         const entry = TECH_ICONS[tech];
         if (!entry) return null;
         const { Icon, color } = entry;
         return (
-          <span key={tech} title={tech} className="flex items-center gap-2 text-xs text-muted">
-            <Icon size={18} color={color} />
-            {tech}
-          </span>
+          <li key={tech} title={tech}>
+            <Icon size={15} color={color} aria-hidden />
+            <span className="sr-only">{tech}</span>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 
-/* ---------- Mobile, tablet e "reduzir movimento": lista simples ---------- */
-function ProjetosLista() {
+function ProjectCard({ p, i }: { p: Project; i: number }) {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-28">
-      <Reveal>
-        <p className="mb-4 text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-        <h2 className="font-[var(--font-display)] text-3xl md:text-4xl max-w-xl">Alguns trabalhos que já colocamos no ar</h2>
-      </Reveal>
-      <div className="mt-16 flex flex-col gap-20">
-        {projects.map((p, i) => (
-          <div key={p.title} className={`flex flex-col items-center gap-8 md:gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"}`}>
-            <Reveal className="w-full md:w-1/2" delay={0.05}>
-              <ProjectImage title={p.title} image={p.image} />
-            </Reveal>
-            <Reveal className="w-full md:w-1/2" delay={0.15}>
-              <p className="text-xs uppercase tracking-wide text-gold">{p.category}</p>
-              <h3 className="mt-2 font-[var(--font-display)] text-2xl md:text-3xl">{p.title}</h3>
-              <p className="mt-5 leading-relaxed text-muted">{p.description}</p>
-              <div className="mt-6">
-                <Techs techs={p.techs} />
-              </div>
-              <div className="mt-8">
-                <VerProjeto href={p.href} />
-              </div>
-            </Reveal>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ---------- Desktop: scrollytelling. A seção fica fixa e a rolagem conta a história de cada projeto ---------- */
-function ProjetosPinados() {
-  const total = HISTORIA.length;
-
-  return (
-    <div className="pj-stage relative h-[100svh] w-full overflow-hidden">
-      {/* Parallax de fundo: o logo grande sobe e gira devagar enquanto você rola */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
-        <div className="pj-logo-far absolute h-[78vmin] w-[78vmin] rounded-full opacity-[0.1] mix-blend-screen">
-          <Image src="/logo.jpeg" alt="" fill sizes="80vmin" className="object-contain" draggable={false} />
-        </div>
-        <div className="pj-logo-near hidden lg:block absolute -right-[8vmin] bottom-[-14vmin] h-[46vmin] w-[46vmin] rounded-full opacity-[0.16] mix-blend-screen">
-          <Image src="/logo.jpeg" alt="" fill sizes="50vmin" className="object-contain" draggable={false} />
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 40%, var(--background) 100%)" }}
-        />
-      </div>
-
-      {/* Cabeçalho da seção e contador */}
-      <div className="absolute inset-x-0 top-20 z-20 md:top-24">
-        <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-6 text-center md:items-end md:justify-between md:text-left">
-          <div>
-            <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-1 hidden font-[var(--font-display)] text-lg md:block md:text-2xl xl:text-3xl">Veja como três projetos foram construídos</h2>
-          </div>
-          <p className="font-mono text-sm text-muted md:ml-auto">
-            <span className="pj-count text-lg text-foreground md:text-2xl">01</span> / {String(total).padStart(2, "0")}
-          </p>
-        </div>
-      </div>
-
-      {HISTORIA.map((p, i) => (
-        <article
-          key={p.title}
-          className="pj-panel absolute inset-0 flex items-center justify-center px-6 pb-28 pt-36 md:pb-20 md:pt-44"
-          aria-label={`Projeto ${i + 1} de ${total}: ${p.title}`}
-        >
-          <div className="pj-card glass-strong grid w-full max-w-6xl grid-cols-1 items-center gap-4 rounded-3xl p-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:p-8 xl:p-10">
-            <div className="text-center lg:text-left">
-              <p className="font-mono text-xs uppercase tracking-wide text-gold">{p.category}</p>
-              <h3 className="mt-1 font-[var(--font-display)] text-xl lg:mt-2 lg:text-3xl xl:text-4xl">{p.title}</h3>
-
-              <ol className="mx-auto mt-3 max-w-xs space-y-2 text-left lg:mx-0 lg:mt-6 lg:max-w-none lg:space-y-3">
-                {ETAPAS.map((nome, k) => (
-                  <li key={nome} className="pj-step flex gap-4 opacity-35">
-                    <span className="pj-dot mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/20 font-mono text-[10px] text-muted transition-colors duration-300">
-                      <span className="pj-num">{k + 1}</span>
-                      <LuCheck className="pj-check hidden h-3 w-3" aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-mono text-[11px] uppercase tracking-wider text-muted">{nome}</p>
-                      <div className="pj-txt">
-                        <p className="overflow-hidden pt-0.5 text-sm leading-relaxed text-foreground/90">{etapasPorProjeto[p.title][k]}</p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-
-              <div className="mt-3 h-[3px] w-full overflow-hidden rounded-full bg-white/10 lg:mt-6">
-                <div
-                  className="pj-bar h-full origin-left rounded-full bg-gradient-to-r from-gold to-gold-light shadow-[0_0_12px_rgba(212,169,74,0.7)]"
-                  style={{ transform: "scaleX(0)" }}
-                />
-              </div>
-
-              <div className="mt-3 hidden flex-wrap items-center gap-5 lg:mt-6 lg:flex">
-                <VerProjeto href={p.href} />
-                <div className="hidden lg:block">
-                  <Techs techs={p.techs} />
-                </div>
-              </div>
-            </div>
-
-            {/* O site se constrói: esqueleto, linha de varredura e a captura real */}
-            <div className="pj-frame hud-frame relative order-first aspect-[16/10] w-full lg:order-none lg:aspect-video">
-              <div className="glass relative h-full w-full overflow-hidden rounded-xl p-1.5">
-                <div className="relative h-full w-full overflow-hidden rounded-lg bg-surface-2">
-                  <div className="pj-shot absolute inset-0 will-change-[clip-path,filter,transform]">
-                    <Image src={p.image} alt={p.title} fill priority={i === 0} draggable={false} className="object-cover object-top" quality={90} sizes="(max-width: 1023px) 100vw, 55vw" />
-                  </div>
-                  <div aria-hidden className="pj-skeleton pointer-events-none absolute inset-0 p-[4%]">
-                    <div className="pj-sk flex items-center justify-between">
-                      <div className="h-3 w-[16%] rounded-full bg-white/15" />
-                      <div className="flex w-[38%] justify-between">
-                        <div className="h-2 w-[22%] rounded-full bg-white/10" />
-                        <div className="h-2 w-[22%] rounded-full bg-white/10" />
-                        <div className="h-2 w-[22%] rounded-full bg-white/10" />
-                      </div>
-                    </div>
-                    <div className="mt-[7%] grid grid-cols-[1.1fr_0.9fr] gap-[5%]">
-                      <div>
-                        <div className="pj-sk h-5 w-[92%] rounded-md bg-white/20" />
-                        <div className="pj-sk mt-3 h-5 w-[70%] rounded-md bg-white/20" />
-                        <div className="pj-sk mt-6 h-2 w-[88%] rounded-full bg-white/10" />
-                        <div className="pj-sk mt-2 h-2 w-[76%] rounded-full bg-white/10" />
-                        <div className="pj-sk mt-7 h-8 w-[34%] rounded-lg bg-gold/40" />
-                      </div>
-                      <div className="pj-sk aspect-[4/3] rounded-xl bg-white/10" />
-                    </div>
-                    <div className="mt-[6%] grid grid-cols-3 gap-[3%]">
-                      <div className="pj-sk h-14 rounded-lg bg-white/10" />
-                      <div className="pj-sk h-14 rounded-lg bg-white/10" />
-                      <div className="pj-sk h-14 rounded-lg bg-white/10" />
-                    </div>
-                  </div>
-                  <div
-                    aria-hidden
-                    className="pj-scan pointer-events-none absolute inset-x-0 top-0 h-[2px] opacity-0"
-                    style={{ background: "linear-gradient(90deg, transparent, #e8c876 20%, #fff 50%, #e8c876 80%, transparent)", boxShadow: "0 0 18px 4px rgba(232,200,118,0.65), 0 -26px 60px 10px rgba(212,169,74,0.18)" }}
-                  />
-                  <span className="pj-live absolute bottom-3 right-3 inline-flex lg:bottom-auto lg:right-4 lg:top-4 items-center gap-1.5 rounded-full border border-[#25d366]/40 bg-black/50 px-3 py-1 font-mono text-[10px] text-[#7dffa8] opacity-0 backdrop-blur">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#25d366] shadow-[0_0_8px_#25d366]" /> no ar
-                  </span>
-                </div>
-              </div>
+    <li className="pj-item relative pt-3">
+      <span className="nm-tab absolute left-4 top-0 z-10 inline-flex items-center gap-2 rounded-md px-2 py-1 font-mono text-[10px] text-muted">
+        / {String(i + 1).padStart(2, "0")}
+        <span aria-hidden className="h-1 w-1 rounded-full bg-gold" />
+      </span>
+      <article className="nm-card group h-full">
+        <span aria-hidden className="nm-raised" />
+        <span aria-hidden className="nm-pressed" />
+        <div className="relative flex h-full flex-col p-4">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-2">
+            <div className="pj-shot absolute inset-0">
+              <Image
+                src={p.image}
+                alt={p.title}
+                fill
+                quality={90}
+                sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 340px"
+                className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              />
             </div>
           </div>
-        </article>
-      ))}
-
-      {/* Trilho inferior: um segmento por projeto */}
-      <div className="absolute inset-x-0 bottom-4 z-20 md:bottom-8">
-        <div className="mx-auto flex max-w-6xl gap-2 px-6">
-          {HISTORIA.map((p, i) => (
-            <div key={p.title} className="flex-1">
-              <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
-                <div className="pj-seg h-full origin-left bg-gold" style={{ transform: "scaleX(0)" }} />
-              </div>
-              <p className="pj-seg-label mt-2 hidden truncate font-mono text-[10px] text-muted/60 xl:block">
-                {String(i + 1).padStart(2, "0")} {p.title}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------- Resumo: aparece depois que a história foi vista, para voltar sem rolar tudo de novo ---------- */
-function ProjetosResumo({ onRever }: { onRever: () => void }) {
-  const track = useRef<HTMLUListElement>(null);
-  const [progresso, setProgresso] = useState(0);
-  const [inicio, setInicio] = useState(true);
-  const [fim, setFim] = useState(false);
-
-  // Progresso da rolagem lateral, estado das setas e arrastar com o mouse.
-  useEffect(() => {
-    const el = track.current;
-    if (!el) return;
-    const atualizar = () => {
-      const max = el.scrollWidth - el.clientWidth;
-      setProgresso(max > 0 ? el.scrollLeft / max : 1);
-      setInicio(el.scrollLeft <= 4);
-      setFim(max <= 4 || el.scrollLeft >= max - 4);
-    };
-    atualizar();
-    el.addEventListener("scroll", atualizar, { passive: true });
-    window.addEventListener("resize", atualizar);
-
-    let down = false;
-    let moveu = false;
-    let startX = 0;
-    let startLeft = 0;
-    const onDown = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      down = true;
-      moveu = false;
-      startX = e.clientX;
-      startLeft = el.scrollLeft;
-    };
-    const onMove = (e: PointerEvent) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 5 && !moveu) {
-        moveu = true;
-        el.classList.add("is-dragging");
-      }
-      if (moveu) el.scrollLeft = startLeft - dx;
-    };
-    const onUp = () => {
-      down = false;
-      el.classList.remove("is-dragging");
-    };
-    // Depois de arrastar, o clique não pode abrir o projeto por engano.
-    const onClick = (e: MouseEvent) => {
-      if (moveu) {
-        e.preventDefault();
-        e.stopPropagation();
-        moveu = false;
-      }
-    };
-    el.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    el.addEventListener("click", onClick, true);
-    return () => {
-      el.removeEventListener("scroll", atualizar);
-      window.removeEventListener("resize", atualizar);
-      el.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-      el.removeEventListener("click", onClick, true);
-    };
-  }, []);
-
-  const mover = (dir: 1 | -1) => {
-    const el = track.current;
-    if (!el) return;
-    const card = el.querySelector("li");
-    const passo = card ? card.getBoundingClientRect().width + 16 : 340;
-    el.scrollBy({ left: dir * passo, behavior: "smooth" });
-  };
-
-  return (
-    <div className="pj-fade relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pb-28 pt-24 md:pb-16 md:pt-28">
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
-        <div className="absolute h-[78vmin] w-[78vmin] rounded-full opacity-[0.08] mix-blend-screen">
-          <Image src="/logo.jpeg" alt="" fill sizes="80vmin" className="object-contain" draggable={false} />
-        </div>
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 40%, var(--background) 100%)" }} />
-      </div>
-
-      <div className="pj-card glass-strong relative w-full max-w-6xl rounded-3xl lg:p-8 xl:p-10">
-        <div className="flex flex-col items-center gap-5 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
-          <div>
-            <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-            <h2 className="mt-2 font-[var(--font-display)] text-3xl">Alguns projetos no ar</h2>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onRever}
-              className="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-foreground transition-colors hover:border-gold/60 hover:text-gold"
+          <h3 className="mt-5 font-[var(--font-display)] text-lg leading-snug">
+            {p.title} <span className="font-light text-muted">— {p.category.toLowerCase()}</span>
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{p.description}</p>
+          <div className="mt-auto flex items-center justify-between gap-3 pt-6">
+            <a
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-white/15 px-4 py-2 text-xs text-foreground transition-colors duration-300 hover:border-foreground hover:bg-foreground hover:text-background"
             >
-              Rever como foram construídos
-            </button>
-            <div className="hidden gap-2 lg:flex">
-              <button
-                type="button"
-                onClick={() => mover(-1)}
-                disabled={inicio}
-                aria-label="Projeto anterior"
-                className="glass grid h-11 w-11 place-items-center rounded-full text-foreground transition-colors hover:border-gold/60 disabled:opacity-30"
-              >
-                <LuArrowLeft className="h-4 w-4" aria-hidden />
-              </button>
-              <button
-                type="button"
-                onClick={() => mover(1)}
-                disabled={fim}
-                aria-label="Próximo projeto"
-                className="glass grid h-11 w-11 place-items-center rounded-full text-foreground transition-colors hover:border-gold/60 disabled:opacity-30"
-              >
-                <LuArrowRight className="h-4 w-4" aria-hidden />
-              </button>
-            </div>
+              Ver projeto<span className="sr-only">: {p.title} (abre em nova aba)</span>
+            </a>
+            <Techs techs={p.techs} />
           </div>
         </div>
-
-        {/* Carrossel lateral: toque no celular; setas ou arrastar com o mouse no computador */}
-        <ul
-          ref={track}
-          tabIndex={0}
-          aria-label="Projetos, role para o lado"
-          className="no-scrollbar pr-track-resumo -mx-6 mt-9 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[10vw] pb-2 lg:mx-0 lg:mt-8 lg:px-0"
-        >
-          {projects.map((p) => (
-            <li key={p.title} className="w-[80vw] shrink-0 snap-center sm:w-[55vw] lg:w-[360px] lg:snap-start">
-              <a href={p.href} target="_blank" rel="noopener noreferrer" draggable={false} className="glass-card group block p-4">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
-                  <Image
-                    src={p.image}
-                    alt={p.title}
-                    fill
-                    sizes="(max-width: 1023px) 80vw, 360px"
-                    quality={90}
-                    draggable={false}
-                    className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-                  />
-                </div>
-                <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-gold">{p.category}</p>
-                <p className="mt-1 font-[var(--font-display)] text-lg leading-snug">{p.title}</p>
-                <p className="mt-3 text-xs text-muted transition-colors group-hover:text-gold">Ver projeto completo →</p>
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-4 h-[3px] overflow-hidden rounded-full bg-white/10">
-          <div
-            className="h-full origin-left rounded-full bg-gradient-to-r from-gold to-gold-light"
-            style={{ transform: `scaleX(${Math.max(0.12, progresso)})`, transition: "transform 0.2s" }}
-          />
-        </div>
-        <p className="mt-3 text-center font-mono text-[11px] text-muted">
-          <span className="lg:hidden">Deslize para ver os outros →</span>
-          <span className="hidden lg:inline">Use as setas ou arraste para o lado →</span>
-        </p>
-      </div>
-    </div>
+      </article>
+    </li>
   );
 }
 
 export default function Projects() {
   const root = useRef<HTMLElement>(null);
-  const pinado = useSyncExternalStore(assinar, lerPinado, () => false);
-  const [concluido, setConcluido] = useState(false);
-  // Altura da seção antes de virar resumo (px); serve para recuar a rolagem na troca.
-  const alturaAntes = useRef(0);
 
+  // Rolar para revelar: cada cartão sobe "afundado" no painel e se ergue enquanto a captura
+  // ganha cor e foco. Preso à rolagem, então volta ao estado inicial se a pessoa rolar para cima.
   useGSAP(
     () => {
-      if (!pinado) return;
-      if (concluido) {
-        // Recalcula os outros gatilhos e SÓ DEPOIS recua a rolagem: o refresh restauraria a posição
-        // antiga e jogaria o leitor para o fim da página.
-        ScrollTrigger.refresh();
-        if (alturaAntes.current && root.current) {
-          const encolheu = alturaAntes.current - root.current.offsetHeight;
-          alturaAntes.current = 0;
-          if (encolheu > 0) window.scrollTo(0, Math.max(0, window.scrollY - encolheu));
-          ScrollTrigger.update();
-        }
-        return;
-      }
-      const stage = root.current?.querySelector<HTMLElement>(".pj-stage");
-      if (!stage) return;
-
-      const panels = gsap.utils.toArray<HTMLElement>(".pj-panel", stage);
-      const count = panels.length;
-      const countEl = stage.querySelector<HTMLElement>(".pj-count");
-      const segs = stage.querySelectorAll(".pj-seg");
-      const labels = stage.querySelectorAll(".pj-seg-label");
-
-      // Celular e telas de toque: revelação leve (só recorte + opacidade). Filtros como blur e
-      // grayscale animados a cada quadro derrubam o FPS nesses aparelhos.
-      const leve = window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
-
-      gsap.set(panels, { autoAlpha: 0 });
-      gsap.set(panels[0], { autoAlpha: 1 });
-
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: stage,
-          start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 1.25 * count)}`,
-          pin: true,
-          scrub: leve ? 0.3 : 0.7,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+      const mm = gsap.matchMedia();
+      mm.add(
+        {
+          motion: "(prefers-reduced-motion: no-preference)",
+          desk: "(min-width: 1024px) and (pointer: fine)",
+          tres: "(min-width: 1024px)",
+          duas: "(min-width: 768px)",
         },
-        // Cada etapa acende em 0%, 25%, 50% e 75% do projeto, calculado a partir da posição na
-        // linha do tempo: funciona igual rolando para baixo ou para cima.
-        onUpdate: () => {
-          const t = tl.time();
-          if (countEl) countEl.textContent = String(Math.min(count, Math.floor(t + 0.05) + 1)).padStart(2, "0");
-          panels.forEach((panel, i) => {
-            const p = Math.min(1, Math.max(0, (t - (i + 0.1)) / 0.7));
-            const items = panel.querySelectorAll<HTMLElement>(".pj-step");
-            const ativa = p <= 0 ? -1 : Math.min(items.length - 1, Math.floor(p * items.length));
-            items.forEach((el, k) => {
-              el.classList.toggle("is-on", k === ativa && p < 1);
-              el.classList.toggle("is-done", k < ativa || (p >= 1 && k <= ativa));
+        (ctx) => {
+          const { motion, desk, tres, duas } = ctx.conditions as Record<string, boolean>;
+          if (!motion) return;
+          const colunas = tres ? 3 : duas ? 2 : 1;
+
+          gsap.utils.toArray<HTMLElement>(".pj-item").forEach((item, i) => {
+            const q = gsap.utils.selector(item);
+            // Colunas da direita começam mais baixas: a fileira entra em cascata.
+            const desce = 60 + (i % colunas) * 45;
+            const tl = gsap.timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: { trigger: item, start: "top 96%", end: "top 50%", scrub: 0.6 },
             });
+            tl.fromTo(item, { y: desce, opacity: 0.25 }, { y: 0, opacity: 1 }, 0)
+              .fromTo(q(".nm-pressed"), { opacity: 1 }, { opacity: 0 }, 0.25)
+              .fromTo(q(".nm-raised"), { opacity: 0 }, { opacity: 1 }, 0.25)
+              .fromTo(
+                q(".pj-shot"),
+                // Filtros animados pesam no celular; lá a captura só se aproxima.
+                desk ? { filter: "grayscale(1) blur(6px) brightness(0.7)", scale: 1.08 } : { scale: 1.06 },
+                desk ? { filter: "grayscale(0) blur(0px) brightness(1)", scale: 1 } : { scale: 1 },
+                0
+              );
           });
-        },
-      });
-
-      // Parallax: o logo grande e o pequeno andam em velocidades diferentes do conteúdo.
-      tl.fromTo(".pj-logo-far", { yPercent: 18, rotation: -10, scale: 0.92 }, { yPercent: -18, rotation: 10, scale: 1.08, duration: count }, 0)
-        .fromTo(".pj-logo-near", { yPercent: 40, rotation: 20 }, { yPercent: -40, rotation: -20, duration: count }, 0);
-
-      panels.forEach((panel, i) => {
-        const q = gsap.utils.selector(panel);
-        const shot = q(".pj-shot")[0] as HTMLElement;
-        const frame = shot.parentElement as HTMLElement;
-        const b = i + 0.1;
-        const d = 0.7;
-
-        // Entrada (o primeiro painel já começa visível)
-        if (i > 0) {
-          tl.fromTo(panel, { autoAlpha: 0, yPercent: 5 }, { autoAlpha: 1, yPercent: 0, duration: 0.1, ease: "power2.out" }, i);
         }
-
-        // Construção do site, presa à rolagem: esqueleto, linha de varredura e revelação da captura.
-        tl.fromTo(q(".pj-sk"), { opacity: 0, scaleX: 0.2, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: d * 0.3, stagger: 0.015 }, b)
-          .fromTo(q(".pj-scan"), { opacity: 1, y: 0 }, { opacity: 1, y: () => frame.clientHeight, duration: d * 0.55 }, b + d * 0.3)
-          .fromTo(
-            shot,
-            leve
-              ? { clipPath: "inset(0 0 100% 0)", opacity: 0.55 }
-              : { clipPath: "inset(0 0 100% 0)", filter: "blur(12px) grayscale(1) brightness(0.75)", scale: 1.07, transformOrigin: "50% 0%" },
-            leve
-              ? { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: d * 0.6 }
-              : { clipPath: "inset(0 0 0% 0)", filter: "blur(0px) grayscale(0) brightness(1)", scale: 1, duration: d * 0.6 },
-            b + d * 0.3
-          )
-          .fromTo(q(".pj-skeleton"), { opacity: 1 }, { opacity: 0, duration: d * 0.4 }, b + d * 0.45)
-          .to(q(".pj-scan"), { opacity: 0, duration: d * 0.05 }, b + d * 0.86)
-          .fromTo(q(".pj-live"), { opacity: 0 }, { opacity: 1, duration: d * 0.1 }, b + d * 0.9)
-          .fromTo(q(".pj-bar"), { scaleX: 0 }, { scaleX: 1, duration: d }, b)
-          .fromTo(segs[i], { scaleX: 0 }, { scaleX: 1, duration: d + 0.1 }, b);
-        if (labels[i]) tl.to(labels[i], { color: "#e8c876", duration: 0.05 }, b);
-
-        // Saída (o último painel fica até o fim)
-        if (i < count - 1) {
-          tl.to(panel, { autoAlpha: 0, yPercent: -5, duration: 0.1, ease: "power2.in" }, i + 0.92);
-        }
-      });
-
-      tl.to({}, { duration: 0.12 }); // respiro no fim
-
-      // Depois que a seção inteira saiu da tela, ela vira o resumo de uma tela só. Quem voltar
-      // rolando para cima passa por ele direto, sem refazer o scrollytelling.
-      const st = tl.scrollTrigger;
-      ScrollTrigger.create({
-        trigger: root.current,
-        // Dispara logo depois que a rolagem fixa termina, para a volta ser curta.
-        start: "bottom 75%",
-        onEnter: () => {
-          // Desfaz o "pin" do GSAP ANTES do React trocar o conteúdo (senão o React não acha o nó).
-          alturaAntes.current = root.current?.offsetHeight ?? 0;
-          st?.kill(true);
-          tl.kill();
-          setConcluido(true);
-        },
-      });
+      );
     },
-    { scope: root, dependencies: [pinado, concluido], revertOnUpdate: true }
+    { scope: root }
   );
 
   return (
-    <section ref={root} id="projetos" className="section-border relative bg-surface/30">
-      {pinado ? concluido ? <ProjetosResumo onRever={() => setConcluido(false)} /> : <ProjetosPinados /> : <ProjetosLista />}
+    <section ref={root} id="projetos" className="section-border relative overflow-hidden py-24 md:py-32">
+      <CursorLens grid={0.12} />
+
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="nm-panel relative rounded-[2rem] px-4 pb-8 pt-12 sm:px-8 md:rounded-[2.5rem] md:px-12 md:pb-14 md:pt-16">
+          <GlassLogo className="pointer-events-none absolute -top-12 right-0 h-36 w-36 sm:-top-20 sm:right-4 sm:h-56 sm:w-56 lg:-top-24 lg:right-10 lg:h-72 lg:w-72" />
+
+          <Reveal>
+            <div className="max-w-xl pr-28 sm:pr-48 lg:pr-0">
+              <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
+              <h2 className="mt-4 font-[var(--font-display)] text-[2.1rem] font-light leading-[1.05] sm:text-5xl lg:text-6xl">
+                Trabalhos que já colocamos no ar
+              </h2>
+            </div>
+          </Reveal>
+
+          {/* Linha com um degrau, apontando para o objeto */}
+          <div aria-hidden className="mt-10 flex items-start md:mt-12">
+            <div className="h-px flex-1 bg-gradient-to-r from-white/5 to-white/15" />
+            <svg width="26" height="10" viewBox="0 0 26 10" className="shrink-0">
+              <path d="M0 0.5 C8 0.5 10 9.5 18 9.5 H26" fill="none" stroke="rgba(255,255,255,0.15)" />
+            </svg>
+            <div className="mt-[9px] h-px w-1/3 bg-gradient-to-r from-white/15 to-transparent" />
+          </div>
+
+          <ul className="mt-10 grid gap-x-6 gap-y-10 md:mt-14 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((p, i) => (
+              <ProjectCard key={p.title} p={p} i={i} />
+            ))}
+          </ul>
+        </div>
+      </div>
     </section>
   );
 }
