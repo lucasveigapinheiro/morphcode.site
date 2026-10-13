@@ -4,6 +4,10 @@ import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
 import Spotlight from "@/components/Spotlight";
 import ScrollProgress from "@/components/ScrollProgress";
+import ConversionTracking from "@/components/ConversionTracking";
+import { Analytics } from "@vercel/analytics/next";
+import { siteUrl } from "@/lib/site";
+import { PHONE } from "@/lib/whatsapp";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -20,9 +24,21 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const title = "Site profissional no ar em cerca de 7 dias | Morph Code";
+const title = "Seu negócio no Google, os clientes no seu WhatsApp | Morph Code";
 const description =
-  "Site profissional para o seu negócio aparecer no Google e receber orçamentos pelo WhatsApp. Pronto em 7 dias, em média.";
+  "Site sob medida para o seu negócio aparecer no Google e receber pedidos de orçamento pelo WhatsApp. No ar em cerca de 7 dias, falando direto com quem faz.";
+
+// Dados da empresa para o Google (resultado com nome, telefone e e-mail).
+const empresa = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Morph Code",
+  description,
+  url: siteUrl,
+  image: `${siteUrl}/logo.jpeg`,
+  telephone: `+${PHONE}`,
+  email: "morphcode.dev@gmail.com",
+};
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
@@ -30,12 +46,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  // Vercel sets this to the production domain (custom domain once one is added).
-  metadataBase: new URL(
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000"
-  ),
+  metadataBase: new URL(siteUrl),
   title,
   description,
   openGraph: {
@@ -67,6 +78,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ScrollProgress />
         <Spotlight />
         <MotionProvider>{children}</MotionProvider>
+        <ConversionTracking />
+        <Analytics />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(empresa) }} />
       </body>
     </html>
   );

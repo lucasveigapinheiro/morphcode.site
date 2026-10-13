@@ -15,10 +15,10 @@ export default function Contact() {
         <Reveal>
           <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4">Contato</p>
           <h2 className="font-[var(--font-display)] text-3xl md:text-5xl leading-tight">
-            Quer o seu site no ar em <span className="gold-gradient-text">7 dias?</span>
+            Seu site no ar em cerca de <span className="gold-gradient-text">7 dias.</span>
           </h2>
           <p className="mt-5 text-muted max-w-md mx-auto">
-            Conte pelo WhatsApp o que o seu negócio faz. Você recebe o valor e o prazo, sem compromisso.
+            Mande uma mensagem contando o que o seu negócio faz. Você recebe valor e prazo antes de fechar, sem compromisso.
           </p>
         </Reveal>
 

@@ -114,7 +114,7 @@ export default function HeroScene() {
       {/* Dica para telas de toque */}
       {!seguro && (
         <p className="hs-hint pointer-events-none absolute left-1/2 top-[3%] z-20 hidden -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-black/40 px-3 py-1.5 font-mono text-[11px] text-nevoa [@media(hover:none)]:inline-flex">
-          <LuFingerprint className="h-3.5 w-3.5 animate-pulse text-gold" aria-hidden />
+          <LuFingerprint className="h-3.5 w-3.5 motion-safe:animate-pulse text-gold" aria-hidden />
           Aperte e segure a logo
         </p>
       )}

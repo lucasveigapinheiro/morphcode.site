@@ -5,6 +5,7 @@ export default function WhatsAppFloat() {
   return (
     <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 bg-gradient-to-t from-background via-background/80 to-transparent">
       <a
+        data-origem="barra-fixa"
         href={whatsappLink(budgetMessage)}
         target="_blank"
         rel="noopener noreferrer"

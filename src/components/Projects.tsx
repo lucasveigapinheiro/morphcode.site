@@ -5,6 +5,8 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
+import Magnetic from "./Magnetic";
 import { SiHtml5, SiCss, SiJavascript, SiTailwindcss } from "react-icons/si";
 import type { IconType } from "react-icons";
 import Reveal from "./Reveal";
@@ -48,20 +50,20 @@ export const projects: Project[] = [
     techs: ["HTML5", "Tailwind CSS", "JavaScript"],
   },
   {
+    title: "Mecânica Rossi",
+    category: "Site institucional",
+    description: "Vitrine digital da oficina, com identidade visual própria e um botão de WhatsApp que leva direto ao orçamento.",
+    href: "https://lucasveigapinheiro.github.io/MecanicaRossi/",
+    image: "/projects/mecanica-rossi.jpg",
+    techs: ["HTML5", "CSS3", "JavaScript"],
+  },
+  {
     title: "Sistema de Ordens de Serviço",
     category: "Sistema sob medida",
     description:
       "Uma oficina que controlava tudo no papel. Agora entrada de veículos, orçamentos, status de reparo e histórico de clientes ficam em um só lugar.",
     href: "https://lucasveigapinheiro.github.io/sistemaos/",
     image: "/projects/sistema-os.jpg",
-    techs: ["HTML5", "CSS3", "JavaScript"],
-  },
-  {
-    title: "Site para Oficina Mecânica",
-    category: "Site institucional",
-    description: "Vitrine digital da oficina, com identidade visual própria e um botão de WhatsApp que leva direto ao orçamento.",
-    href: "https://lucasveigapinheiro.github.io/MecanicaRossi/",
-    image: "/projects/mecanica-rossi.jpg",
     techs: ["HTML5", "CSS3", "JavaScript"],
   },
   {
@@ -134,7 +136,8 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
               rel="noopener noreferrer"
               className="rounded-full border border-white/15 px-4 py-2 text-xs text-foreground transition-colors duration-300 hover:border-foreground hover:bg-foreground hover:text-background"
             >
-              Ver projeto<span className="sr-only">: {p.title} (abre em nova aba)</span>
+              {p.category.startsWith("Site") || p.category === "Landing page" ? "Abrir o site" : "Abrir o sistema"}
+              <span className="sr-only">: {p.title} (abre em nova aba)</span>
             </a>
             <Techs techs={p.techs} />
           </div>
@@ -147,20 +150,19 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
 export default function Projects() {
   const root = useRef<HTMLElement>(null);
 
-  // Rolar para revelar: cada cartão sobe "afundado" no painel e se ergue enquanto a captura
-  // ganha cor e foco. Preso à rolagem, então volta ao estado inicial se a pessoa rolar para cima.
+  // Rolar para revelar: cada cartão sobe "afundado" no painel e se ergue. A captura fica sempre
+  // nítida e colorida: ela é a prova, então não pode aparecer borrada para quem rola rápido.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add(
         {
           motion: "(prefers-reduced-motion: no-preference)",
-          desk: "(min-width: 1024px) and (pointer: fine)",
           tres: "(min-width: 1024px)",
           duas: "(min-width: 768px)",
         },
         (ctx) => {
-          const { motion, desk, tres, duas } = ctx.conditions as Record<string, boolean>;
+          const { motion, tres, duas } = ctx.conditions as Record<string, boolean>;
           if (!motion) return;
           const colunas = tres ? 3 : duas ? 2 : 1;
 
@@ -172,16 +174,10 @@ export default function Projects() {
               defaults: { ease: "none" },
               scrollTrigger: { trigger: item, start: "top 96%", end: "top 50%", scrub: 0.6 },
             });
-            tl.fromTo(item, { y: desce, opacity: 0.25 }, { y: 0, opacity: 1 }, 0)
+            tl.fromTo(item, { y: desce, opacity: 0.4 }, { y: 0, opacity: 1 }, 0)
               .fromTo(q(".nm-pressed"), { opacity: 1 }, { opacity: 0 }, 0.25)
               .fromTo(q(".nm-raised"), { opacity: 0 }, { opacity: 1 }, 0.25)
-              .fromTo(
-                q(".pj-shot"),
-                // Filtros animados pesam no celular; lá a captura só se aproxima.
-                desk ? { filter: "grayscale(1) blur(6px) brightness(0.7)", scale: 1.08 } : { scale: 1.06 },
-                desk ? { filter: "grayscale(0) blur(0px) brightness(1)", scale: 1 } : { scale: 1 },
-                0
-              );
+              .fromTo(q(".pj-shot"), { scale: 1.06 }, { scale: 1 }, 0);
           });
         }
       );
@@ -195,14 +191,17 @@ export default function Projects() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="nm-panel relative rounded-[2rem] px-4 pb-8 pt-12 sm:px-8 md:rounded-[2.5rem] md:px-12 md:pb-14 md:pt-16">
-          <GlassLogo className="pointer-events-none absolute -top-12 right-0 h-36 w-36 sm:-top-20 sm:right-4 sm:h-56 sm:w-56 lg:-top-24 lg:right-10 lg:h-72 lg:w-72" />
+          <GlassLogo className="pointer-events-none absolute hidden lg:-top-24 lg:right-10 lg:block lg:h-72 lg:w-72" />
 
           <Reveal>
-            <div className="max-w-xl pr-28 sm:pr-48 lg:pr-0">
-              <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Projetos</p>
-              <h2 className="mt-4 font-[var(--font-display)] text-[2.1rem] font-light leading-[1.05] sm:text-5xl lg:text-6xl">
-                Trabalhos que já colocamos no ar
+            <div className="max-w-2xl">
+              <p className="text-[13px] font-medium tracking-[0.02em] text-gold">Sites no ar</p>
+              <h2 className="mt-4 font-[var(--font-display)] text-[2.1rem] font-light leading-[1.05] sm:text-5xl lg:text-[3.4rem]">
+                Não acredite na gente. Abra os sites e teste.
               </h2>
+              <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-muted">
+                Todos estão no ar. Clique em qualquer um e navegue como se fosse um cliente, de preferência pelo celular.
+              </p>
             </div>
           </Reveal>
 
@@ -220,6 +219,24 @@ export default function Projects() {
               <ProjectCard key={p.title} p={p} i={i} />
             ))}
           </ul>
+
+          {/* Pedido de orçamento logo depois da prova */}
+          <div className="mt-14 flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 md:flex-row md:items-center">
+            <div>
+              <p className="font-[var(--font-display)] text-xl md:text-2xl">Quer um site assim para o seu negócio?</p>
+              <p className="mt-1 text-sm text-muted">Conte o que você faz e receba valor e prazo, sem compromisso.</p>
+            </div>
+            <Magnetic strength={0.2}>
+              <a
+                href={whatsappLink(budgetMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-shine inline-flex items-center justify-center rounded-lg bg-gold px-6 py-3.5 text-sm font-semibold text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_28px_rgba(212,169,74,0.4)]"
+              >
+                Pedir orçamento no WhatsApp
+              </a>
+            </Magnetic>
+          </div>
         </div>
       </div>
     </section>

@@ -9,6 +9,10 @@ const faqs = [
     a: "O valor depende do que você precisa, como número de páginas, textos e fotos. Você conta o seu projeto pelo WhatsApp e recebe o valor e o prazo antes de fechar, sem compromisso.",
   },
   {
+    q: "Serve para o meu tipo de negócio?",
+    a: "Já colocamos no ar sites para estética automotiva, oficina mecânica, suplementos e clínica de estética. Se o seu cliente procura o serviço no Google e prefere falar pelo WhatsApp, o site é para você.",
+  },
+  {
     q: "Quanto tempo leva para desenvolver um site?",
     a: "Em média, 7 dias para um site institucional ou landing page. Sistemas mais complexos, com integrações e funcionalidades personalizadas, levam de 2 a 3 semanas. O prazo exato é sempre alinhado no início do projeto.",
   },
@@ -38,7 +42,7 @@ export default function Faq() {
       <div className="mx-auto max-w-3xl px-6">
         <p className="text-[13px] font-medium tracking-[0.02em] text-gold mb-4 text-center">Dúvidas frequentes</p>
         <h2 className="font-[var(--font-display)] text-3xl md:text-4xl text-center">
-          Perguntas que recebemos com frequência
+          O que perguntam antes de fechar
         </h2>
 
         <div className="glass-card mt-12 divide-y divide-white/10 px-6 hover:!translate-y-0">
@@ -53,6 +57,7 @@ export default function Faq() {
                 >
                   <span className="font-medium text-sm md:text-base">{item.q}</span>
                   <span
+                    aria-hidden
                     className={`shrink-0 text-gold transition-transform duration-200 ${
                       isOpen ? "rotate-45" : ""
                     }`}

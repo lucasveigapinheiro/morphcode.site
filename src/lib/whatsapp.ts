@@ -1,4 +1,4 @@
-const PHONE = "5511930957162";
+export const PHONE = "5511930957162";
 
 export function whatsappLink(message: string) {
   return `https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`;

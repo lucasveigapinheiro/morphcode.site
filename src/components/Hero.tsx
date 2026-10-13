@@ -5,25 +5,32 @@ import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 import HeroScene from "./HeroScene";
 import CursorLens from "./CursorLens";
-import { LuArrowDown } from "react-icons/lu";
+import { LuArrowDown, LuCheck } from "react-icons/lu";
 
-const lineA = "Seu site profissional".split(" ");
-const lineB = "no ar em cerca de".split(" ");
-const lineC = "7 dias.".split(" ");
+const lineA = "Seu negócio no Google.".split(" ");
+const lineB = "Os clientes no seu WhatsApp.".split(" ");
+const lineC = "Site no ar em cerca de 7 dias.".split(" ");
 
+// Clientes com site no ar, na mesma ordem da seção de projetos.
+const clientes = ["2B Estética Automotiva", "GMG Equilíbrio", "Mecânica Rossi"];
+
+// Cada palavra é separada por um espaço real, para o título copiar e ser lido certo.
+// O título já nasce visível (só desliza um pouco): esconder com opacidade atrasaria o
+// carregamento percebido e a métrica de LCP do Google.
 function Words({ words, start, className = "" }: { words: string[]; start: number; className?: string }) {
   return (
     <span className="block">
       {words.map((w, i) => (
-        <motion.span
-          key={`${w}-${i}`}
-          initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.7, delay: start + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-          className={`inline-block mr-[0.25em] ${className}`}
-        >
-          {w}
-        </motion.span>
+        <span key={`${w}-${i}`}>
+          <motion.span
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6, delay: start + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+            className={`inline-block ${className}`}
+          >
+            {w}
+          </motion.span>{" "}
+        </span>
       ))}
     </span>
   );
@@ -42,7 +49,7 @@ export default function Hero() {
       <CursorLens className="-z-10" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:min-h-[calc(100svh-10rem)] lg:grid-cols-[1fr_1fr]">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:min-h-[calc(100svh-10rem)] lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <motion.a
             href="#produto"
@@ -56,34 +63,24 @@ export default function Hero() {
             <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
           </motion.a>
 
-          <h1 className="font-[var(--font-display)] text-[2.4rem] leading-[1.06] sm:text-5xl lg:text-[3.1rem] xl:text-[3.4rem]">
-            <Words words={lineA} start={0.2} className="font-light text-foreground/65" />
-            <Words words={lineB} start={0.5} className="font-semibold text-foreground" />
-            <Words words={lineC} start={0.8} className="font-semibold gold-gradient-text" />
+          <h1 className="font-[var(--font-display)] text-[2.2rem] leading-[1.06] sm:text-5xl lg:text-[2.8rem] xl:text-[3.1rem]">
+            <Words words={lineA} start={0} className="font-light text-foreground/70" />
+            <Words words={lineB} start={0.15} className="font-semibold text-foreground" />
+            <Words words={lineC} start={0.3} className="font-semibold gold-gradient-text" />
           </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="mt-7 max-w-lg font-mono text-[13px] leading-relaxed text-muted sm:text-sm"
-          >
-            Site para o seu negócio aparecer no Google e receber pedidos de orçamento pelo
-            WhatsApp. Você fala direto com quem faz o site, do briefing à entrega.
-          </motion.p>
+          <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-muted sm:text-base">
+            Para oficinas, estéticas, clínicas e lojas que querem aparecer no Google e receber cliente sem formulário e sem
+            intermediário. Você fala direto com quem faz o site.
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.15 }}
-            className="mt-9 flex flex-col gap-3 sm:flex-row"
-          >
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Magnetic strength={0.2}>
               <a
                 href={whatsappLink(budgetMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-shine inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-6 py-3.5 text-sm font-medium text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_32px_rgba(212,169,74,0.45)]"
+                className="btn-shine inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gold px-6 py-3.5 text-sm font-semibold text-background transition-[background-color,box-shadow] hover:bg-gold-light hover:shadow-[0_0_32px_rgba(212,169,74,0.45)] sm:w-auto"
               >
                 Pedir orçamento no WhatsApp
               </a>
@@ -91,23 +88,36 @@ export default function Hero() {
             <Magnetic strength={0.2}>
               <a
                 href="#projetos"
-                className="glass inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-gold/60"
+                className="glass inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-gold/60 sm:w-auto"
               >
-                Ver projetos reais
+                Ver sites no ar
               </a>
             </Magnetic>
-          </motion.div>
+          </div>
+          <p className="mt-4 flex items-center gap-2 text-[13px] text-muted">
+            <LuCheck className="h-4 w-4 shrink-0 text-gold" aria-hidden />
+            Você recebe valor e prazo antes de fechar. Sem compromisso.
+          </p>
+
+          <div className="mt-10 border-t border-white/10 pt-5">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-muted/80">Sites no ar de clientes</p>
+            <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-foreground/85">
+              {clientes.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <HeroScene />
       </div>
 
       <a
-        href="#produto"
-        aria-label="Rolar para o próximo bloco"
+        href="#projetos"
+        aria-label="Rolar para os projetos"
         className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-2 font-mono text-[11px] text-muted transition-colors hover:text-gold lg:flex"
       >
-        <LuArrowDown className="h-3.5 w-3.5 animate-bounce" aria-hidden /> role
+        <LuArrowDown className="h-3.5 w-3.5 motion-safe:animate-bounce" aria-hidden /> role
       </a>
     </section>
   );

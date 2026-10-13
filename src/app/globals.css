@@ -64,6 +64,12 @@ h1 {
   line-height: 1.05;
 }
 
+/* Toque: sem a espera do duplo toque para zoom nos links e botões */
+a,
+button {
+  touch-action: manipulation;
+}
+
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
@@ -85,15 +91,6 @@ h1 {
   color: #0a0a0a;
 }
 
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 
 @keyframes float-slow {
   0%, 100% {
@@ -322,29 +319,6 @@ h1 {
   .glass-strong.rounded-3xl {
     border-radius: 1rem;
   }
-}
-
-/* Rolagem lateral sem barra visível */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Alinha o primeiro cartão com o conteúdo centralizado de 72rem */
-@media (min-width: 1200px) {
-  .pr-track {
-    padding-inline: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
-    scroll-padding-inline: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
-  }
-}
-
-.pr-track.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  scroll-behavior: auto;
 }
 
 /* Bolha de vidro só com mouse */

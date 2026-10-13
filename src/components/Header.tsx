@@ -7,10 +7,10 @@ import Magnetic from "./Magnetic";
 
 const links = [
   { href: "#produto", label: "Morph Clínica" },
-  { href: "#projetos", label: "Projetos" },
-  { href: "#servicos", label: "Serviços" },
+  { href: "#projetos", label: "Sites no ar" },
+  { href: "#servicos", label: "O que você recebe" },
+  { href: "#como-funciona", label: "Como funciona" },
   { href: "#duvidas", label: "Dúvidas" },
-  { href: "#contato", label: "Contato" },
 ];
 
 export default function Header() {

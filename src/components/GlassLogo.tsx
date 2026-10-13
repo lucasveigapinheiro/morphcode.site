@@ -22,6 +22,8 @@ export default function GlassLogo({ className = "" }: { className?: string }) {
   useEffect(() => {
     const el = box.current;
     if (!el) return;
+    // Só em tela grande: no celular o objeto seria pequeno e o three.js pesaria no 4G.
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
     let cancelado = false;
     let limpar = () => {};
 
