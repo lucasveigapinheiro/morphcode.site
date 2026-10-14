@@ -1,16 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import MorphLogo from "./MorphLogo";
 import { useEffect, useState } from "react";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Magnetic from "./Magnetic";
 
 const links = [
-  { href: "#produto", label: "Morph Clínica" },
-  { href: "#projetos", label: "Sites no ar" },
-  { href: "#servicos", label: "O que você recebe" },
-  { href: "#como-funciona", label: "Como funciona" },
-  { href: "#duvidas", label: "Dúvidas" },
+  { href: "/#produto", label: "Morph Clínica" },
+  { href: "/#projetos", label: "Sites no ar" },
+  { href: "/#servicos", label: "O que você recebe" },
+  { href: "/#como-funciona", label: "Como funciona" },
+  { href: "/#duvidas", label: "Dúvidas" },
 ];
 
 export default function Header() {
@@ -31,12 +32,12 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto max-w-6xl px-6 h-18 py-3 flex items-center justify-between">
-        <a href="#topo" className="flex items-center gap-2.5">
+        <Link href="/#topo" className="flex items-center gap-2.5">
           <MorphLogo glow={false} className="h-10 w-10 shrink-0" label="Morph Code" />
           <span className="font-[var(--font-display)] text-lg tracking-wide">
             MORPH <span className="text-gold">CODE</span>
           </span>
-        </a>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted">
           {links.map((l) => (

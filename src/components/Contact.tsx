@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { whatsappLink, budgetMessage } from "@/lib/whatsapp";
 import Reveal from "./Reveal";
 import Magnetic from "./Magnetic";
@@ -45,6 +46,22 @@ export default function Contact() {
       </div>
 
       <footer className="mt-24 border-t border-border">
+        <nav aria-label="Serviços" className="mx-auto max-w-6xl px-6 pt-10">
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted sm:justify-start">
+            {[
+              { href: "/criacao-de-sites", label: "Criação de sites" },
+              { href: "/landing-page", label: "Landing page" },
+              { href: "/sistemas-web", label: "Sistemas web" },
+              { href: "/clinicas", label: "Sistema para clínicas de estética" },
+            ].map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="hover:text-gold">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
             <Image src="/logo.jpeg" alt="Morph Code" width={28} height={28} className="rounded-full" />
@@ -61,6 +78,9 @@ export default function Contact() {
             </a>
             <a href="mailto:morphcode.dev@gmail.com" className="hover:text-gold">
               E-mail
+            </a>
+            <a href="https://www.instagram.com/morphcode.dev" target="_blank" rel="noopener noreferrer" className="hover:text-gold">
+              Instagram
             </a>
           </div>
         </div>

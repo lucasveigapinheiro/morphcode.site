@@ -1,6 +1,7 @@
 "use client";
 
 import { LuGlobe, LuMessageCircle, LuPenTool, LuSearch, LuSmartphone, LuWrench } from "react-icons/lu";
+import Link from "next/link";
 import Reveal from "./Reveal";
 
 // O que vem no site, escrito pelo lado de quem compra: o que cada item faz pelo negócio.
@@ -37,10 +38,19 @@ export default function Services() {
         </ul>
 
         <p className="mt-12 text-sm text-muted">
-          Precisa de um sistema, como agenda, ordens de serviço ou painel de gestão?{" "}
-          <a href="#projetos" className="text-foreground underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold">
-            Também fazemos, veja nos projetos.
-          </a>
+          Veja em detalhe:{" "}
+          <Link href="/criacao-de-sites" className="text-foreground underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold">
+            criação de sites
+          </Link>
+          ,{" "}
+          <Link href="/landing-page" className="text-foreground underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold">
+            landing page
+          </Link>{" "}
+          e{" "}
+          <Link href="/sistemas-web" className="text-foreground underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold">
+            sistemas web sob medida
+          </Link>
+          , como agenda, ordens de serviço e painel de gestão.
         </p>
       </div>
     </section>

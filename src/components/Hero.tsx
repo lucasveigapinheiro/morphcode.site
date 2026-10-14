@@ -7,9 +7,9 @@ import HeroScene from "./HeroScene";
 import CursorLens from "./CursorLens";
 import { LuArrowDown, LuCheck } from "react-icons/lu";
 
-const lineA = "Seu negócio no Google.".split(" ");
+const lineA = "Criação de sites para o seu negócio.".split(" ");
 const lineB = "Os clientes no seu WhatsApp.".split(" ");
-const lineC = "Site no ar em cerca de 7 dias.".split(" ");
+const lineC = "No ar em cerca de 7 dias.".split(" ");
 
 // Clientes com site no ar, na mesma ordem da seção de projetos.
 const clientes = ["2B Estética Automotiva", "GMG Equilíbrio", "Mecânica Rossi"];
@@ -70,8 +70,8 @@ export default function Hero() {
           </h1>
 
           <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-muted sm:text-base">
-            Para oficinas, estéticas, clínicas e lojas que querem aparecer no Google e receber cliente sem formulário e sem
-            intermediário. Você fala direto com quem faz o site.
+            Sites para oficinas, estéticas, clínicas e lojas aparecerem no Google e receberem cliente sem formulário e sem
+            intermediário. De São Bernardo do Campo para todo o Brasil, falando direto com quem faz.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">

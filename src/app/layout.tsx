@@ -24,9 +24,9 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const title = "Seu negócio no Google, os clientes no seu WhatsApp | Morph Code";
+const title = "Criação de Sites em São Bernardo do Campo | Morph Code";
 const description =
-  "Site sob medida para o seu negócio aparecer no Google e receber pedidos de orçamento pelo WhatsApp. No ar em cerca de 7 dias, falando direto com quem faz.";
+  "Criação de sites sob medida para o seu negócio aparecer no Google e receber orçamentos pelo WhatsApp. No ar em cerca de 7 dias. Atendemos todo o Brasil.";
 
 // Dados da empresa para o Google e para assistentes de IA: quem é, o que faz, onde atende e como falar.
 const empresa = {

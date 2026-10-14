@@ -11,6 +11,11 @@
 - Suporte depois da entrega e planos de manutenção
 - Sistemas web sob medida: agenda, ordens de serviço, painel de gestão (2 a 3 semanas)
 
+Páginas de cada serviço:
+- Criação de sites: https://morphcode.com.br/criacao-de-sites
+- Landing page: https://morphcode.com.br/landing-page
+- Sistemas web sob medida: https://morphcode.com.br/sistemas-web
+
 ## Morph Clínica
 
 Sistema para clínicas de estética: ficha de anamnese assinada no celular da paciente, prontuário com alertas, agenda com lembretes pelo WhatsApp e adequação à LGPD, com a marca da clínica. Funciona no navegador e pode ser instalado como aplicativo.
