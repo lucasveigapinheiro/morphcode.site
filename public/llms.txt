@@ -1,0 +1,31 @@
+# Morph Code
+
+> Morph Code faz sites e sistemas web sob medida para pequenos negócios no Brasil. O foco é o negócio aparecer no Google e receber pedidos de orçamento pelo WhatsApp. Um site institucional ou landing page fica no ar em cerca de 7 dias, e o cliente fala direto com quem desenvolve.
+
+## Serviços
+
+- Site institucional e landing page sob medida, com design da marca do cliente (sem template pronto)
+- Botão de WhatsApp em todas as páginas, para o cliente pedir orçamento sem formulário
+- Estrutura para o Google e SEO local, para aparecer para quem busca o serviço na região
+- Domínio, hospedagem e publicação inclusos
+- Suporte depois da entrega e planos de manutenção
+- Sistemas web sob medida: agenda, ordens de serviço, painel de gestão (2 a 3 semanas)
+
+## Morph Clínica
+
+Sistema para clínicas de estética: ficha de anamnese assinada no celular da paciente, prontuário com alertas, agenda com lembretes pelo WhatsApp e adequação à LGPD, com a marca da clínica. Funciona no navegador e pode ser instalado como aplicativo.
+
+- Plano mensal: R$ 149/mês + implantação de R$ 497, sem fidelidade
+- Licença vitalícia: R$ 2.700 (à vista ou 3x), depois R$ 97/mês de hospedagem
+- Página: https://morphcode.com.br/clinicas
+
+## Projetos entregues
+
+Estética automotiva, oficina mecânica, loja de suplementos, clínica de estética, sistema de ordens de serviço.
+
+## Contato
+
+- WhatsApp: +55 11 93095-7162 (https://wa.me/5511930957162)
+- E-mail: morphcode.dev@gmail.com
+- Site: https://morphcode.com.br
+- Orçamento sem compromisso: o valor e o prazo são enviados antes de fechar.

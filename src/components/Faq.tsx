@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { LuCheck, LuSendHorizontal } from "react-icons/lu";
 import { whatsappLink, generalMessage } from "@/lib/whatsapp";
+import { jsonLd } from "@/lib/site";
 import Reveal from "./Reveal";
 
 const faqs = [
@@ -130,7 +131,7 @@ export default function Faq() {
 
   return (
     <section id="duvidas" className="section-border py-24 md:py-28">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqSchema)} />
 
       <div className="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
         <div className="min-w-0">

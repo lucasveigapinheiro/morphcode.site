@@ -6,7 +6,7 @@ import Spotlight from "@/components/Spotlight";
 import ScrollProgress from "@/components/ScrollProgress";
 import ConversionTracking from "@/components/ConversionTracking";
 import { Analytics } from "@vercel/analytics/next";
-import { siteUrl } from "@/lib/site";
+import { jsonLd, siteUrl } from "@/lib/site";
 import { PHONE } from "@/lib/whatsapp";
 
 const inter = Inter({
@@ -28,16 +28,51 @@ const title = "Seu negócio no Google, os clientes no seu WhatsApp | Morph Code"
 const description =
   "Site sob medida para o seu negócio aparecer no Google e receber pedidos de orçamento pelo WhatsApp. No ar em cerca de 7 dias, falando direto com quem faz.";
 
-// Dados da empresa para o Google (resultado com nome, telefone e e-mail).
+// Dados da empresa para o Google e para assistentes de IA: quem é, o que faz, onde atende e como falar.
 const empresa = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Morph Code",
-  description,
-  url: siteUrl,
-  image: `${siteUrl}/logo.jpeg`,
-  telephone: `+${PHONE}`,
-  email: "morphcode.dev@gmail.com",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${siteUrl}/#empresa`,
+      name: "Morph Code",
+      description,
+      url: siteUrl,
+      logo: `${siteUrl}/logo.jpeg`,
+      image: `${siteUrl}/logo.jpeg`,
+      telephone: `+${PHONE}`,
+      email: "morphcode.dev@gmail.com",
+      address: { "@type": "PostalAddress", addressRegion: "SP", addressCountry: "BR" },
+      areaServed: { "@type": "Country", name: "Brasil" },
+      priceRange: "$$",
+      knowsAbout: ["Criação de sites", "Landing pages", "SEO local", "Sistemas web sob medida", "Integração com WhatsApp"],
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: `+${PHONE}`,
+        contactType: "sales",
+        availableLanguage: "Portuguese",
+      },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Serviços",
+        itemListElement: [
+          "Site institucional sob medida",
+          "Landing page para receber orçamentos pelo WhatsApp",
+          "SEO local para aparecer no Google",
+          "Sistemas web sob medida (agenda, ordens de serviço, painel de gestão)",
+          "Morph Clínica, sistema para clínicas de estética",
+        ].map((name) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name } })),
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#site`,
+      url: siteUrl,
+      name: "Morph Code",
+      inLanguage: "pt-BR",
+      publisher: { "@id": `${siteUrl}/#empresa` },
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -49,6 +84,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title,
   description,
+  applicationName: "Morph Code",
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  twitter: { card: "summary_large_image", title, description },
   openGraph: {
     title,
     description,
@@ -80,7 +123,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MotionProvider>{children}</MotionProvider>
         <ConversionTracking />
         <Analytics />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(empresa) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(empresa)} />
       </body>
     </html>
   );

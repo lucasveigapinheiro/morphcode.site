@@ -31,6 +31,7 @@ import {
   type Tela,
 } from "@/lib/clinica";
 import { clinicaMessage, planoMessage, whatsappLink } from "@/lib/whatsapp";
+import { jsonLd, siteUrl } from "@/lib/site";
 
 const titulo = `${PRODUTO} | Sistema para clínicas de estética`;
 const descricao =
@@ -39,7 +40,34 @@ const descricao =
 export const metadata: Metadata = {
   title: titulo,
   description: descricao,
+  alternates: { canonical: "/clinicas" },
   openGraph: { title: titulo, description: descricao, url: "/clinicas", siteName: "Morph Code", locale: "pt_BR", type: "website" },
+  twitter: { card: "summary_large_image", title: titulo, description: descricao },
+};
+
+// O produto com planos e preços, e as perguntas frequentes, para o Google e assistentes de IA.
+const dadosEstruturados = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: PRODUTO,
+      description: descricao,
+      url: `${siteUrl}/clinicas`,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web, Android, iOS, Windows, macOS",
+      inLanguage: "pt-BR",
+      provider: { "@id": `${siteUrl}/#empresa` },
+      offers: [
+        { "@type": "Offer", name: "Plano mensal", price: "149", priceCurrency: "BRL", description: "R$ 149/mês + implantação de R$ 497" },
+        { "@type": "Offer", name: "Licença vitalícia", price: "2700", priceCurrency: "BRL", description: "Depois R$ 97/mês de hospedagem" },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqClinica.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
 };
 
 const passosFicha: { tela: Tela; titulo: string; texto: string }[] = [
@@ -526,6 +554,7 @@ export default function ClinicasPage() {
           </p>
         </section>
       </main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(dadosEstruturados)} />
     </div>
   );
 }
