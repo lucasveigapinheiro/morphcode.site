@@ -10,7 +10,7 @@ import { track } from "@vercel/analytics";
 export default function ConversionTracking() {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href*="api.whatsapp.com"]');
+      const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="/whatsapp"], a[href*="api.whatsapp.com"]');
       if (!link) return;
       const origem =
         link.closest<HTMLElement>("[data-origem]")?.dataset.origem ||

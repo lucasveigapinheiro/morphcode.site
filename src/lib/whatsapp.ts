@@ -1,7 +1,14 @@
 export const PHONE = "5511930957162";
 
-export function whatsappLink(message: string) {
+/** Endereço final no WhatsApp, já com a mensagem. */
+export function whatsappDireto(message: string) {
   return `https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`;
+}
+
+// Os botões passam por /whatsapp antes de abrir a conversa: é a página que o Google Ads
+// usa para contar o pedido de orçamento como conversão.
+export function whatsappLink(message: string) {
+  return `/whatsapp?texto=${encodeURIComponent(message)}`;
 }
 
 export const budgetMessage = `Olá, Morph Code! Vim pelo site e gostaria de um orçamento.`;
