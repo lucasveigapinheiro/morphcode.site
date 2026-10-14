@@ -191,7 +191,7 @@ export default function Projects() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="nm-panel relative rounded-[2rem] px-4 pb-8 pt-12 sm:px-8 md:rounded-[2.5rem] md:px-12 md:pb-14 md:pt-16">
-          <GlassLogo className="pointer-events-none absolute hidden lg:-top-24 lg:right-10 lg:block lg:h-72 lg:w-72" />
+          <GlassLogo className="pointer-events-none absolute -top-16 right-2 h-32 w-32 sm:-top-20 sm:right-6 sm:h-36 sm:w-36 lg:-top-24 lg:right-10 lg:h-72 lg:w-72" />
 
           <Reveal>
             <div className="max-w-2xl">

@@ -22,8 +22,6 @@ export default function GlassLogo({ className = "" }: { className?: string }) {
   useEffect(() => {
     const el = box.current;
     if (!el) return;
-    // Só em tela grande: no celular o objeto seria pequeno e o three.js pesaria no 4G.
-    if (!window.matchMedia("(min-width: 1024px)").matches) return;
     let cancelado = false;
     let limpar = () => {};
 
@@ -39,7 +37,9 @@ export default function GlassLogo({ className = "" }: { className?: string }) {
       } catch {
         return; // Sem WebGL: o objeto é só decoração, a seção funciona sem ele.
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      // No celular o objeto é pequeno: densidade menor pesa menos na GPU sem perder nitidez visível.
+      const pequeno = !window.matchMedia("(min-width: 1024px)").matches;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, pequeno ? 1.5 : 2));
       renderer.setClearColor(0x000000, 0);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.domElement.style.width = "100%";
