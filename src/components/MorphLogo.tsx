@@ -70,13 +70,25 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
         if (halo) hover.to(halo, { opacity: 1, scale: 1.25 }, 0);
         if (sheen) hover.fromTo(sheen, { xPercent: -140 }, { xPercent: 140, duration: 1.1, ease: "power2.inOut" }, 0);
 
-        const enter = contextSafe((e?: Event) => {
-          hover.timeScale(1).play();
-          if (e && (e as PointerEvent).pointerType === "touch") onPress?.();
-        });
+        const enter = contextSafe(() => hover.timeScale(1).play());
         const leave = contextSafe(() => hover.timeScale(1.4).reverse());
-        el.addEventListener("pointerenter", enter);
-        el.addEventListener("pointerleave", leave);
+        // Mouse/caneta: pointer events. Toque: no iOS o pointer event é cancelado no começo do
+        // "segurar" (callout/seleção), então o toque usa touchstart/touchend, que seguem até soltar.
+        const pEnter = (e: PointerEvent) => {
+          if (e.pointerType !== "touch") enter();
+        };
+        const pLeave = (e: PointerEvent) => {
+          if (e.pointerType !== "touch") leave();
+        };
+        const tStart = contextSafe(() => {
+          hover.timeScale(1).play();
+          onPress?.();
+        });
+        el.addEventListener("pointerenter", pEnter);
+        el.addEventListener("pointerleave", pLeave);
+        el.addEventListener("touchstart", tStart, { passive: true });
+        el.addEventListener("touchend", leave);
+        el.addEventListener("touchcancel", leave);
         el.addEventListener("focus", enter);
         el.addEventListener("blur", leave);
 
@@ -88,6 +100,7 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
           rx = gsap.quickTo(s, "rotationX", { duration: 0.6, ease: "power3" });
           ry = gsap.quickTo(s, "rotationY", { duration: 0.6, ease: "power3" });
           onMove = (e) => {
+            if (e.pointerType === "touch") return;
             const r = el.getBoundingClientRect();
             const px = (e.clientX - r.left) / r.width - 0.5;
             const py = (e.clientY - r.top) / r.height - 0.5;
@@ -103,8 +116,11 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
         }
 
         return () => {
-          el.removeEventListener("pointerenter", enter);
-          el.removeEventListener("pointerleave", leave);
+          el.removeEventListener("pointerenter", pEnter);
+          el.removeEventListener("pointerleave", pLeave);
+          el.removeEventListener("touchstart", tStart);
+          el.removeEventListener("touchend", leave);
+          el.removeEventListener("touchcancel", leave);
           el.removeEventListener("focus", enter);
           el.removeEventListener("blur", leave);
           if (onMove) el.removeEventListener("pointermove", onMove);
@@ -122,7 +138,7 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
       role="img"
       aria-label={label}
       onContextMenu={(e) => e.preventDefault()}
-      style={{ touchAction: "pan-y", WebkitTouchCallout: "none", WebkitUserSelect: "none", userSelect: "none" }}
+      style={{ touchAction: "pan-y", WebkitTouchCallout: "none", WebkitUserSelect: "none", userSelect: "none", WebkitTapHighlightColor: "transparent" }}
     >
       {glow && (
         <div
