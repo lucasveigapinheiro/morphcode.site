@@ -44,12 +44,12 @@ export const projects: Project[] = [
     techs: ["HTML5", "CSS3", "JavaScript"],
   },
   {
-    title: "Sistema para Clínica Estética",
-    category: "Sistema sob medida",
-    description: "Painel de gestão com agenda de consultas, cadastro e histórico de pacientes, pensado para a doutora e a recepção.",
-    href: "https://paty-clinica.vercel.app/pages/dashboard.html",
+    title: "Morph Clínica (Gestão para Clínicas)",
+    category: "SaaS / Sistema sob medida",
+    description: "Plataforma clínica completa: anamnese assinada no celular, controle de estoque com FEFO e validades, financeiro com taxas de maquininha e novo estilo caderno de bem-estar.",
+    href: "/clinicas",
     image: "/projects/labessie.jpg",
-    techs: ["HTML5", "CSS3", "JavaScript"],
+    techs: ["Next.js", "Node.js", "Turso LibSQL", "Tailwind CSS"],
   },
   {
     title: "Orçamento Pessoal",

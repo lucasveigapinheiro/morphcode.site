@@ -11,9 +11,10 @@ import { APRESENTACAO_PDF, DEMO, PRODUTO } from "@/lib/clinica";
 
 const pontos = [
   "Ficha de anamnese assinada no celular da paciente",
-  "Alertas de alergia e contraindicação no prontuário",
-  "Agenda com lembretes pelo WhatsApp",
-  "Com a marca, as cores e os serviços da clínica",
+  "Estoque com regra FEFO (baixa automática do lote que vence antes)",
+  "Controle financeiro com taxas de maquininha e sinal de reserva",
+  "Alertas clínicos de alergia e contraindicações no prontuário",
+  "Novo estilo caderno de bem-estar com o monograma da sua clínica",
 ];
 
 export default function ProdutoDestaque() {
@@ -39,11 +40,10 @@ export default function ProdutoDestaque() {
             Produto principal
           </p>
           <h2 className="font-[var(--font-display)] text-3xl leading-tight md:text-5xl">
-            <span className="clinic-gradient-text">{PRODUTO}</span>: o sistema que tira a ficha de anamnese do papel.
+            <span className="clinic-gradient-text">{PRODUTO}</span>: gestão estética completa sem complicação.
           </h2>
-          <p className="mt-5 max-w-lg text-muted">
-            Feito para clínicas de estética: a paciente preenche e assina pelo celular, e a doutora vê os riscos
-            antes do procedimento. Prontuário, agenda e LGPD em um só lugar.
+          <p className="mt-5 max-w-lg text-muted leading-relaxed">
+            Feito para clínicas de estética: a paciente preenche a anamnese no celular, o estoque protege suas ampolas com a regra FEFO e o financeiro calcula o lucro líquido real com taxas de maquininha.
           </p>
 
           <ul className="mt-7 space-y-3">
@@ -67,7 +67,7 @@ export default function ProdutoDestaque() {
                 href="/clinicas"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-eucalipto px-7 py-3.5 text-sm font-medium text-white transition-[background-color,box-shadow] hover:bg-[#3b7165] hover:shadow-[0_0_30px_rgba(95,160,145,0.45)]"
               >
-                Conhecer o sistema <LuArrowRight className="h-4 w-4" aria-hidden />
+                Conhecer o sistema completo <LuArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </Magnetic>
             <Magnetic strength={0.25}>

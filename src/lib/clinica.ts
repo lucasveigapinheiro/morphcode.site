@@ -50,7 +50,13 @@ export const planos: Plano[] = [
     preco: "R$ 149/mês",
     detalhe: "+ implantação de R$ 497 (paga uma vez)",
     cta: "Quero o plano mensal",
-    itens: ["Hospedagem e backup", "Suporte e atualizações inclusos", "Sem fidelidade: aviso de 30 dias", "Após 48 meses, vira licença"],
+    itens: [
+      "Prontuário com ficha digital no celular",
+      "Estoque FEFO e Financeiro inclusos",
+      "Hospedagem, backup e suporte inclusos",
+      "Sem fidelidade: aviso de 30 dias",
+      "Após 48 meses, vira licença",
+    ],
     destaque: false,
   },
   {
@@ -59,7 +65,13 @@ export const planos: Plano[] = [
     preco: "R$ 2.700",
     detalhe: "à vista ou em 3x · depois R$ 97/mês de hospedagem",
     cta: "Quero a licença",
-    itens: ["Implantação e personalização", "12 meses de hospedagem e suporte", "Licença de uso sem prazo", "Menor custo no longo prazo"],
+    itens: [
+      "Implantação e personalização da marca",
+      "Todos os módulos: Anamnese, Estoque e Financeiro",
+      "12 meses de hospedagem e suporte",
+      "Licença de uso sem prazo de validade",
+      "Menor custo no longo prazo",
+    ],
     destaque: true,
   },
 ];
@@ -104,12 +116,36 @@ export const faqClinica = [
     a: "Não. O sistema abre no navegador do computador, do tablet e do celular. Se quiser, você instala como aplicativo em poucos toques, direto do navegador, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
   },
   {
+    q: "Como funciona o controle de estoque com a regra FEFO?",
+    a: "O sistema organiza os insumos e ampolas pelo lote que vence primeiro (FEFO — First Expire, First Out). Ao dar baixa em um procedimento, o sistema prioriza automaticamente o lote mais antigo para evitar que produtos caros (toxinas, preenchedores, bioestimuladores) expirem no armário. Lotes vencidos têm a saída bloqueada para atendimento e exigem descarte formal com motivo registrado.",
+  },
+  {
+    q: "O estoque avisa quando preciso comprar produtos?",
+    a: "Sim. Para cada insumo você define um estoque mínimo e um estoque ideal. O painel calcula a sugestão de compra em tempo real, informando exatamente quantas unidades adquirir para não faltar produto e nem empatar dinheiro desnecessário.",
+  },
+  {
+    q: "Como o sistema financeiro calcula as taxas da minha maquininha?",
+    a: "Você cadastra as taxas praticadas pela sua maquininha para débito, crédito à vista e parcelado (2x a 12x). Ao registrar um pagamento, o sistema calcula na hora o valor líquido que realmente cai na sua conta e grava essa taxa no histórico, garantindo que o fluxo de caixa reflita a realidade contábil.",
+  },
+  {
+    q: "Posso cobrar sinal para garantir o agendamento da paciente?",
+    a: "Sim. O sistema permite registrar um sinal no ato da marcação (ex.: via PIX) e deixar o valor restante provisionado para a data da consulta, mantendo ambos vinculados ao mesmo agendamento para a recepção não se perder.",
+  },
+  {
     q: "A ficha assinada no celular tem valor?",
     a: "Cada ficha guarda a assinatura, a data, a hora e uma cópia exata dos termos e das perguntas que a paciente viu, com um código de verificação. Os textos jurídicos são ajustáveis e devem ser revisados pela assessoria da clínica.",
   },
   {
+    q: "Minha clínica é obrigada a usar todos os módulos?",
+    a: "Não. Na tela de Configurações você ativa ou desativa Estoque e Financeiro com um clique. Se você prefere começar apenas com prontuário digital e agenda, os outros módulos ficam ocultos para manter a interface o mais enxuta possível.",
+  },
+  {
     q: "Posso usar as perguntas da minha ficha de papel?",
     a: "Sim. Na implantação passamos a sua ficha para o sistema e, depois, você mesma cria, edita ou remove perguntas na tela de configurações.",
+  },
+  {
+    q: "Como funciona o novo estilo e a personalização da marca?",
+    a: "O sistema segue a direção de um caderno de bem-estar elegante, com paleta botânica acolhedora (Eucalipto, Argila e Porcelana) e tipografia refinada. Você pode personalizar as cores da clínica, logo, foto e o selo monograma de botica com as iniciais da sua marca.",
   },
   {
     q: "E se eu quiser sair?",

@@ -15,10 +15,20 @@ import {
   LuArchive,
   LuMonitor,
   LuPlus,
+  LuBoxes,
+  LuWallet,
+  LuPalette,
+  LuSparkles,
+  LuShieldCheck,
+  LuTrendingUp,
 } from "react-icons/lu";
 import { FaAndroid, FaApple, FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
 import SlideCarousel from "@/components/clinica/SlideCarousel";
+import TestePaciente from "@/components/clinica/TestePaciente";
+import MockupEstoque from "@/components/clinica/MockupEstoque";
+import MockupFinanceiro from "@/components/clinica/MockupFinanceiro";
+import MockupEstilo from "@/components/clinica/MockupEstilo";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import {
   APRESENTACAO_PDF,
@@ -33,9 +43,9 @@ import {
 import { clinicaMessage, planoMessage, whatsappLink } from "@/lib/whatsapp";
 import { jsonLd, siteUrl } from "@/lib/site";
 
-const titulo = `${PRODUTO} | Sistema para clínicas de estética`;
+const titulo = `${PRODUTO} | Sistema Completo para Clínicas de Estética`;
 const descricao =
-  "Ficha de anamnese assinada no celular, prontuário com alertas, agenda com lembretes pelo WhatsApp e LGPD, com a marca da sua clínica.";
+  "Ficha de anamnese assinada no celular da paciente, estoque inteligente por lote e validade (FEFO), controle financeiro com taxas de maquininha e novo estilo caderno de bem-estar.";
 
 export const metadata: Metadata = {
   title: titulo,
@@ -59,8 +69,8 @@ const dadosEstruturados = {
       inLanguage: "pt-BR",
       provider: { "@id": `${siteUrl}/#empresa` },
       offers: [
-        { "@type": "Offer", name: "Plano mensal", price: "149", priceCurrency: "BRL", description: "R$ 149/mês + implantação de R$ 497" },
-        { "@type": "Offer", name: "Licença vitalícia", price: "2700", priceCurrency: "BRL", description: "Depois R$ 97/mês de hospedagem" },
+        { "@type": "Offer", name: "Plano mensal", price: "149", priceCurrency: "BRL", description: "R$ 149/mês + implantação de R$ 497 (estoque e financeiro inclusos)" },
+        { "@type": "Offer", name: "Licença vitalícia", price: "2700", priceCurrency: "BRL", description: "Depois R$ 97/mês de hospedagem (estoque e financeiro inclusos)" },
       ],
     },
     {
@@ -80,7 +90,7 @@ const seguranca = [
   { icon: LuLock, titulo: "Ficha que não se altera", texto: "Cada ficha assinada recebe um código de verificação e fica guardada como foi enviada." },
   { icon: LuFileText, titulo: "Termos inclusos", texto: "Aviso de privacidade, termo de consentimento e declaração de veracidade." },
   { icon: LuCamera, titulo: "Uso de imagem", texto: "Autorização separada para prontuário e divulgação, com registro de revogação." },
-  { icon: LuHistory, titulo: "Histórico de acessos", texto: "Registro de quem viu, alterou ou enviou cada informação." },
+  { icon: LuHistory, titulo: "Histórico de acessos e auditoria", texto: "Registro de quem viu, alterou ou movimentou valores e prontuários." },
   { icon: LuArchive, titulo: "Guarda de 20 anos", texto: "Paciente é arquivada, nunca apagada, como exige a lei do prontuário." },
   { icon: LuCloudDownload, titulo: "Backup em 1 clique", texto: "Cópia completa de todos os dados, guardada onde a clínica quiser." },
 ];
@@ -133,11 +143,13 @@ export default function ClinicasPage() {
               <span className="font-fraunces text-base text-grafite">{PRODUTO}</span>
             </span>
           </Link>
-          <nav className="hidden items-center gap-7 text-sm text-grafite/65 md:flex">
-            <a href="#como-funciona" className="hover:text-eucalipto">Como funciona</a>
-            <a href="#demo" className="hover:text-eucalipto">Demonstração</a>
-            <a href="#recursos" className="hover:text-eucalipto">Recursos</a>
-            <a href="#planos" className="hover:text-eucalipto">Planos</a>
+          <nav className="hidden items-center gap-6 text-sm text-grafite/65 lg:flex">
+            <a href="#como-funciona" className="hover:text-eucalipto transition-colors">Como funciona</a>
+            <a href="#estoque" className="hover:text-eucalipto transition-colors">Estoque FEFO</a>
+            <a href="#financeiro" className="hover:text-eucalipto transition-colors">Financeiro</a>
+            <a href="#estilo" className="hover:text-eucalipto transition-colors">Novo estilo</a>
+            <a href="#demo" className="hover:text-eucalipto transition-colors">Demonstração</a>
+            <a href="#planos" className="hover:text-eucalipto transition-colors">Planos</a>
           </nav>
           <a
             href={whatsappLink(clinicaMessage)}
@@ -153,7 +165,7 @@ export default function ClinicasPage() {
       </header>
 
       <main>
-        {/* Abertura */}
+        {/* Abertura (Hero) */}
         <section className="relative overflow-hidden">
           <div
             aria-hidden
@@ -167,13 +179,19 @@ export default function ClinicasPage() {
           />
           <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 pb-20 pt-14 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
             <Reveal>
-              <Eyebrow>Sistema para clínicas de estética</Eyebrow>
-              <h1 className="font-fraunces text-[2.6rem] leading-[1.05] tracking-tight md:text-6xl">
-                A ficha de anamnese sai do papel e <em className="text-eucalipto">avisa antes</em> do procedimento.
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className="rounded-full bg-eucalipto/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-eucalipto">
+                  Sistema de Gestão Clínica & Estética
+                </span>
+                <span className="rounded-full border border-argila/30 bg-argila/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-argila">
+                  Novidades: Estoque FEFO & Financeiro
+                </span>
+              </div>
+              <h1 className="font-fraunces text-[2.5rem] leading-[1.08] tracking-tight md:text-5xl lg:text-6xl">
+                A ficha sai do papel, o estoque <em className="text-eucalipto">avisa antes</em> e o financeiro calcula cada taxa.
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-grafite/70">
-                A paciente preenche e assina no celular. Alergias e contraindicações aparecem em destaque no prontuário.
-                Agenda, lembretes e LGPD, tudo com a marca da sua clínica.
+              <p className="mt-6 max-w-xl text-lg text-grafite/75 leading-relaxed">
+                A paciente preenche e assina no celular. O estoque prioriza o lote que vence primeiro (FEFO) para não perder ampolas caras. O financeiro desconta taxas de maquininha e controla sinais de agendamento. Tudo com o novo visual elegante <strong className="text-eucalipto font-medium">caderno de bem-estar</strong> e a marca da sua clínica.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <BotaoWhats texto="Quero uma demonstração" mensagem={clinicaMessage} />
@@ -186,8 +204,14 @@ export default function ClinicasPage() {
                   Explorar o sistema <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/60">
-                {["Funciona no navegador", "Vira app no celular", "A partir de R$ 149/mês"].map((t) => (
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/65">
+                {[
+                  "Ficha digital no celular",
+                  "Estoque FEFO e validades",
+                  "Financeiro com taxas de cartão",
+                  "Caderno de bem-estar",
+                  "A partir de R$ 149/mês",
+                ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
@@ -215,12 +239,13 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Como funciona */}
+        {/* Como funciona a ficha */}
         <section id="como-funciona" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto max-w-6xl px-6">
             <Reveal className="max-w-2xl">
-              <Eyebrow>Como funciona</Eyebrow>
+              <Eyebrow>Anamnese digital</Eyebrow>
               <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">A ficha no celular da paciente, em 3 passos.</h2>
+              <p className="mt-4 text-grafite/70">Sem aplicativo para a paciente baixar. Ela abre o link pelo WhatsApp, responde as perguntas com toque confortável e assina com a ponta do dedo.</p>
             </Reveal>
             <div className="mt-14 grid gap-10 md:grid-cols-3">
               {passosFicha.map((p, i) => (
@@ -247,26 +272,196 @@ export default function ClinicasPage() {
                 </Reveal>
               ))}
             </div>
+
+            {/* Simulador Interativo da Ficha */}
+            <div className="mt-20 border-t border-grafite/10 pt-16">
+              <Reveal className="text-center max-w-2xl mx-auto mb-12">
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-argila">Experimente ao vivo</span>
+                <h3 className="font-fraunces text-3xl font-medium text-grafite mt-2">
+                  Teste agora como se fosse a sua paciente
+                </h3>
+                <p className="mt-3 text-sm text-grafite/65">
+                  Toque nas perguntas no celular abaixo e veja os alertas clínicos surgirem instantaneamente no prontuário da doutora:
+                </p>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <div className="rounded-3xl border border-grafite/10 bg-porcelana/80 p-6 md:p-10">
+                  <TestePaciente />
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        {/* NOVO: Estoque Inteligente com FEFO */}
+        <section id="estoque" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-eucalipto/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-eucalipto mb-4">
+                <LuBoxes className="h-4 w-4" /> Novo Módulo
+              </div>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">
+                Controle de estoque por lote e validade com a regra FEFO.
+              </h2>
+              <p className="mt-5 text-lg text-grafite/70 leading-relaxed">
+                Em clínicas de estética, toxinas botulínicas, preenchedores e bioestimuladores custam caro. O Morph Clínica organiza tudo por lote e validade, garantindo que o produto mais antigo saia primeiro e bloqueando o uso de insumos vencidos.
+              </p>
+            </Reveal>
+
+            {/* Grid de 4 pilares do Estoque */}
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-2xl border border-grafite/10 bg-white p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-eucalipto/10 text-eucalipto">
+                  <LuSparkles className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Baixa Inteligente FEFO</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  First Expire, First Out: ao registrar um procedimento, o sistema deduz prioritariamente do lote mais próximo do vencimento.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-white p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-argila/15 text-argila">
+                  <LuShieldCheck className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Bloqueio de Vencidos</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Proteção jurídica e sanitária: lote vencido não pode ser selecionado para aplicação em paciente, exigindo descarte com motivo formal.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-white p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-eucalipto/10 text-eucalipto">
+                  <LuTrendingUp className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Sugestão de Compra</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Defina o mínimo e o ideal de cada produto. O sistema calcula a quantidade exata a pedir sem empatar capital de giro desnecessário.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-white p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-porcelana text-grafite">
+                  <LuHistory className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Histórico Permanente</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Movimentações nunca são apagadas: entradas, saídas com motivo e descartes ficam guardados junto ao backup do sistema.
+                </p>
+              </div>
+            </div>
+
+            {/* Mockup Interativo de Estoque */}
+            <div className="mt-14">
+              <Reveal>
+                <MockupEstoque />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        {/* NOVO: Gestão Financeira com Taxas de Cartão */}
+        <section id="financeiro" className="border-t border-grafite/10 bg-white py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-argila/15 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-argila mb-4">
+                <LuWallet className="h-4 w-4" /> Novo Módulo
+              </div>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">
+                Financeiro feito para a rotina real de quem atende.
+              </h2>
+              <p className="mt-5 text-lg text-grafite/70 leading-relaxed">
+                Chega de planilhas confusas com parcelamento de cartão e de ser surpreendida pelas taxas da maquininha. O Morph Clínica calcula o líquido real que cai na conta e organiza sinais de reserva diretamente na agenda.
+              </p>
+            </Reveal>
+
+            {/* Grid de 4 pilares do Financeiro */}
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-2xl border border-grafite/10 bg-porcelana/70 p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-eucalipto text-white">
+                  <LuWallet className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Taxas de Maquininha</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Cadastre as taxas de débito e crédito (1x até 12x). Ao registrar a venda, o valor líquido real é apurado na hora e gravado historicamente.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-porcelana/70 p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-argila text-white">
+                  <LuCalendarCheck className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Sinal de Agendamento</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Reduza faltas e no-show: registre a entrada na reserva do horário e provisione o saldo para o dia do atendimento no mesmo agendamento.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-porcelana/70 p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-eucalipto text-white">
+                  <LuTrendingUp className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Regime de Caixa Real</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  O dinheiro entra no mês em que realmente foi pago. Vendas parceladas entram parcela a parcela para você ter clareza total dos meses seguintes.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-grafite/10 bg-porcelana/70 p-6 shadow-sm">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-grafite text-white">
+                  <LuLock className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold text-base text-grafite">Auditoria Contábil</h3>
+                <p className="mt-2 text-xs text-grafite/65 leading-relaxed">
+                  Lançamentos não são apagados arbitrariamente: estornos e cancelamentos exigem motivo obrigatório e mantêm o livro-caixa íntegro.
+                </p>
+              </div>
+            </div>
+
+            {/* Mockup Interativo de Financeiro */}
+            <div className="mt-14">
+              <Reveal>
+                <MockupFinanceiro />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        {/* NOVO: O Novo Estilo Caderno de Bem-Estar */}
+        <section id="estilo" className="border-t border-grafite/10 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="max-w-2xl mb-12">
+              <Eyebrow>Identidade & Experiência</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">
+                O novo estilo: caderno de bem-estar para clínicas elegantes.
+              </h2>
+              <p className="mt-5 text-lg text-grafite/70 leading-relaxed">
+                A experiência da paciente começa na apresentação do seu consultório. O Morph Clínica substitui o visual de software hospitalar por um design acolhedor, sofisticado e orgânico, com selo monograma de botica e personalização total.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <MockupEstilo />
+            </Reveal>
           </div>
         </section>
 
         {/* Demonstração */}
-        <section id="demo" className="border-t border-grafite/10 py-24">
+        <section id="demo" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
             <Reveal>
-              <Eyebrow>Demonstração</Eyebrow>
+              <Eyebrow>Demonstração pública</Eyebrow>
               <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Explore o sistema como se fosse a sua clínica.</h2>
               <p className="mt-5 text-grafite/70">
-                Uma clínica de exemplo, com pacientes, fichas assinadas, alertas, prontuário e agenda preenchidos. Mexa à
-                vontade: cadastre uma paciente, envie uma ficha de teste para o seu celular e troque as cores da clínica.
+                Uma clínica de exemplo com prontuários, fichas assinadas, alertas, estoque com ampolas reais, financeiro com lançamentos e agenda preenchida. Mexa à vontade: teste a baixa de estoque, cadastre uma paciente, envie uma ficha para o seu celular e troque as cores da clínica.
               </p>
               <p className="mt-4 text-sm text-grafite/55">
-                Clínica e pacientes fictícios. As fichas de teste são apagadas em 24 horas.
+                Clínica e pacientes fictícios. As fichas de teste são apagadas automaticamente em 24 horas.
               </p>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="rounded-[2rem] border border-grafite/10 bg-white p-9 shadow-lg shadow-eucalipto/10">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-argila">Acesso livre</p>
+              <div className="rounded-[2rem] border border-grafite/10 bg-porcelana p-9 shadow-lg shadow-eucalipto/10">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-argila">Acesso livre e imediato</p>
                 <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-[15px]">
                   <dt className="text-grafite/55">Usuário</dt>
                   <dd className="font-mono font-semibold text-grafite">{DEMO.usuario}</dd>
@@ -281,14 +476,14 @@ export default function ClinicasPage() {
                 >
                   Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
-                <p className="mt-3 text-center text-xs text-grafite/50">Abre em outra aba. Funciona no computador e no celular.</p>
+                <p className="mt-3 text-center text-xs text-grafite/50">Abre em outra aba. Funciona perfeitamente no celular, tablet e computador.</p>
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* Recursos */}
-        <section id="recursos" className="border-t border-grafite/10 bg-white py-24">
+        {/* Recursos: Agenda & Personalização */}
+        <section id="recursos" className="border-t border-grafite/10 py-24">
           <div className="mx-auto max-w-6xl space-y-28 px-6">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <Reveal delay={0.1} className="order-last lg:order-first">
@@ -314,15 +509,22 @@ export default function ClinicasPage() {
 
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <Reveal>
-                <Eyebrow>Personalização</Eyebrow>
-                <h2 className="font-fraunces text-4xl leading-tight">Com a cara da sua clínica, e ela mesma ajusta.</h2>
+                <Eyebrow>Personalização total</Eyebrow>
+                <h2 className="font-fraunces text-4xl leading-tight">Com a cara da sua clínica, e você mesma ajusta.</h2>
                 <p className="mt-5 text-grafite/70">
-                  Logo, foto, cores, letras, serviços, perguntas da ficha e mensagens. Sem programador: a clínica muda na tela
-                  de configurações e vale na hora, inclusive na ficha que a paciente recebe.
+                  Logo, foto, cores, letras, procedimentos, tabela de preços, perguntas da ficha e mensagens. Sem depender de programador: você altera na tela de configurações e vale na hora, inclusive na ficha que a paciente abre.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {["Logo e foto", "8 paletas prontas", "Serviços", "Perguntas da ficha", "Mensagens", "Dados legais"].map((c) => (
-                    <span key={c} className="rounded-full border border-nevoa bg-porcelana px-4 py-1.5 text-sm font-semibold text-eucalipto">
+                  {[
+                    "Logo e monograma",
+                    "8 paletas refinadas",
+                    "Tabela de procedimentos",
+                    "Editor de anamnese",
+                    "Módulos on/off",
+                    "Taxas de cartão",
+                    "Dados legais",
+                  ].map((c) => (
+                    <span key={c} className="rounded-full border border-nevoa bg-white px-4 py-1.5 text-sm font-semibold text-eucalipto shadow-sm">
                       {c}
                     </span>
                   ))}
@@ -336,11 +538,11 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Aplicativo */}
-        <section id="aplicativo" className="border-t border-grafite/10 py-24">
+        {/* Aplicativo PWA */}
+        <section id="aplicativo" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto max-w-6xl px-6">
             <Reveal className="max-w-2xl">
-              <Eyebrow>Aplicativo</Eyebrow>
+              <Eyebrow>Aplicativo instalável</Eyebrow>
               <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Instale como aplicativo, sem loja.</h2>
               <p className="mt-5 text-grafite/70">
                 O sistema vira um app no celular, no tablet e no computador: ícone com a marca da sua clínica na tela inicial,
@@ -349,7 +551,7 @@ export default function ClinicasPage() {
               </p>
               <p className="mt-4 inline-flex items-start gap-2 text-sm text-grafite/60">
                 <LuLock className="mt-0.5 h-4 w-4 shrink-0 text-eucalipto" aria-hidden />
-                As fichas e prontuários continuam guardados no servidor, protegidos pelo login. Nada de paciente fica salvo no aparelho.
+                As fichas e prontuários continuam guardados no servidor seguro com banco exclusivo da sua clínica.
               </p>
             </Reveal>
             <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -357,7 +559,7 @@ export default function ClinicasPage() {
                 const Icone = sistema.id === "iphone" ? FaApple : sistema.id === "android" ? FaAndroid : LuMonitor;
                 return (
                   <Reveal key={sistema.id} delay={i * 0.08}>
-                    <div className="h-full rounded-[2rem] border border-grafite/10 bg-white p-8 shadow-lg shadow-eucalipto/10">
+                    <div className="h-full rounded-[2rem] border border-grafite/10 bg-porcelana p-8 shadow-sm">
                       <div className="flex items-center gap-3">
                         <span className="grid h-11 w-11 place-items-center rounded-2xl bg-eucalipto text-white">
                           <Icone className="h-5 w-5" aria-hidden />
@@ -413,20 +615,20 @@ export default function ClinicasPage() {
               ))}
             </div>
             <p className="mt-6 text-xs text-grafite/50">
-              Os textos jurídicos podem ser ajustados pela clínica e devem ser revisados pela sua assessoria.
+              Os textos jurídicos podem ser ajustados pela clínica e devem ser revisados pela sua assessoria jurídica.
             </p>
           </div>
         </section>
 
-        {/* Apresentação */}
+        {/* Apresentação comercial */}
         <section id="apresentacao" className="border-t border-grafite/10 bg-white py-24">
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 grid-cols-1 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
             <Reveal>
-              <Eyebrow>Apresentação</Eyebrow>
+              <Eyebrow>Apresentação comercial</Eyebrow>
               <h2 className="font-fraunces text-4xl leading-tight">Veja a apresentação completa.</h2>
               <p className="mt-5 text-grafite/70">
-                Os mesmos slides que usamos nas reuniões com clínicas. Navegue pelas setas ou baixe o PDF para mostrar à
-                sua equipe.
+                Os mesmos slides que usamos nas reuniões com clínicas de estética. Navegue pelas setas ou baixe o PDF para mostrar à
+                sua sócia ou equipe.
               </p>
               <a
                 href={APRESENTACAO_PDF}
@@ -446,10 +648,10 @@ export default function ClinicasPage() {
         <section id="planos" className="relative overflow-hidden py-24">
           <div className="relative mx-auto max-w-5xl px-6">
             <Reveal className="text-center">
-              <Eyebrow>Planos</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Escolha como começar.</h2>
+              <Eyebrow>Planos e investimento</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight md:text-5xl">Escolha como começar na sua clínica.</h2>
               <p className="mx-auto mt-4 max-w-xl text-grafite/65">
-                Hospedagem, backup, suporte e atualizações inclusos. Você só abre o link e usa.
+                Prontuário digital, estoque FEFO e financeiro inclusos. Sem limite de pacientes e com banco de dados próprio e isolado.
               </p>
             </Reveal>
             <div className="mt-14 grid gap-6 md:grid-cols-2">
@@ -490,21 +692,21 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Dúvidas */}
-        <section className="py-24">
+        {/* Dúvidas (FAQ) */}
+        <section className="py-24 border-t border-grafite/10 bg-white">
           <div className="mx-auto max-w-3xl px-6">
             <Reveal className="text-center">
-              <Eyebrow>Dúvidas</Eyebrow>
-              <h2 className="font-fraunces text-4xl leading-tight">Perguntas das clínicas</h2>
+              <Eyebrow>Tire suas dúvidas</Eyebrow>
+              <h2 className="font-fraunces text-4xl leading-tight">Perguntas frequentes das doutoras</h2>
             </Reveal>
             <div className="mt-10 divide-y divide-grafite/10 border-y border-grafite/10">
               {faqClinica.map((f) => (
                 <details key={f.q} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-grafite [&::-webkit-details-marker]:hidden">
                     {f.q}
                     <LuPlus className="h-5 w-5 shrink-0 text-argila transition-transform group-open:rotate-45" aria-hidden />
                   </summary>
-                  <p className="mt-3 text-grafite/70">{f.a}</p>
+                  <p className="mt-3 text-grafite/70 leading-relaxed text-[15px]">{f.a}</p>
                 </details>
               ))}
             </div>
@@ -520,12 +722,18 @@ export default function ClinicasPage() {
               style={{ background: "radial-gradient(circle, var(--argila) 0%, transparent 70%)" }}
             />
             <div className="relative">
-              <span className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-argila font-fraunces text-2xl italic shadow-[inset_0_0_0_4px_var(--eucalipto),inset_0_0_0_5px_rgba(201,142,115,0.55)]">
-                MC
-              </span>
+              <div className="mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-argila p-1 shadow-lg shadow-black/25">
+                <Image
+                  src="/logo.jpeg"
+                  alt="Morph Code"
+                  width={80}
+                  height={80}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </div>
               <h2 className="mt-6 font-fraunces text-4xl leading-tight md:text-5xl">Vamos ver funcionando na sua clínica?</h2>
               <p className="mx-auto mt-4 max-w-lg text-nevoa/90">
-                Demonstração de 20 minutos, com uma ficha de teste enviada para o seu celular.
+                Demonstração ao vivo de 20 minutos, com ficha de teste no seu WhatsApp e simulação de estoque e financeiro.
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <BotaoWhats texto="Agendar demonstração" mensagem={clinicaMessage} claro />
