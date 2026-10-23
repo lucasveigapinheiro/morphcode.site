@@ -5,6 +5,7 @@ import MotionProvider from "@/components/MotionProvider";
 import Spotlight from "@/components/Spotlight";
 import ScrollProgress from "@/components/ScrollProgress";
 import ConversionTracking from "@/components/ConversionTracking";
+import MetaPixel from "@/components/MetaPixel";
 import { Analytics } from "@vercel/analytics/next";
 import { jsonLd, siteUrl } from "@/lib/site";
 import { PHONE } from "@/lib/whatsapp";
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Spotlight />
         <MotionProvider>{children}</MotionProvider>
         <ConversionTracking />
+        <MetaPixel />
         <Analytics />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(empresa)} />
       </body>
