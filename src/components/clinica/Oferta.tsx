@@ -45,7 +45,7 @@ export function PrecoLicenca() {
   if (!ativa) return <>R$ 2.700</>;
   return (
     <>
-      <s className="mr-3 text-3xl text-nevoa/55">R$ 2.700</s>
+      <s className="block text-2xl text-nevoa/55">R$ 2.700</s>
       R$ 2.000
     </>
   );

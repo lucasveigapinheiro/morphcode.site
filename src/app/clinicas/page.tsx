@@ -354,7 +354,7 @@ export default function ClinicasPage() {
                 </p>
               </SeOferta>
             </Reveal>
-            <div className="mt-14 grid gap-6 md:grid-cols-2">
+            <div className="mt-14 grid gap-6 md:grid-cols-2 [&>*]:min-w-0">
               {planos.map((p, i) => (
                 <Reveal key={p.id} delay={i * 0.1}>
                   <div
