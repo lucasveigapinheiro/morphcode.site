@@ -24,3 +24,7 @@ export const clinicaMessage = `Olá, Morph Code! Vim pelo site e quero conhecer 
 export function planoMessage(plano: string) {
   return `Olá, Morph Code! Vim pelo site e tenho interesse na opção "${plano}" do Morph Clínica.`;
 }
+
+export const ofertaMessage = `Olá, Morph Code! Vi a oferta de fim de ano do Morph Clínica (50% na implantação) e quero aproveitar.`;
+
+export const ofertaLicencaMessage = `Olá, Morph Code! Vi a oferta de fim de ano da licença vitalícia do Morph Clínica por R$ 2.000 e quero aproveitar.`;

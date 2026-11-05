@@ -16,6 +16,10 @@ export type Tela = { src: string; alt: string; width: number; height: number };
 
 export const telas = {
   painel: { src: "/clinicas/telas/dashboard.png", alt: "Painel inicial do sistema com a identidade da clínica", width: 1406, height: 749 },
+  pacientesNovo: { src: "/clinicas/telas/pacientes-novo.png", alt: "Lista de pacientes com ficha assinada, alertas de saúde e atalho para convênios", width: 2160, height: 1350 },
+  estoque: { src: "/clinicas/telas/estoque.png", alt: "Estoque por lote e validade com alertas de reposição e vencimento", width: 2160, height: 1350 },
+  financeiro: { src: "/clinicas/telas/financeiro.png", alt: "Financeiro com lançamentos de cartão parcelado, valores a receber e atrasados", width: 2160, height: 1350 },
+  relatorio: { src: "/clinicas/telas/relatorio.png", alt: "Relatório de pacientes com procedimentos mais procurados e fichas assinadas", width: 2160, height: 1350 },
   pacientes: { src: "/clinicas/telas/pacientes.png", alt: "Lista de pacientes com status da ficha e do consentimento", width: 1406, height: 749 },
   agenda: { src: "/clinicas/telas/agenda.png", alt: "Agenda com calendário e horários do dia", width: 1406, height: 748 },
   cores: { src: "/clinicas/telas/cores.png", alt: "Configurações de cores e letras da clínica", width: 1100, height: 500 },
@@ -113,58 +117,30 @@ export const passosInstalarApp = [
 export const faqClinica = [
   {
     q: "Preciso instalar alguma coisa?",
-    a: "Não. O sistema abre no navegador do computador, do tablet e do celular. Se quiser, você instala como aplicativo em poucos toques, direto do navegador, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
-  },
-  {
-    q: "Como funciona o controle de estoque com a regra FEFO?",
-    a: "O sistema organiza os insumos e ampolas pelo lote que vence primeiro (FEFO — First Expire, First Out). Ao dar baixa em um procedimento, o sistema prioriza automaticamente o lote mais antigo para evitar que produtos caros (toxinas, preenchedores, bioestimuladores) expirem no armário. Lotes vencidos têm a saída bloqueada para atendimento e exigem descarte formal com motivo registrado.",
-  },
-  {
-    q: "O estoque avisa quando preciso comprar produtos?",
-    a: "Sim. Para cada insumo você define um estoque mínimo e um estoque ideal. O painel calcula a sugestão de compra em tempo real, informando exatamente quantas unidades adquirir para não faltar produto e nem empatar dinheiro desnecessário.",
-  },
-  {
-    q: "Como o sistema financeiro calcula as taxas da minha maquininha?",
-    a: "Você cadastra as taxas praticadas pela sua maquininha para débito, crédito à vista e parcelado (2x a 12x). Ao registrar um pagamento, o sistema calcula na hora o valor líquido que realmente cai na sua conta e grava essa taxa no histórico, garantindo que o fluxo de caixa reflita a realidade contábil.",
-  },
-  {
-    q: "Posso cobrar sinal para garantir o agendamento da paciente?",
-    a: "Sim. O sistema permite registrar um sinal no ato da marcação (ex.: via PIX) e deixar o valor restante provisionado para a data da consulta, mantendo ambos vinculados ao mesmo agendamento para a recepção não se perder.",
+    a: "Não. O sistema abre no navegador do computador, do tablet e do celular, e pode virar aplicativo com a marca da clínica em poucos toques, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
   },
   {
     q: "A ficha assinada no celular tem valor?",
     a: "Cada ficha guarda a assinatura, a data, a hora e uma cópia exata dos termos e das perguntas que a paciente viu, com um código de verificação. Os textos jurídicos são ajustáveis e devem ser revisados pela assessoria da clínica.",
   },
   {
-    q: "Minha clínica é obrigada a usar todos os módulos?",
-    a: "Não. Na tela de Configurações você ativa ou desativa Estoque e Financeiro com um clique. Se você prefere começar apenas com prontuário digital e agenda, os outros módulos ficam ocultos para manter a interface o mais enxuta possível.",
+    q: "Como funciona o estoque?",
+    a: "Os insumos ficam organizados por lote e validade. Ao registrar o atendimento, a baixa sai do lote que vence primeiro. Lote vencido não pode ser usado e exige descarte com motivo. Você define mínimo e ideal de cada produto e o sistema mostra o que precisa comprar.",
+  },
+  {
+    q: "O financeiro calcula as taxas da maquininha?",
+    a: "Sim. Você cadastra as taxas de débito e de crédito (à vista e parcelado) e o sistema mostra o valor líquido de cada recebimento. Cartão parcelado entra parcela a parcela, no mês em que cai. Também dá para registrar sinal no agendamento e desconto por convênio.",
   },
   {
     q: "Posso usar as perguntas da minha ficha de papel?",
     a: "Sim. Na implantação passamos a sua ficha para o sistema e, depois, você mesma cria, edita ou remove perguntas na tela de configurações.",
   },
   {
-    q: "Como funciona o novo estilo e a personalização da marca?",
-    a: "O sistema segue a direção de um caderno de bem-estar elegante, com paleta botânica acolhedora (Eucalipto, Argila e Porcelana) e tipografia refinada. Você pode personalizar as cores da clínica, logo, foto e o selo monograma de botica com as iniciais da sua marca.",
-  },
-  {
     q: "E se eu quiser sair?",
     a: "No plano mensal não há fidelidade: é só avisar com 30 dias, e o acesso vai até o fim do último mês pago. Seus dados são seus e você recebe uma cópia completa de tudo, incluindo fichas assinadas e fotos.",
   },
   {
-    q: "O que é a licença vitalícia?",
-    a: "Você paga R$ 2.700 uma vez (à vista ou em 3x de R$ 900) e ganha o direito de usar o sistema sem prazo, com 12 meses de hospedagem inclusos. Depois, fica só a hospedagem de R$ 97/mês, que mantém o sistema no ar com backup, suporte e atualizações. O sistema continua sendo da Morph Code: a licença é o direito de uso.",
-  },
-  {
-    q: "E se eu atrasar a hospedagem da licença?",
-    a: "O sistema fica suspenso e volta exatamente como estava quando o pagamento é feito, sem precisar comprar a licença de novo. Seus dados continuam guardados e você pode pedir o backup completo a qualquer momento.",
-  },
-  {
-    q: "O plano mensal vira licença?",
-    a: "Sim. Depois de 48 mensalidades pagas, a clínica ganha a licença vitalícia e passa a pagar só a hospedagem de R$ 97/mês.",
-  },
-  {
-    q: "Os lembretes de consulta são automáticos?",
-    a: "O sistema mostra quem precisa ser lembrada amanhã e abre o WhatsApp com a mensagem pronta, em um toque. O envio totalmente automático pode ser contratado à parte, pela API oficial do WhatsApp.",
+    q: "Como funciona a oferta de fim de ano?",
+    a: "Quem fechar até 23 de dezembro paga 50% a menos na taxa de implantação do plano mensal (R$ 248,50 em vez de R$ 497) ou leva a licença vitalícia por R$ 2.000 em vez de R$ 2.700. O restante de cada plano segue igual.",
   },
 ];
