@@ -63,15 +63,15 @@ const pilares: { id: string; eyebrow: string; titulo: string; texto: string; ite
     id: "prontuario",
     eyebrow: "Prontuário",
     titulo: "Alergia sempre à vista.",
-    texto: "Cada paciente tem ficha assinada, histórico de atendimentos, fotos e autorização de uso de imagem. Os alertas de saúde aparecem já na lista.",
+    texto: "Alergia e medicamento de uso contínuo aparecem em destaque já na lista de pacientes, antes de abrir a ficha. Cada paciente tem ficha assinada, histórico de atendimentos, fotos e autorização de uso de imagem.",
     itens: ["Alerta de alergia e medicamento contínuo em destaque", "Paciente arquivada, nunca apagada", "Convênios com desconto aplicado no financeiro"],
     tela: telas.pacientesNovo,
   },
   {
     id: "estoque",
     eyebrow: "Estoque",
-    titulo: "Nenhuma ampola vence no armário.",
-    texto: "Toxinas, preenchedores e bioestimuladores controlados por lote e validade. O atendimento dá baixa no lote que vence primeiro.",
+    titulo: "Veja o que vence antes de perder a ampola.",
+    texto: "Toxinas, preenchedores e bioestimuladores ficam por lote e validade. O atendimento dá baixa no lote que vence primeiro, e lote vencido fica bloqueado.",
     itens: ["Lote vencido bloqueado, com descarte e motivo", "Mínimo, ideal e sugestão de compra", "Valor em estoque pelo custo de cada lote"],
     tela: telas.estoque,
   },
@@ -107,7 +107,7 @@ function Moldura({ tela, className = "", prioridade = false }: { tela: Tela; cla
       height={tela.height}
       priority={prioridade}
       sizes="(min-width: 1024px) 640px, 100vw"
-      className={`h-auto w-full rounded-2xl shadow-2xl shadow-eucalipto/25 ring-1 ring-grafite/10 ${className}`}
+      className={`h-auto w-full rounded-[2rem] ${className}`}
     />
   );
 }
@@ -180,10 +180,10 @@ export default function ClinicasPage() {
           <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 pb-24 pt-14 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
             <Reveal>
               <h1 className="text-balance font-fraunces text-[2.5rem] leading-[1.08] tracking-tight md:text-5xl lg:text-6xl">
-                Sua clínica com cara de <em className="text-eucalipto">profissional</em> em 2027.
+                Chega de <em className="text-eucalipto">ficha perdida</em>, horário esquecido e produto vencido.
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-grafite/75">
-                Ficha de anamnese assinada no celular da paciente, prontuário, agenda, estoque e financeiro em um só lugar, com a marca da sua clínica.
+                O Morph Clínica junta ficha assinada no celular da paciente, agenda com lembrete, estoque por lote e validade e financeiro num só sistema, com a marca da sua clínica.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <BotaoWhats
@@ -196,11 +196,11 @@ export default function ClinicasPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-grafite/20 px-7 py-3.5 text-sm font-semibold text-grafite transition-colors hover:border-eucalipto hover:text-eucalipto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-eucalipto"
                 >
-                  Explorar o sistema <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                  Testar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-grafite/65">
-                {["Sem fidelidade no plano mensal", "Suporte e backup inclusos", "A partir de R$ 149/mês"].map((t) => (
+                {["Testado, aprovado e em uso por profissionais da área", "Sem fidelidade no plano mensal", "A partir de R$ 149/mês"].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <LuCheck className="h-4 w-4 text-eucalipto" aria-hidden /> {t}
                   </li>
@@ -208,22 +208,8 @@ export default function ClinicasPage() {
               </ul>
             </Reveal>
 
-            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[520px]">
-              <Moldura tela={telas.painel} prioridade className="rotate-[1.5deg]" />
-              <div className="absolute -bottom-10 -left-4 w-[42%] md:-left-10">
-                <Image
-                  src={telas.fichaCelular.src}
-                  alt={telas.fichaCelular.alt}
-                  width={telas.fichaCelular.width}
-                  height={telas.fichaCelular.height}
-                  sizes="220px"
-                  className="h-auto w-full -rotate-[4deg] rounded-[1.6rem] border-[6px] border-grafite shadow-2xl shadow-grafite/40"
-                />
-              </div>
-              <div className="absolute -right-2 -top-6 rounded-2xl border border-[#ebc1bd] bg-white px-4 py-3 shadow-xl md:-right-8">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9c2a22]">Alerta clínico</p>
-                <p className="font-fraunces text-base text-grafite">Alergia: dipirona</p>
-              </div>
+            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[600px]">
+              <Moldura tela={telas.painel} prioridade />
             </Reveal>
           </div>
         </section>
@@ -426,8 +412,8 @@ export default function ClinicasPage() {
               <h2 className="mt-6 font-fraunces text-4xl leading-tight md:text-5xl">Comece 2027 com a clínica organizada.</h2>
               <p className="mx-auto mt-4 max-w-lg text-nevoa/90">
                 <TextoOferta
-                  durante="Feche até 23 de dezembro: metade da implantação no mensal ou licença por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
-                  depois="Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
+                  durante="Já testado, aprovado e em uso atualmente por profissionais da área. Feche até 23 de dezembro: metade da implantação no mensal ou licença por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
+                  depois="Já testado, aprovado e em uso atualmente por profissionais da área. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
                 />
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

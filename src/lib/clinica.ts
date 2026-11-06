@@ -15,10 +15,10 @@ export const DEMO = {
 export type Tela = { src: string; alt: string; width: number; height: number };
 
 export const telas = {
-  painel: { src: "/clinicas/telas/dashboard.png", alt: "Painel inicial do sistema com a identidade da clínica", width: 1406, height: 749 },
-  pacientesNovo: { src: "/clinicas/telas/pacientes-novo.png", alt: "Lista de pacientes com ficha assinada, alertas de saúde e atalho para convênios", width: 2160, height: 1350 },
-  estoque: { src: "/clinicas/telas/estoque.png", alt: "Estoque por lote e validade com alertas de reposição e vencimento", width: 2160, height: 1350 },
-  financeiro: { src: "/clinicas/telas/financeiro.png", alt: "Financeiro com lançamentos de cartão parcelado, valores a receber e atrasados", width: 2160, height: 1350 },
+  painel: { src: "/clinicas/telas/cena-painel.webp", alt: "Lista de pacientes do Morph Clínica com alerta de alergia em destaque e a ficha de anamnese aberta no celular da paciente", width: 1800, height: 1530 },
+  pacientesNovo: { src: "/clinicas/telas/cena-prontuario.webp", alt: "Lista de pacientes com ficha assinada, alerta de alergia e medicamento contínuo em destaque e atalho para convênios", width: 1800, height: 1200 },
+  estoque: { src: "/clinicas/telas/cena-estoque.webp", alt: "Estoque por lote e validade com alerta de produto que vence em 22 dias e sugestão de reposição", width: 1800, height: 1200 },
+  financeiro: { src: "/clinicas/telas/cena-financeiro.webp", alt: "Financeiro com cartão parcelado parcela a parcela, valores a receber, lançamento em atraso e registro de alterações", width: 1800, height: 1200 },
   relatorio: { src: "/clinicas/telas/relatorio.png", alt: "Relatório de pacientes com procedimentos mais procurados e fichas assinadas", width: 2160, height: 1350 },
   pacientes: { src: "/clinicas/telas/pacientes.png", alt: "Lista de pacientes com status da ficha e do consentimento", width: 1406, height: 749 },
   agenda: { src: "/clinicas/telas/agenda.png", alt: "Agenda com calendário e horários do dia", width: 1406, height: 748 },
@@ -26,9 +26,9 @@ export const telas = {
   editorFicha: { src: "/clinicas/telas/editor-ficha.png", alt: "Editor das perguntas da ficha de anamnese", width: 1000, height: 640 },
   alertas: { src: "/clinicas/telas/alertas.png", alt: "Prontuário com alerta de alergia em destaque", width: 1030, height: 600 },
   evolucao: { src: "/clinicas/telas/evolucao.png", alt: "Assinatura da ficha e evolução do atendimento com produto e lote", width: 1030, height: 460 },
-  fichaCelular: { src: "/clinicas/telas/ficha-celular.png", alt: "Ficha de anamnese aberta no celular da paciente", width: 484, height: 749 },
-  saudeCelular: { src: "/clinicas/telas/saude-celular.png", alt: "Perguntas de saúde respondidas no celular", width: 484, height: 749 },
-  assinatura: { src: "/clinicas/telas/assinatura.png", alt: "Assinatura da paciente com o dedo", width: 484, height: 459 },
+  fichaCelular: { src: "/clinicas/telas/celular-ficha.webp", alt: "Ficha de anamnese aberta no celular da paciente", width: 780, height: 1688 },
+  saudeCelular: { src: "/clinicas/telas/celular-saude.webp", alt: "Perguntas de saúde respondidas no celular, com alergia informada pela paciente", width: 780, height: 1688 },
+  assinatura: { src: "/clinicas/telas/celular-assinatura.webp", alt: "Assinatura da paciente com o dedo e botão para assinar e enviar a ficha", width: 780, height: 908 },
 } satisfies Record<string, Tela>;
 
 // O slide 12 traz um depoimento fictício, identificado como tal no próprio slide.
@@ -115,6 +115,10 @@ export const passosInstalarApp = [
 ];
 
 export const faqClinica = [
+  {
+    q: "O Morph Clínica já é usado na prática?",
+    a: "Sim. O sistema já foi testado, aprovado e está em uso atualmente por profissionais da área, no dia a dia do atendimento. Se quiser ver funcionando antes de decidir, abra a demonstração ou peça uma apresentação ao vivo pelo WhatsApp.",
+  },
   {
     q: "Preciso instalar alguma coisa?",
     a: "Não. O sistema abre no navegador do computador, do tablet e do celular, e pode virar aplicativo com a marca da clínica em poucos toques, sem loja de aplicativos. A paciente não instala nada: recebe um link pelo WhatsApp e preenche a ficha no próprio celular.",
