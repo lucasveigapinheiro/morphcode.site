@@ -115,7 +115,7 @@ function Moldura({ tela, className = "", prioridade = false }: { tela: Tela; cla
 function BotaoWhats({ texto, mensagem, claro = false }: { texto: React.ReactNode; mensagem: string; claro?: boolean }) {
   return (
     <a
-      href={whatsappLink(mensagem)}
+      href={whatsappLink(mensagem, "clinica")}
       target="_blank"
       rel="noopener noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eucalipto ${
@@ -157,7 +157,7 @@ export default function ClinicasPage() {
             <a href="#duvidas" className="transition-colors hover:text-eucalipto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-eucalipto">Dúvidas</a>
           </nav>
           <a
-            href={whatsappLink(clinicaMessage)}
+            href={whatsappLink(clinicaMessage, "clinica")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-eucalipto px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
@@ -444,7 +444,7 @@ export default function ClinicasPage() {
             </div>
           </div>
           <p className="mt-8 text-center text-xs text-grafite/50">
-            {PRODUTO} é um produto <Link href="/" className="underline hover:text-eucalipto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-eucalipto">Morph Code</Link> · Lucas Veiga Pinheiro · (11) 93095-7162 ·{" "}
+            {PRODUTO} é um produto <Link href="/" className="underline hover:text-eucalipto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-eucalipto">Morph Code</Link> · Lucas Veiga Pinheiro · (11) 91215-0103 ·{" "}
             <a href="mailto:morphcode.dev@gmail.com" className="underline hover:text-eucalipto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-eucalipto">morphcode.dev@gmail.com</a> · @morphcode.dev
           </p>
         </section>

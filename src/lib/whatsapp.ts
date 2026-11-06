@@ -1,14 +1,20 @@
-export const PHONE = "5511930957162";
+export const PHONE = "5511912150103";
+
+/** Número usado nas páginas e anúncios do Morph Clínica. */
+export const PHONE_CLINICA = "5511912150103";
+export const PHONE_CLINICA_TEXTO = "(11) 91215-0103";
 
 /** Endereço final no WhatsApp, já com a mensagem. */
-export function whatsappDireto(message: string) {
-  return `https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`;
+export function whatsappDireto(message: string, phone: string = PHONE) {
+  return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
 }
 
 // Os botões passam por /whatsapp antes de abrir a conversa: é a página que o Google Ads
 // usa para contar o pedido de orçamento como conversão.
-export function whatsappLink(message: string) {
-  return `/whatsapp?texto=${encodeURIComponent(message)}`;
+// `numero: "clinica"` escolhe o número do Morph Clínica; só esse valor é aceito na URL.
+export function whatsappLink(message: string, numero?: "clinica") {
+  const extra = numero ? `&numero=${numero}` : "";
+  return `/whatsapp?texto=${encodeURIComponent(message)}${extra}`;
 }
 
 export const budgetMessage = `Olá, Morph Code! Vim pelo site e gostaria de um orçamento.`;
