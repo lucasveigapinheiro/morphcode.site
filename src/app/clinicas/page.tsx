@@ -113,7 +113,7 @@ function BotaoWhats({ texto, mensagem, variante = "verde" }: { texto: React.Reac
       href={whatsappLink(mensagem, "clinica")}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-4 text-[15px] font-bold transition-[transform,filter,background-color] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-argila ${cor}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full px-7 sm:whitespace-nowrap py-4 text-[15px] font-bold transition-[transform,filter,background-color] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-argila ${cor}`}
     >
       <FaWhatsapp className="h-[18px] w-[18px]" aria-hidden /> {texto}
     </a>
@@ -132,7 +132,7 @@ const navLink = "transition-colors hover:text-white focus-visible:outline-2 focu
 
 export default function ClinicasPage() {
   return (
-    <div className={`${fontesClinica} font-manrope relative z-0 bg-white pb-24 text-grafite antialiased md:pb-0`}>
+    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-white pb-24 text-grafite antialiased md:pb-0`}>
       <a href="#conteudo" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-full focus-visible:bg-eucalipto focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:text-white">
         Ir para o conteúdo
       </a>
@@ -200,7 +200,7 @@ export default function ClinicasPage() {
                   href={DEMO.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/30 px-7 py-4 text-[15px] font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-argila"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-7 py-4 text-[15px] font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-argila"
                 >
                   Testar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
@@ -217,7 +217,7 @@ export default function ClinicasPage() {
         </section>
 
         {/* O problema e a saída */}
-        <section className="relative -mt-12 px-4 md:px-6">
+        <section id="rotina" className="relative -mt-12 scroll-mt-24 px-4 md:px-6">
           <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-6 shadow-[0_30px_80px_-30px_rgba(29,60,54,0.35)] ring-1 ring-grafite/5 md:p-12">
             <Reveal className="max-w-2xl">
               <Eyebrow>A rotina da clínica hoje</Eyebrow>
