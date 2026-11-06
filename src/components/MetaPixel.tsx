@@ -17,6 +17,11 @@ export function trackMetaContact(params: Record<string, string>) {
   window.fbq?.("track", "Contact", params);
 }
 
+/** Evento padrão do Meta para quem abre algo do produto, como a demonstração aberta. */
+export function trackMetaViewContent(params: Record<string, string>) {
+  window.fbq?.("track", "ViewContent", params);
+}
+
 /** Carrega o Meta Pixel e conta cada página vista. Só liga quando NEXT_PUBLIC_META_PIXEL_ID existe. */
 export default function MetaPixel() {
   const pathname = usePathname();

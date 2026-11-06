@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { track } from "@vercel/analytics";
-import { trackMetaContact } from "@/components/MetaPixel";
+import { trackMetaContact, trackMetaViewContent } from "@/components/MetaPixel";
 
 /**
  * Conta cada clique em um link de WhatsApp como conversão, com a origem do clique: o
@@ -11,6 +11,14 @@ import { trackMetaContact } from "@/components/MetaPixel";
 export default function ConversionTracking() {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
+      // A demonstração fica em outro endereço: o clique é o único sinal de que a pessoa a abriu.
+      const demo = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href*="morph-clinica-demo"]');
+      if (demo) {
+        const origem = demo.closest<HTMLElement>("[data-origem]")?.dataset.origem || demo.closest("section")?.id || "cabecalho";
+        track("demo_click", { origem, pagina: window.location.pathname });
+        trackMetaViewContent({ content_name: "demonstracao", origem, pagina: window.location.pathname });
+        return;
+      }
       const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="/whatsapp"], a[href*="api.whatsapp.com"]');
       if (!link) return;
       const origem =
