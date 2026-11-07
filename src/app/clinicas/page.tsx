@@ -15,6 +15,7 @@ import {
 } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
+import FaixaOferta, { VagasSemana } from "@/components/clinica/FaixaOferta";
 import { PrecoImplantacao, PrecoLicenca, SeOferta, TextoOferta } from "@/components/clinica/Oferta";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import { DEMO, PRODUTO, faqClinica, planos, telas, type Tela } from "@/lib/clinica";
@@ -137,12 +138,8 @@ export default function ClinicasPage() {
         Ir para o conteúdo
       </a>
 
-      {/* Faixa da oferta de fim de ano (some sozinha depois de 23/12) */}
-      <SeOferta>
-        <div className="bg-argila px-4 py-2.5 text-center text-[13px] font-bold text-eucalipto-escuro">
-          Fim de ano: 50% na implantação ou licença por R$ 2.000, para quem fechar até 23 de dezembro.
-        </div>
-      </SeOferta>
+      {/* Faixa da oferta: cronômetro real até o fim das vagas da semana e depois até 23/12 */}
+      <FaixaOferta />
 
       {/* Cabeçalho */}
       <header className="sticky top-0 z-30 bg-eucalipto-escuro/95 backdrop-blur">
@@ -205,7 +202,8 @@ export default function ClinicasPage() {
                   Testar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
-              <p className="mt-6 text-sm text-white/65">
+              <VagasSemana className="mt-5 inline-flex rounded-full bg-argila px-4 py-1.5 text-sm font-bold text-eucalipto-escuro" />
+              <p className="mt-5 text-sm text-white/65">
                 A partir de <strong className="text-white">R$ 149/mês</strong> · sem fidelidade no plano mensal · demonstração aberta, sem cadastro
               </p>
             </Reveal>
@@ -389,8 +387,9 @@ export default function ClinicasPage() {
               <p className="mx-auto mt-4 max-w-xl text-grafite/65">
                 Prontuário, estoque e financeiro inclusos nos dois planos, sem limite de pacientes e com banco de dados próprio e isolado.
               </p>
+              <VagasSemana className="mx-auto mt-6 inline-block rounded-full bg-eucalipto-escuro px-5 py-2 text-sm font-bold text-white" />
               <SeOferta>
-                <p className="mx-auto mt-6 inline-block rounded-full bg-argila/15 px-5 py-2 text-sm font-bold text-[#a4543a]">
+                <p className="mx-auto mt-4 inline-block rounded-full bg-argila/15 px-5 py-2 text-sm font-bold text-[#a4543a]">
                   Fim de ano, até 23 de dezembro: 50% na implantação do plano mensal e licença vitalícia por R$ 2.000.
                 </p>
               </SeOferta>

@@ -13,8 +13,8 @@ declare global {
 }
 
 /** Evento padrão do Meta para o clique em um botão de WhatsApp. */
-export function trackMetaContact(params: Record<string, string>) {
-  window.fbq?.("track", "Contact", params);
+export function trackMetaContact(params: Record<string, string>, eventId?: string) {
+  window.fbq?.("track", "Contact", params, eventId ? { eventID: eventId } : undefined);
 }
 
 /** Evento padrão do Meta para quem abre algo do produto, como a demonstração aberta. */
