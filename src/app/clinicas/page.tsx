@@ -133,7 +133,7 @@ const navLink = "transition-colors hover:text-white focus-visible:outline-2 focu
 
 export default function ClinicasPage() {
   return (
-    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-white pb-24 text-grafite antialiased md:pb-0`}>
+    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-white pb-36 text-grafite antialiased md:pb-12`}>
       <a href="#conteudo" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-full focus-visible:bg-eucalipto focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:text-white">
         Ir para o conteúdo
       </a>

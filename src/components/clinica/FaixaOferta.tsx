@@ -52,16 +52,20 @@ export default function FaixaOferta() {
   ];
 
   return (
-    <div className="bg-argila px-4 py-2.5 text-eucalipto-escuro">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-x-6 gap-y-1.5 text-center sm:flex-row">
-        <p className="text-[13px] font-bold">
-          {comVagas
-            ? `Só ${VAGAS} vagas de implantação até o fim da semana. 50% off + licença por R$ 2.000.`
-            : "Fim de ano: 50% na implantação ou licença por R$ 2.000, só até 23 de dezembro."}
+    // Fixa na tela o tempo todo. No celular fica logo acima do botão de WhatsApp; no desktop, colada no rodapé.
+    <div className="fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-40 bg-argila px-3 py-2 text-eucalipto-escuro shadow-[0_-6px_20px_-8px_rgba(0,0,0,0.35)] md:bottom-0 md:px-4 md:py-2.5">
+      <div className="mx-auto flex max-w-6xl flex-row items-center justify-center gap-x-3 gap-y-1 text-center md:gap-x-6">
+        <p className="whitespace-nowrap text-xs font-bold md:text-[13px]">
+          <span className="md:hidden">{comVagas ? `Só ${VAGAS} vagas` : "50% off"}</span>
+          <span className="hidden md:inline">
+            {comVagas
+              ? `Só ${VAGAS} vagas de implantação até o fim da semana. 50% off + licença por R$ 2.000.`
+              : "Fim de ano: 50% na implantação ou licença por R$ 2.000, só até 23 de dezembro."}
+          </span>
         </p>
         {resto !== null && (
           <p className="flex items-center gap-1.5 text-[13px] font-bold" role="timer" aria-label={comVagas ? "Tempo restante das vagas da semana" : "Tempo restante da oferta"}>
-            <span>{comVagas ? "Termina em" : "Acaba em"}</span>
+            <span className="whitespace-nowrap">{comVagas ? "Termina em" : "Acaba em"}</span>
             {partes.map(([v, u], i) => (
               <span key={i} className="rounded bg-eucalipto-escuro px-1.5 py-0.5 tabular-nums text-white">
                 {v}
