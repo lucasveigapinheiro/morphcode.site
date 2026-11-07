@@ -133,7 +133,7 @@ const navLink = "transition-colors hover:text-white focus-visible:outline-2 focu
 
 export default function ClinicasPage() {
   return (
-    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-white pb-36 text-grafite antialiased md:pb-12`}>
+    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-white pb-24 pt-9 text-grafite antialiased md:pb-12 md:pt-0`}>
       <a href="#conteudo" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-full focus-visible:bg-eucalipto focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:text-white">
         Ir para o conteúdo
       </a>
@@ -142,7 +142,7 @@ export default function ClinicasPage() {
       <FaixaOferta />
 
       {/* Cabeçalho */}
-      <header className="sticky top-0 z-30 bg-eucalipto-escuro/95 backdrop-blur">
+      <header className="sticky top-9 z-30 bg-eucalipto-escuro/95 backdrop-blur md:top-0">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
             <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full" />

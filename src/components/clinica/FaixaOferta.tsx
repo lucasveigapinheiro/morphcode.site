@@ -52,8 +52,8 @@ export default function FaixaOferta() {
   ];
 
   return (
-    // Fixa na tela o tempo todo. No celular fica logo acima do botão de WhatsApp; no desktop, colada no rodapé.
-    <div className="fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-40 bg-argila px-3 py-2 text-eucalipto-escuro shadow-[0_-6px_20px_-8px_rgba(0,0,0,0.35)] md:bottom-0 md:px-4 md:py-2.5">
+    // Fixa na tela o tempo todo. No celular fica no topo (altura fixa h-9, que o cabeçalho e a página compensam); no desktop, no rodapé.
+    <div className="fixed inset-x-0 top-0 z-40 flex h-9 items-center bg-argila px-3 text-eucalipto-escuro shadow-[0_6px_20px_-8px_rgba(0,0,0,0.35)] md:bottom-0 md:top-auto md:h-auto md:px-4 md:py-2.5 md:shadow-[0_-6px_20px_-8px_rgba(0,0,0,0.35)]">
       <div className="mx-auto flex max-w-6xl flex-row items-center justify-center gap-x-3 gap-y-1 text-center md:gap-x-6">
         <p className="whitespace-nowrap text-xs font-bold md:text-[13px]">
           <span className="md:hidden">{comVagas ? `Só ${VAGAS} vagas` : "50% off"}</span>
