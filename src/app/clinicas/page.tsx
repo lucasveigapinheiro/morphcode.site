@@ -15,13 +15,14 @@ import {
 } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa";
 import Reveal from "@/components/Reveal";
-import FaixaOferta, {
+import {
+  CabecalhoClinica,
   CronometroPlanosClinica,
   FlutuantesClinica,
   PainelVagasClinica,
   SeloAoVivoClinica,
 } from "@/components/clinica/FaixaOferta";
-import { PrecoImplantacao, PrecoLicenca, SeOferta, TextoOferta } from "@/components/clinica/Oferta";
+import { PrecoImplantacao, PrecoLicenca, TextoOferta } from "@/components/clinica/Oferta";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import { DEMO, PRODUTO, faqClinica, planos, telas, type Tela } from "@/lib/clinica";
 import { clinicaMessage, ofertaLicencaMessage, ofertaMessage, whatsappLink } from "@/lib/whatsapp";
@@ -176,13 +177,11 @@ function Check({ children }: { children: React.ReactNode }) {
   );
 }
 
-const navLink = "transition-colors hover:text-[#f7d46c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f]";
-
 export default function ClinicasPage() {
   const linkWhatsOferta = whatsappLink(ofertaMessage, "clinica");
 
   return (
-    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-[#faf9f5] pb-24 pt-9 text-[#122420] antialiased md:pb-12 md:pt-0`}>
+    <div className={`${fontesClinica} font-manrope relative z-0 overflow-x-clip bg-[#faf9f5] pb-24 text-[#122420] antialiased md:pb-12`}>
       <a
         href="#conteudo"
         className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-full focus-visible:bg-[#f3c64f] focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-bold focus-visible:text-[#0c221d]"
@@ -190,88 +189,34 @@ export default function ClinicasPage() {
         Ir para o conteúdo
       </a>
 
-      {/* Faixa da oferta em Ouro Champanhe + Esmeralda Escuro */}
-      <FaixaOferta />
-
-      {/* Cabeçalho Esmeralda Profundo */}
-      <header className="sticky top-9 z-30 border-b border-white/10 bg-[#0c221d]/95 backdrop-blur md:top-0">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
-            <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full ring-1 ring-[#f3c64f]/50" />
-            <span className="font-fraunces text-base text-white">{PRODUTO}</span>
-          </Link>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex">
-            <a href="#sistema" className={navLink}>O sistema</a>
-            <a href="#como-funciona" className={navLink}>Como começar</a>
-            <a href="#demo" className={navLink}>Demonstração</a>
-            <a href="#planos" className="font-bold text-[#f7d46c] transition-colors hover:text-white">Planos e 50% OFF</a>
-            <a href="#duvidas" className={navLink}>Dúvidas</a>
-          </nav>
-          <a
-            href={whatsappLink(ofertaMessage, "clinica")}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-origem="cabecalho"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-4 py-2 text-xs font-extrabold text-[#0c221d] shadow-sm transition hover:brightness-105 sm:text-sm"
-          >
-            <FaWhatsapp className="h-4 w-4" aria-hidden />
-            <span className="hidden sm:inline">Garantir 50% OFF</span>
-            <span className="sm:hidden">WhatsApp</span>
-          </a>
-        </div>
-      </header>
+      {/* Cabeçalho fixo no topo que alterna com a notificação de compra e depois volta ao normal */}
+      <CabecalhoClinica produto={PRODUTO} linkWhatsOferta={linkWhatsOferta} />
 
       <main id="conteudo">
-        {/* Abertura enxuta no celular e alinhada ao criativo do Meta Ads */}
+        {/* Hero despoluído: foco único na promessa, prova ao vivo enxuta e CTA direto */}
         <section id="hero" className="relative overflow-hidden bg-gradient-to-b from-[#0c221d] via-[#112e27] to-[#0c221d] text-white">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-32 -top-32 h-[560px] w-[560px] rounded-full opacity-30 blur-3xl"
+            className="pointer-events-none absolute -right-32 -top-32 h-[520px] w-[520px] rounded-full opacity-25 blur-3xl"
             style={{ background: "radial-gradient(circle, #f3c64f 0%, transparent 70%)" }}
           />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-20 pt-8 sm:px-6 md:pb-28 md:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+          <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 pb-18 pt-8 sm:px-6 md:pb-26 md:pt-16 lg:grid-cols-[1fr_1fr] lg:gap-12">
             <Reveal>
               <SeloAoVivoClinica />
 
-              <h1 className="text-balance text-[2.15rem] font-extrabold leading-[1.06] tracking-tight sm:text-5xl lg:text-[3.5rem]">
+              <h1 className="text-balance text-[2.15rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
                 Perdeu a <em className="font-fraunces font-normal text-[#f7d46c]">ficha da paciente</em> de novo?
               </h1>
 
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-[#d9ebe5] sm:mt-5 sm:text-lg">
-                Ficha assinada no celular da paciente, agenda com lembrete no WhatsApp, estoque por lote e validade e financeiro com taxa de maquininha num só sistema.
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-[#d9ebe5] sm:mt-5 sm:text-lg">
+                Ficha assinada no celular da paciente, estoque por lote e validade e financeiro com taxa de maquininha — tudo com a marca da sua clínica.
               </p>
 
-              {/* Resumo compacto lado a lado (2 colunas mesmo no celular, igual ao criativo do anúncio) */}
-              <div className="mt-5 grid max-w-xl grid-cols-2 gap-2.5 sm:mt-6 sm:gap-3.5">
-                <div className="rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 sm:p-4">
-                  <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#86efac] sm:text-[11px]">
-                    Plano mensal
-                  </span>
-                  <p className="mt-1 font-fraunces text-2xl font-bold text-white sm:text-3xl">
-                    R$ 149<span className="font-manrope text-xs font-normal text-white/75">/mês</span>
-                  </p>
-                  <p className="mt-1 text-[11px] leading-snug text-white/85 sm:text-xs">
-                    Sem fidelidade · Implantação <strong className="text-[#f7d46c]">R$ 248,50</strong> (50% off)
-                  </p>
-                </div>
+              <p className="mt-4 text-xs font-semibold text-[#f7d46c] sm:text-sm">
+                Plano mensal por <strong className="text-white">R$ 149/mês</strong> · Implantação com <strong className="underline decoration-[#f3c64f]/60 underline-offset-4">50% OFF nas 5 vagas da semana</strong>
+              </p>
 
-                <div className="rounded-2xl border border-[#f3c64f]/60 bg-gradient-to-br from-[#f7d46c]/25 via-[#f3c64f]/15 to-transparent p-3.5 shadow-lg shadow-black/20 sm:p-4">
-                  <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#f7d46c] sm:text-[11px]">
-                    Licença vitalícia
-                  </span>
-                  <p className="mt-1 font-fraunces text-2xl font-bold text-[#f7d46c] sm:text-3xl">
-                    R$ 2.000
-                  </p>
-                  <p className="mt-1 text-[11px] leading-snug text-white/90 sm:text-xs">
-                    De <s>R$ 2.700</s> · 12 meses inclusos
-                  </p>
-                </div>
-              </div>
-
-              {/* Barra elegante das 5 vagas de implantação pela metade */}
-              <PainelVagasClinica />
-
-              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
+              <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:flex-wrap">
                 <BotaoWhats
                   variante="argila"
                   origem="hero-oferta"
@@ -283,16 +228,16 @@ export default function ClinicasPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-origem="hero-demo"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/[0.05] px-7 py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f] sm:py-4"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/[0.04] px-7 py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f] sm:py-4"
                 >
                   Ver a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
             </Reveal>
 
-            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[600px]">
-              <div className="rounded-[1.6rem] border border-[#f3c64f]/35 bg-[#081714] p-1.5 shadow-[0_40px_90px_-25px_rgba(0,0,0,0.8)] sm:rounded-[1.9rem] sm:p-2">
-                <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.3rem] sm:rounded-[1.5rem]" />
+            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[580px]">
+              <div className="rounded-[1.5rem] border border-[#f3c64f]/30 bg-[#081714] p-1.5 shadow-[0_32px_80px_-25px_rgba(0,0,0,0.8)] sm:rounded-[1.8rem] sm:p-2">
+                <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.2rem] sm:rounded-[1.45rem]" />
               </div>
             </Reveal>
           </div>
@@ -417,7 +362,7 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Planos e Oferta subiram para logo depois dos módulos do sistema: conversão direta no mobile */}
+        {/* Planos e Oferta: concentra os gatilhos de escassez (cronômetro + painel de vagas) sem poluir o Hero */}
         <section id="planos" className="scroll-mt-20 border-y border-[#e2e8e5] bg-[#f2f6f4] py-16 md:py-24">
           <div className="mx-auto max-w-5xl px-5 sm:px-6">
             <Reveal className="text-center">
@@ -429,14 +374,9 @@ export default function ClinicasPage() {
                 Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
               </p>
 
-              {/* Cronômetro elegante em blocos Esmeralda & Ouro */}
+              {/* Cronômetro regressivo + Barra das 5 vagas da semana */}
               <CronometroPlanosClinica />
-
-              <SeOferta>
-                <p className="mx-auto mt-4 inline-block rounded-full border border-[#eab308]/40 bg-[#fef9c3] px-4 py-1.5 text-xs font-extrabold text-[#854d0e] sm:text-sm">
-                  Implantação pela metade (de R$ 497 por R$ 248,50 até 13/11) ou Licença Vitalícia por R$ 2.000 (até 23/12).
-                </p>
-              </SeOferta>
+              <PainelVagasClinica />
             </Reveal>
 
             {/* Os 2 cartões de planos com alto contraste */}
@@ -451,11 +391,11 @@ export default function ClinicasPage() {
                     }`}
                   >
                     {p.destaque ? (
-                      <span className=" -top-3.5 right-6 inline-block self-start rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0c221d] shadow-md sm:absolute sm:right-8 sm:text-xs">
+                      <span className="-top-3.5 right-6 inline-block self-start rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0c221d] shadow-md sm:absolute sm:right-8 sm:text-xs">
                         Economia de R$ 700 · Vitalícia
                       </span>
                     ) : (
-                      <span className=" -top-3.5 right-6 inline-block self-start rounded-full bg-[#16a34a] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md sm:absolute sm:right-8 sm:text-xs">
+                      <span className="-top-3.5 right-6 inline-block self-start rounded-full bg-[#16a34a] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md sm:absolute sm:right-8 sm:text-xs">
                         Só 5 vagas com 50% na implantação
                       </span>
                     )}
@@ -674,7 +614,7 @@ export default function ClinicasPage() {
         </section>
       </main>
 
-      {/* Barra fixa mobile limpa + Toast apenas no desktop */}
+      {/* Barra fixa inferior no celular */}
       <FlutuantesClinica linkWhatsOferta={linkWhatsOferta} />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(dadosEstruturados)} />

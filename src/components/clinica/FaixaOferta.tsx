@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { LuCheck, LuClock, LuSparkles } from "react-icons/lu";
+import { LuBellRing, LuCheck, LuClock, LuSparkles } from "react-icons/lu";
 
 // Datas reais da oferta (horário de Brasília):
 // - 5 vagas de implantação pela metade (R$ 497 -> R$ 248,50) até sexta, 13/11/2026
@@ -46,64 +48,166 @@ export function VagasSemana({ className = "" }: { className?: string }) {
   return <p className={className}>Só {VAGAS_TOTAL} vagas de implantação com 50% de desconto até sexta (13/11).</p>;
 }
 
-/**
- * Faixa de topo de alto contraste (Ouro Champanhe Luminoso #F3C64F sobre Esmeralda Profundo #0D2621),
- * limpa e direta no celular.
- */
-export default function FaixaOferta() {
-  const { hidratado, comVagas, encerrada, d, h, m, s } = useRelogioOferta();
-  if (hidratado && encerrada) return null;
+const NOTIFICACOES_COMPRA = [
+  {
+    tempo: "Agora mesmo",
+    clinica: "Clínica de Estética · São Paulo, SP",
+    acao: "Garantiu 1 das 5 vagas com 50% OFF na implantação",
+  },
+  {
+    tempo: "Há 2 min",
+    clinica: "Dra. Biomédica Esteta · Curitiba, PR",
+    acao: "Adquiriu a Licença Vitalícia por R$ 2.000",
+  },
+  {
+    tempo: "Há 4 min",
+    clinica: "Studio de Harmonização · Belo Horizonte, MG",
+    acao: "Reservou o Plano Mensal com implantação por R$ 248,50",
+  },
+  {
+    tempo: "Há 6 min",
+    clinica: "Clínica Dermatológica · Campinas, SP",
+    acao: "Garantiu 1 das 5 vagas com 50% OFF na implantação",
+  },
+];
 
-  const partes: [string, string][] = [
-    [String(d), d === 1 ? "d" : "d"],
-    [dois(h), "h"],
-    [dois(m), "m"],
-    [dois(s), "s"],
-  ];
+const navLink =
+  "transition-colors hover:text-[#f7d46c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f]";
+
+/**
+ * Cabeçalho fixo no topo (sem faixa dourada acima) que alterna suavemente
+ * entre a barra "Morph Clínica" e a notificação de compra em estilo push,
+ * voltando ao normal após alguns segundos.
+ */
+export function CabecalhoClinica({
+  produto,
+  linkWhatsOferta,
+}: {
+  produto: string;
+  linkWhatsOferta: string;
+}) {
+  const [indice, setIndice] = useState(0);
+  const [mostrandoNotificacao, setMostrandoNotificacao] = useState(false);
+
+  useEffect(() => {
+    let tEsconder: ReturnType<typeof setTimeout>;
+
+    const disparar = (novoIndice?: number) => {
+      if (typeof novoIndice === "number") {
+        setIndice(novoIndice);
+      }
+      setMostrandoNotificacao(true);
+      tEsconder = setTimeout(() => {
+        setMostrandoNotificacao(false);
+      }, 4800);
+    };
+
+    const tInicial = setTimeout(() => disparar(0), 4500);
+
+    const intervalo = setInterval(() => {
+      setIndice((atual) => {
+        const proximo = (atual + 1) % NOTIFICACOES_COMPRA.length;
+        setMostrandoNotificacao(true);
+        clearTimeout(tEsconder);
+        tEsconder = setTimeout(() => {
+          setMostrandoNotificacao(false);
+        }, 4800);
+        return proximo;
+      });
+    }, 18000);
+
+    return () => {
+      clearTimeout(tInicial);
+      clearTimeout(tEsconder);
+      clearInterval(intervalo);
+    };
+  }, []);
+
+  const item = NOTIFICACOES_COMPRA[indice];
 
   return (
-    <div className="fixed inset-x-0 top-0 z-40 flex h-9 items-center border-b border-[#d49b27]/40 bg-gradient-to-r from-[#ecc046] via-[#f7d46c] to-[#ecc046] px-3 text-[#0c221d] shadow-[0_6px_24px_-6px_rgba(0,0,0,0.45)] md:bottom-0 md:top-auto md:h-auto md:border-b-0 md:border-t md:px-4 md:py-2.5 md:shadow-[0_-6px_24px_-6px_rgba(0,0,0,0.45)]">
-      <div className="mx-auto flex max-w-6xl flex-row items-center justify-center gap-x-2.5 text-center md:gap-x-6">
-        <p className="whitespace-nowrap text-xs font-extrabold tracking-tight md:text-[13.5px]">
-          <span className="md:hidden">
-            {comVagas ? `Só ${VAGAS_TOTAL} vagas · 50% OFF` : "Oferta 50% OFF"}
-          </span>
-          <span className="hidden md:inline">
-            {comVagas
-              ? `🔥 Só ${VAGAS_TOTAL} vagas até 13/11: implantação pela metade (R$ 248,50) ou Licença Vitalícia por R$ 2.000.`
-              : "Fim de ano: 50% na implantação (R$ 248,50) ou Licença Vitalícia por R$ 2.000, só até 23 de dezembro."}
-          </span>
-        </p>
-
-        {hidratado && (
-          <p
-            className="flex items-center gap-1 text-xs font-extrabold md:gap-1.5 md:text-[13px]"
-            role="timer"
-            aria-label={comVagas ? "Tempo restante das vagas da semana" : "Tempo restante da oferta"}
-          >
-            <span className="hidden whitespace-nowrap sm:inline">{comVagas ? "Encerra em" : "Acaba em"}</span>
-            {partes.map(([v, u], i) => (
-              <span key={i} className="rounded bg-[#0c221d] px-1.5 py-0.5 tabular-nums text-[#f7d46c]">
-                {v}
-                <span className="text-[10px] font-semibold text-white/80">{u}</span>
-              </span>
-            ))}
-          </p>
-        )}
-
-        <a
-          href="#planos"
-          className="hidden rounded-full bg-[#0c221d] px-4 py-1 text-xs font-extrabold text-[#f7d46c] transition hover:bg-[#163830] lg:inline-block"
+    <header className="sticky top-0 z-40 h-16 overflow-hidden border-b border-white/10 bg-[#0c221d]/95 backdrop-blur">
+      <div className="relative mx-auto h-full max-w-6xl px-4 sm:px-6">
+        {/* Topo padrão: Morph Clínica + Navegação + Botão WhatsApp */}
+        <div
+          aria-hidden={mostrandoNotificacao}
+          className={`flex h-full items-center justify-between gap-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
+            mostrandoNotificacao
+              ? "-translate-y-full opacity-0 pointer-events-none"
+              : "translate-y-0 opacity-100"
+          }`}
         >
-          Garantir condição →
-        </a>
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
+            <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full ring-1 ring-[#f3c64f]/50" />
+            <span className="font-fraunces text-base text-white">{produto}</span>
+          </Link>
+          <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex">
+            <a href="#sistema" className={navLink}>O sistema</a>
+            <a href="#planos" className="font-bold text-[#f7d46c] transition-colors hover:text-white">Planos e 50% OFF</a>
+            <a href="#como-funciona" className={navLink}>Como começar</a>
+            <a href="#demo" className={navLink}>Demonstração</a>
+            <a href="#duvidas" className={navLink}>Dúvidas</a>
+          </nav>
+          <a
+            href={linkWhatsOferta}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-origem="cabecalho"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-4 py-2 text-xs font-extrabold text-[#0c221d] shadow-sm transition hover:brightness-105 sm:text-sm"
+          >
+            <FaWhatsapp className="h-4 w-4" aria-hidden />
+            <span className="hidden sm:inline">Garantir 50% OFF</span>
+            <span className="sm:hidden">WhatsApp</span>
+          </a>
+        </div>
+
+        {/* Notificação superior em estilo push que substitui temporariamente o topo do Morph Clínica */}
+        <div
+          role="status"
+          aria-live="polite"
+          className={`absolute inset-x-3 inset-y-1.5 flex items-center justify-between gap-3 rounded-2xl border border-[#f3c64f]/50 bg-gradient-to-r from-[#13352d] via-[#173f35] to-[#13352d] px-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-all duration-300 ease-out motion-reduce:transition-none sm:inset-x-6 sm:px-4 ${
+            mostrandoNotificacao
+              ? "translate-y-0 opacity-100"
+              : "translate-y-full opacity-0 pointer-events-none"
+          }`}
+        >
+          <a
+            href={linkWhatsOferta}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-origem="notificacao-topo"
+            className="flex min-w-0 flex-1 items-center gap-3"
+          >
+            <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-[#0c221d] shadow-[0_0_12px_rgba(34,197,94,0.5)]">
+              <LuCheck className="h-4 w-4 stroke-[2.75]" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1 leading-tight">
+              <div className="flex items-center gap-2">
+                <span className="truncate text-[11px] font-extrabold text-[#f7d46c] sm:text-xs">
+                  {item.clinica}
+                </span>
+                <span className="shrink-0 rounded-full bg-black/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#86efac]">
+                  {item.tempo}
+                </span>
+              </div>
+              <p className="mt-0.5 truncate text-xs font-semibold text-white sm:text-[13px]">
+                {item.acao}
+              </p>
+            </div>
+            <span className="hidden shrink-0 rounded-full bg-[#f3c64f] px-3 py-1 text-[11px] font-extrabold text-[#0c221d] sm:inline-flex sm:items-center sm:gap-1">
+              <LuBellRing className="h-3 w-3" aria-hidden />
+              Ver oferta
+            </span>
+          </a>
+        </div>
       </div>
-    </div>
+    </header>
   );
 }
 
 /**
- * Selo ao vivo no Hero: conciso no celular para não ocupar duas linhas.
+ * Selo ao vivo no Hero: mostra apenas o número de clínicas vendo a página agora,
+ * com ponto verde pulsante sólido e perfeitamente alinhado no celular.
  */
 export function SeloAoVivoClinica() {
   const [ativas, setAtivas] = useState(9);
@@ -119,20 +223,22 @@ export function SeloAoVivoClinica() {
   }, []);
 
   return (
-    <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#f3c64f]/35 bg-[#15352e]/90 px-3.5 py-1.5 text-xs font-semibold text-[#e6f2ee] sm:mb-5 sm:px-4 sm:text-sm">
-      <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22c55e] opacity-75 motion-reduce:animate-none" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22c55e]" />
+    <div className="mb-4 inline-flex max-w-full items-center gap-2.5 rounded-full border border-[#f3c64f]/35 bg-[#15352e]/95 px-3.5 py-1.5 text-xs font-semibold leading-none text-[#e6f2ee] shadow-sm sm:mb-5 sm:px-4 sm:py-2 sm:text-sm">
+      <span
+        aria-hidden
+        className="relative inline-flex h-2.5 w-2.5 shrink-0 items-center justify-center"
+      >
+        <span className="h-2.5 w-2.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_2px_rgba(34,197,94,0.85)] animate-pulse motion-reduce:animate-none" />
       </span>
-      <span>
-        <strong className="font-bold text-[#f7d46c] tabular-nums">{ativas} clínicas</strong> vendo esta página agora
+      <span className="whitespace-nowrap">
+        <strong className="font-extrabold text-[#f7d46c] tabular-nums">{ativas} clínicas</strong> vendo esta página agora
       </span>
-    </p>
+    </div>
   );
 }
 
 /**
- * Painel de escassez das 5 vagas de implantação no Hero: enxuto e super legível no mobile.
+ * Painel de escassez das 5 vagas de implantação (usado na seção de Planos para manter o Hero limpo).
  */
 export function PainelVagasClinica() {
   const { hidratado, d, h, m } = useRelogioOferta();
@@ -141,7 +247,7 @@ export function PainelVagasClinica() {
   const percentual = Math.round((preenchidas / VAGAS_TOTAL) * 100);
 
   return (
-    <div className="mt-5 max-w-xl rounded-2xl border border-[#f3c64f]/45 bg-[#122e28]/95 p-3.5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.65)] sm:mt-6 sm:p-4">
+    <div className="mx-auto mt-5 max-w-xl rounded-2xl border border-[#f3c64f]/45 bg-[#122e28] p-4 text-left text-white shadow-[0_20px_50px_-20px_rgba(12,34,29,0.45)] sm:mt-6 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13.5px]">
         <span className="inline-flex items-center gap-1.5 font-semibold text-white">
           <LuClock className="h-4 w-4 shrink-0 text-[#f3c64f]" aria-hidden />
@@ -162,7 +268,7 @@ export function PainelVagasClinica() {
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-[#cfe3dc] sm:text-xs">
-        <span>{preenchidas} vagas preenchidas nesta semana</span>
+        <span>{preenchidas} de {VAGAS_TOTAL} vagas preenchidas nesta semana</span>
         {hidratado && (
           <span className="font-mono text-white/90 tabular-nums">
             Fecha 13/11 ({d}d {dois(h)}h{dois(m)})
@@ -215,85 +321,34 @@ export function CronometroPlanosClinica() {
   );
 }
 
-const ATIVIDADES_RECENTES = [
-  { local: "Clínica de Estética · São Paulo, SP", acao: "Reservou vaga de implantação por R$ 248,50" },
-  { local: "Studio de Harmonização · Belo Horizonte, MG", acao: "Abriu a demonstração do sistema agora" },
-  { local: "Dra. Biomédica Esteta · Curitiba, PR", acao: "Garantiu a Licença Vitalícia por R$ 2.000" },
-  { local: "Clínica Dermatológica · Campinas, SP", acao: "Chamou no WhatsApp para ver a ficha no celular" },
-];
-
 /**
- * No celular mostra apenas a barra fixa inferior limpa (sem toast cobrindo a tela).
- * O toast flutuante aparece apenas em telas maiores (desktop).
+ * Barra fixa inferior no celular para conversão rápida durante a rolagem.
  */
 export function FlutuantesClinica({ linkWhatsOferta }: { linkWhatsOferta: string }) {
   const { hidratado, d, h, m } = useRelogioOferta();
-  const [indice, setIndice] = useState(0);
-  const [visivel, setVisivel] = useState(false);
-
-  useEffect(() => {
-    const t1 = setTimeout(() => {
-      setVisivel(true);
-      setTimeout(() => setVisivel(false), 4500);
-    }, 8000);
-
-    const ciclo = setInterval(() => {
-      setIndice((i) => (i + 1) % ATIVIDADES_RECENTES.length);
-      setVisivel(true);
-      setTimeout(() => setVisivel(false), 4500);
-    }, 24000);
-
-    return () => {
-      clearTimeout(t1);
-      clearInterval(ciclo);
-    };
-  }, []);
-
-  const item = ATIVIDADES_RECENTES[indice];
 
   return (
-    <>
-      {/* Notificação discreta só no desktop (hidden md:block) para não poluir a tela do celular */}
-      <div
-        aria-live="polite"
-        className={`pointer-events-none fixed bottom-14 left-6 z-30 hidden max-w-sm rounded-2xl border border-[#f3c64f]/45 bg-[#0c221d]/95 p-3.5 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.55)] backdrop-blur transition-[transform,opacity] duration-300 motion-reduce:transition-none md:block ${
-          visivel ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#f3c64f] text-[#0c221d]">
-            <LuCheck className="h-4 w-4 stroke-[2.5]" aria-hidden />
-          </span>
-          <div className="min-w-0 text-xs leading-snug">
-            <p className="truncate font-bold text-[#f7d46c]">{item.local}</p>
-            <p className="text-white/90">{item.acao}</p>
-          </div>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f3c64f]/35 bg-[#0c221d]/98 px-4 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-2.5 text-white shadow-[0_-12px_32px_rgba(0,0,0,0.45)] backdrop-blur md:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-fraunces text-base font-bold leading-tight text-white">
+            R$ 149/mês <span className="font-manrope text-xs font-extrabold text-[#f7d46c]">· 50% na implantação</span>
+          </p>
+          <p className="truncate text-[11px] font-medium text-[#cfe3dc] tabular-nums">
+            Restam 2 de 5 vagas {hidratado ? `· ${d}d ${dois(h)}h${dois(m)}` : "até 13/11"}
+          </p>
         </div>
+        <a
+          href={linkWhatsOferta}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-origem="barra-mobile-fixa"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 py-3 text-xs font-extrabold text-white shadow-[0_6px_20px_rgba(34,197,94,0.4)] ring-1 ring-white/25 active:scale-[0.98]"
+        >
+          <FaWhatsapp className="h-4 w-4" aria-hidden />
+          Garantir vaga
+        </a>
       </div>
-
-      {/* Barra fixa inferior no celular */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f3c64f]/35 bg-[#0c221d]/98 px-4 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-2.5 text-white shadow-[0_-12px_32px_rgba(0,0,0,0.45)] backdrop-blur md:hidden">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="font-fraunces text-base font-bold leading-tight text-white">
-              R$ 149/mês <span className="font-manrope text-xs font-extrabold text-[#f7d46c]">· 50% na implantação</span>
-            </p>
-            <p className="truncate text-[11px] font-medium text-[#cfe3dc] tabular-nums">
-              Restam 2 de 5 vagas {hidratado ? `· ${d}d ${dois(h)}h${dois(m)}` : "até 13/11"}
-            </p>
-          </div>
-          <a
-            href={linkWhatsOferta}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-origem="barra-mobile-fixa"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 py-3 text-xs font-extrabold text-white shadow-[0_6px_20px_rgba(34,197,94,0.4)] ring-1 ring-white/25 active:scale-[0.98]"
-          >
-            <FaWhatsapp className="h-4 w-4" aria-hidden />
-            Garantir vaga
-          </a>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
