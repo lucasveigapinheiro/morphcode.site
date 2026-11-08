@@ -9,12 +9,11 @@ export function whatsappDireto(message: string, phone: string = PHONE) {
   return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
 }
 
-// Os botões passam por /whatsapp antes de abrir a conversa: é a página que o Google Ads
-// usa para contar o pedido de orçamento como conversão.
-// `numero: "clinica"` escolhe o número do Morph Clínica; só esse valor é aceito na URL.
+// Abre a conversa direto no WhatsApp, sem passar pela tela intermediária.
+// O rastreamento (Meta Pixel, CAPI e Vercel Analytics) dispara no clique pelo ConversionTracking.
 export function whatsappLink(message: string, numero?: "clinica") {
-  const extra = numero ? `&numero=${numero}` : "";
-  return `/whatsapp?texto=${encodeURIComponent(message)}${extra}`;
+  const phone = numero === "clinica" ? PHONE_CLINICA : PHONE;
+  return whatsappDireto(message, phone);
 }
 
 export const budgetMessage = `Olá, Morph Code! Vim pelo site e gostaria de um orçamento.`;
