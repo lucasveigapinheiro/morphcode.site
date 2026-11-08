@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { LuCheck, LuClock } from "react-icons/lu";
+import { LuCheck, LuClock, LuSparkles } from "react-icons/lu";
 
 // Datas reais da oferta (horário de Brasília):
 // - 5 vagas de implantação pela metade (R$ 497 -> R$ 248,50) até sexta, 13/11/2026
@@ -47,8 +47,8 @@ export function VagasSemana({ className = "" }: { className?: string }) {
 }
 
 /**
- * Faixa de topo clínica e elegante (argila + eucalipto-escuro), fixa no topo no celular e no rodapé no desktop,
- * com cronômetro real e atalho para os planos.
+ * Faixa de topo de alto contraste (Ouro Champanhe Luminoso #F3C64F sobre Esmeralda Profundo #0D2621),
+ * alinhada diretamente com o criativo dourado do Meta Ads.
  */
 export default function FaixaOferta() {
   const { hidratado, comVagas, encerrada, d, h, m, s } = useRelogioOferta();
@@ -62,30 +62,30 @@ export default function FaixaOferta() {
   ];
 
   return (
-    <div className="fixed inset-x-0 top-0 z-40 flex h-9 items-center bg-argila px-3 text-eucalipto-escuro shadow-[0_6px_20px_-8px_rgba(0,0,0,0.35)] md:bottom-0 md:top-auto md:h-auto md:px-4 md:py-2.5 md:shadow-[0_-6px_20px_-8px_rgba(0,0,0,0.35)]">
+    <div className="fixed inset-x-0 top-0 z-40 flex h-9 items-center border-b border-[#d49b27]/40 bg-gradient-to-r from-[#ecc046] via-[#f7d46c] to-[#ecc046] px-3 text-[#0c221d] shadow-[0_6px_24px_-6px_rgba(0,0,0,0.45)] md:bottom-0 md:top-auto md:h-auto md:border-b-0 md:border-t md:px-4 md:py-2.5 md:shadow-[0_-6px_24px_-6px_rgba(0,0,0,0.45)]">
       <div className="mx-auto flex max-w-6xl flex-row items-center justify-center gap-x-3 gap-y-1 text-center md:gap-x-6">
-        <p className="whitespace-nowrap text-xs font-bold md:text-[13px]">
+        <p className="whitespace-nowrap text-xs font-extrabold tracking-tight md:text-[13.5px]">
           <span className="md:hidden">
-            {comVagas ? `Só ${VAGAS_TOTAL} vagas até 13/11 · 50% off` : "Oferta até 23/12 · 50% off"}
+            {comVagas ? `🔥 Só ${VAGAS_TOTAL} vagas até 13/11 · 50% OFF` : "Oferta até 23/12 · 50% OFF"}
           </span>
           <span className="hidden md:inline">
             {comVagas
-              ? `Só ${VAGAS_TOTAL} vagas até 13/11: implantação pela metade (R$ 248,50) ou Licença Vitalícia por R$ 2.000.`
-              : "Fim de ano: 50% na implantação (R$ 248,50) ou licença por R$ 2.000, só até 23 de dezembro."}
+              ? `🔥 Só ${VAGAS_TOTAL} vagas até 13/11: implantação pela metade (R$ 248,50) ou Licença Vitalícia por R$ 2.000.`
+              : "Fim de ano: 50% na implantação (R$ 248,50) ou Licença Vitalícia por R$ 2.000, só até 23 de dezembro."}
           </span>
         </p>
 
         {hidratado && (
           <p
-            className="flex items-center gap-1 text-xs font-bold md:gap-1.5 md:text-[13px]"
+            className="flex items-center gap-1 text-xs font-extrabold md:gap-1.5 md:text-[13px]"
             role="timer"
             aria-label={comVagas ? "Tempo restante das vagas da semana" : "Tempo restante da oferta"}
           >
             <span className="hidden whitespace-nowrap sm:inline">{comVagas ? "Encerra em" : "Acaba em"}</span>
             {partes.map(([v, u], i) => (
-              <span key={i} className="rounded bg-eucalipto-escuro px-1.5 py-0.5 tabular-nums text-white">
+              <span key={i} className="rounded-md bg-[#0c221d] px-1.5 py-0.5 tabular-nums text-[#f7d46c] shadow-sm">
                 {v}
-                <span className="ml-0.5 text-[10px] font-semibold opacity-75">{u}</span>
+                <span className="ml-0.5 text-[10px] font-semibold text-white/80">{u}</span>
               </span>
             ))}
           </p>
@@ -93,9 +93,9 @@ export default function FaixaOferta() {
 
         <a
           href="#planos"
-          className="hidden rounded-full bg-eucalipto-escuro px-3.5 py-1 text-xs font-bold text-white transition-opacity hover:opacity-90 lg:inline-block"
+          className="hidden rounded-full bg-[#0c221d] px-4 py-1 text-xs font-extrabold text-[#f7d46c] transition hover:bg-[#163830] lg:inline-block"
         >
-          Ver condição →
+          Garantir condição →
         </a>
       </div>
     </div>
@@ -103,7 +103,7 @@ export default function FaixaOferta() {
 }
 
 /**
- * Selo suave no Hero: mostra clínicas conhecendo o sistema agora no tom botânico da página.
+ * Selo ao vivo no Hero com ponto verde pulsante e destaque em Ouro Champanhe.
  */
 export function SeloAoVivoClinica() {
   const [ativas, setAtivas] = useState(9);
@@ -119,20 +119,20 @@ export function SeloAoVivoClinica() {
   }, []);
 
   return (
-    <p className="mb-5 inline-flex flex-wrap items-center gap-2.5 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-nevoa ring-1 ring-white/15">
-      <span className="relative flex h-2 w-2" aria-hidden>
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ade80] opacity-75 motion-reduce:animate-none" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ade80]" />
+    <p className="mb-5 inline-flex flex-wrap items-center gap-2.5 rounded-full border border-[#f3c64f]/35 bg-[#15352e]/90 px-4 py-1.5 text-xs font-semibold text-[#e6f2ee] shadow-sm sm:text-sm">
+      <span className="relative flex h-2.5 w-2.5" aria-hidden>
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22c55e] opacity-75 motion-reduce:animate-none" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
       </span>
       <span>
-        Já em uso por profissionais da área · <strong className="text-white tabular-nums">{ativas} clínicas</strong> vendo esta página agora
+        Já em uso por profissionais da área · <strong className="font-bold text-[#f7d46c] tabular-nums">{ativas} clínicas</strong> vendo esta página agora
       </span>
     </p>
   );
 }
 
 /**
- * Cartão elegante de escassez das 5 vagas de implantação pela metade no Hero.
+ * Painel de escassez das 5 vagas de implantação no Hero: alto contraste elegante em Esmeralda + Ouro + Coral.
  */
 export function PainelVagasClinica() {
   const { hidratado, comVagas, d, h, m, s } = useRelogioOferta();
@@ -141,34 +141,34 @@ export function PainelVagasClinica() {
   const percentual = Math.round((preenchidas / VAGAS_TOTAL) * 100);
 
   return (
-    <div className="mt-6 max-w-xl rounded-2xl bg-white/[0.07] p-4 ring-1 ring-white/15 backdrop-blur-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13px]">
-        <span className="inline-flex items-center gap-1.5 font-semibold text-nevoa">
-          <LuClock className="h-4 w-4 shrink-0 text-argila" aria-hidden />
+    <div className="mt-6 max-w-xl rounded-2xl border border-[#f3c64f]/45 bg-[#122e28]/95 p-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.65)]">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13.5px]">
+        <span className="inline-flex items-center gap-1.5 font-semibold text-white">
+          <LuClock className="h-4 w-4 shrink-0 text-[#f3c64f]" aria-hidden />
           <span>
-            Implantação pela metade (<s className="text-white/50">R$ 497</s> por <strong className="text-white">R$ 248,50</strong>)
+            Implantação pela metade (<s className="text-white/45">R$ 497</s> por <strong className="font-extrabold text-[#f7d46c]">R$ 248,50</strong>)
           </span>
         </span>
-        <span className="rounded-full bg-argila px-3 py-0.5 text-xs font-bold text-eucalipto-escuro tabular-nums">
+        <span className="rounded-full bg-[#f3c64f] px-3 py-0.5 text-xs font-extrabold text-[#0c221d] tabular-nums shadow-sm">
           Restam {vagasRestantes} de {VAGAS_TOTAL} vagas até 13/11
         </span>
       </div>
 
-      <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-white/10" aria-hidden>
+      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-black/35 p-0.5 ring-1 ring-white/10" aria-hidden>
         <div
-          className="h-full rounded-full bg-gradient-to-r from-nevoa via-argila to-[#e09f83] transition-[width] duration-500 motion-reduce:transition-none"
+          className="h-full rounded-full bg-gradient-to-r from-[#22c55e] via-[#f3c64f] to-[#f59e0b] transition-[width] duration-500 motion-reduce:transition-none"
           style={{ width: `${percentual}%` }}
         />
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-white/75">
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-[#cfe3dc]">
         <span>
           <strong className="text-white">{preenchidas} de {VAGAS_TOTAL} vagas</strong> desta semana já reservadas (implantação individual)
         </span>
         {hidratado && (
-          <span className="font-mono text-nevoa tabular-nums">
+          <span className="font-mono text-white/90 tabular-nums">
             {comVagas ? "Encerra em " : "Restam "}
-            <strong className="text-white">
+            <strong className="font-bold text-[#f7d46c]">
               {d}d {dois(h)}h {dois(m)}m {dois(s)}s
             </strong>
           </span>
@@ -179,7 +179,7 @@ export function PainelVagasClinica() {
 }
 
 /**
- * Cronômetro elegante em blocos dentro da seção de Planos e Investimento.
+ * Cronômetro grande em blocos dentro da seção de Planos e Investimento, com estética Esmeralda & Ouro.
  */
 export function CronometroPlanosClinica() {
   const { hidratado, comVagas, encerrada, d, h, m, s } = useRelogioOferta();
@@ -193,30 +193,30 @@ export function CronometroPlanosClinica() {
   ];
 
   return (
-    <div className="mx-auto mt-8 max-w-2xl rounded-3xl bg-eucalipto-escuro p-6 text-center text-white shadow-xl shadow-eucalipto/20 ring-1 ring-white/10">
-      <div className="inline-flex items-center gap-2 rounded-full bg-argila/20 px-3.5 py-1 text-xs font-bold text-argila">
-        <span className="h-2 w-2 animate-ping rounded-full bg-argila motion-reduce:animate-none" aria-hidden />
+    <div className="mx-auto mt-8 max-w-2xl rounded-3xl border border-[#f3c64f]/40 bg-gradient-to-b from-[#112c26] to-[#0c221d] p-6 text-center text-white shadow-[0_24px_60px_-20px_rgba(12,34,29,0.55)]">
+      <div className="inline-flex items-center gap-2 rounded-full border border-[#f3c64f]/40 bg-[#f3c64f]/15 px-4 py-1 text-xs font-extrabold uppercase tracking-wider text-[#f7d46c]">
+        <LuSparkles className="h-3.5 w-3.5" aria-hidden />
         {comVagas
           ? "Condição da semana · Só 5 vagas com implantação pela metade (até 13/11)"
           : "Oferta de fim de ano válida até 23 de dezembro"}
       </div>
 
-      <p className="mt-2 text-sm text-nevoa/90">
+      <p className="mt-2.5 text-sm text-[#d8eae4]">
         Depois de sexta-feira (13/11) ou assim que as 5 vagas fecharem, a implantação volta para R$ 497:
       </p>
 
       <div className="mt-4 flex items-center justify-center gap-2 sm:gap-3" role="timer" aria-label="Cronômetro regressivo da condição de implantação">
         {blocos.map((b, i) => (
           <div key={b.rotulo} className="flex items-center gap-2 sm:gap-3">
-            <div className="min-w-[62px] rounded-2xl bg-white/[0.08] px-3 py-2.5 ring-1 ring-white/15 sm:min-w-[74px] sm:px-4">
-              <span className="block font-fraunces text-2xl font-bold leading-none text-argila tabular-nums sm:text-3xl">
+            <div className="min-w-[64px] rounded-2xl border border-[#f3c64f]/35 bg-[#081714] px-3 py-2.5 shadow-inner sm:min-w-[78px] sm:px-4">
+              <span className="block font-fraunces text-2xl font-bold leading-none text-[#f7d46c] tabular-nums sm:text-3xl">
                 {b.valor}
               </span>
-              <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-nevoa/80">
+              <span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-white/75">
                 {b.rotulo}
               </span>
             </div>
-            {i < blocos.length - 1 && <span className="font-fraunces text-xl text-argila/70">:</span>}
+            {i < blocos.length - 1 && <span className="font-fraunces text-xl font-bold text-[#f3c64f]">:</span>}
           </div>
         ))}
       </div>
@@ -232,7 +232,7 @@ const ATIVIDADES_RECENTES = [
 ];
 
 /**
- * Toast flutuante suave (estilo caderno de bem-estar) + Barra fixa de WhatsApp no celular.
+ * Toast flutuante elegante + Barra fixa de WhatsApp de alta conversão no celular.
  */
 export function FlutuantesClinica({ linkWhatsOferta }: { linkWhatsOferta: string }) {
   const { hidratado, d, h, m } = useRelogioOferta();
@@ -264,29 +264,29 @@ export function FlutuantesClinica({ linkWhatsOferta }: { linkWhatsOferta: string
       {/* Notificação discreta no canto inferior esquerdo */}
       <div
         aria-live="polite"
-        className={`pointer-events-none fixed bottom-24 left-4 right-4 z-30 max-w-sm rounded-2xl bg-white/95 p-3.5 text-grafite shadow-[0_20px_50px_-15px_rgba(29,60,54,0.35)] ring-1 ring-eucalipto/15 backdrop-blur transition-[transform,opacity] duration-300 motion-reduce:transition-none md:bottom-14 md:left-6 md:right-auto ${
+        className={`pointer-events-none fixed bottom-24 left-4 right-4 z-30 max-w-sm rounded-2xl border border-[#f3c64f]/45 bg-[#0c221d]/95 p-3.5 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.55)] backdrop-blur transition-[transform,opacity] duration-300 motion-reduce:transition-none md:bottom-14 md:left-6 md:right-auto ${
           visivel ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         }`}
       >
         <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-nevoa text-eucalipto">
-            <LuCheck className="h-4 w-4" aria-hidden />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#f3c64f] text-[#0c221d]">
+            <LuCheck className="h-4 w-4 stroke-[2.5]" aria-hidden />
           </span>
           <div className="min-w-0 text-xs leading-snug">
-            <p className="truncate font-bold text-eucalipto-escuro">{item.local}</p>
-            <p className="text-grafite/75">{item.acao}</p>
+            <p className="truncate font-bold text-[#f7d46c]">{item.local}</p>
+            <p className="text-white/90">{item.acao}</p>
           </div>
         </div>
       </div>
 
       {/* Barra fixa inferior no celular */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-grafite/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-10px_30px_-10px_rgba(29,60,54,0.25)] backdrop-blur md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f3c64f]/35 bg-[#0c221d]/98 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 text-white shadow-[0_-12px_32px_rgba(0,0,0,0.45)] backdrop-blur md:hidden">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-fraunces text-base font-bold leading-tight text-eucalipto-escuro">
-              R$ 149/mês <span className="font-manrope text-xs font-semibold text-[#a4543a]">· Implantação 50% off</span>
+            <p className="font-fraunces text-base font-bold leading-tight text-white">
+              R$ 149/mês <span className="font-manrope text-xs font-extrabold text-[#f7d46c]">· Implantação 50% OFF</span>
             </p>
-            <p className="truncate text-[11px] font-medium text-grafite/65 tabular-nums">
+            <p className="truncate text-[11px] font-medium text-[#cfe3dc] tabular-nums">
               Restam 2 de 5 vagas {hidratado ? `· encerra em ${d}d ${dois(h)}h${dois(m)}` : "até 13/11"}
             </p>
           </div>
@@ -295,7 +295,7 @@ export function FlutuantesClinica({ linkWhatsOferta }: { linkWhatsOferta: string
             target="_blank"
             rel="noopener noreferrer"
             data-origem="barra-mobile-fixa"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#1fa855] px-5 py-3 text-xs font-bold text-white shadow-md shadow-[#1fa855]/30 active:scale-[0.98]"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 py-3 text-xs font-extrabold text-white shadow-[0_6px_20px_rgba(34,197,94,0.4)] ring-1 ring-white/25 active:scale-[0.98]"
           >
             <FaWhatsapp className="h-4 w-4" aria-hidden />
             Garantir vaga
