@@ -21,9 +21,6 @@ import FaixaOferta, {
   PainelVagasClinica,
   SeloAoVivoClinica,
 } from "@/components/clinica/FaixaOferta";
-import TestePaciente from "@/components/clinica/TestePaciente";
-import MockupEstoque from "@/components/clinica/MockupEstoque";
-import MockupFinanceiro from "@/components/clinica/MockupFinanceiro";
 import { PrecoImplantacao, PrecoLicenca, SeOferta, TextoOferta } from "@/components/clinica/Oferta";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import { DEMO, PRODUTO, faqClinica, planos, telas, type Tela } from "@/lib/clinica";
@@ -126,37 +123,9 @@ const cartoes = [
   },
 ];
 
-const entregaveisInclusos = [
-  {
-    titulo: "Prontuário + Ficha de Anamnese Assinada no Celular",
-    tag: "Incluso nos 2 planos",
-    detalhe: "Link enviado pelo WhatsApp, assinatura com o dedo na tela e alertas clínicos de alergia no topo do prontuário.",
-  },
-  {
-    titulo: "Agenda com Lembrete no WhatsApp + Estoque FEFO por Lote",
-    tag: "Incluso nos 2 planos",
-    detalhe: "Confirmação de consulta em 1 toque e baixa prioritária no lote que vence primeiro para evitar perda de insumos.",
-  },
-  {
-    titulo: "Financeiro com Taxas de Maquininha e Parcelado",
-    tag: "Incluso nos 2 planos",
-    detalhe: "Cálculo automático do valor líquido no PIX, débito e crédito parcelado mês a mês, com sinal vinculado à agenda.",
-  },
-  {
-    titulo: "Implantação Completa com a Marca e a Ficha da Sua Clínica",
-    tag: "50% OFF (de R$ 497 por R$ 248,50)",
-    detalhe: "Passamos as perguntas da sua ficha de papel para o sistema e configuramos o aplicativo com as suas cores e logotipo.",
-  },
-  {
-    titulo: "Hospedagem, Banco de Dados Isolado, Backup e Suporte",
-    tag: "Incluso",
-    detalhe: "Sem limite de pacientes cadastradas, cópia completa dos dados em 1 clique e suporte direto pelo WhatsApp.",
-  },
-];
-
 function Eyebrow({ children, claro = false }: { children: React.ReactNode; claro?: boolean }) {
   return (
-    <p className={`mb-3 text-xs font-extrabold uppercase tracking-[0.14em] ${claro ? "text-[#f7d46c]" : "text-[#1b4d42]"}`}>
+    <p className={`mb-2.5 text-xs font-extrabold uppercase tracking-[0.14em] ${claro ? "text-[#f7d46c]" : "text-[#1b4d42]"}`}>
       {children}
     </p>
   );
@@ -166,12 +135,6 @@ function Img({ tela, className = "", prioridade = false, sizes = "(min-width: 10
   return <Image src={tela.src} alt={tela.alt} width={tela.width} height={tela.height} priority={prioridade} sizes={sizes} className={className} />;
 }
 
-/**
- * Botões de ação com alto contraste luminoso:
- * - "ouro": Dourado Champanhe vibrante igual ao criativo vencedor do Meta Ads (#f7d46c -> #eab308)
- * - "verde": Verde Esmeralda Vivo (#16a34a / #1fa855) para chamadas em fundo claro
- * - "claro": Branco puro com texto escuro
- */
 function BotaoWhats({
   texto,
   mensagem,
@@ -232,14 +195,13 @@ export default function ClinicasPage() {
 
       {/* Cabeçalho Esmeralda Profundo */}
       <header className="sticky top-9 z-30 border-b border-white/10 bg-[#0c221d]/95 backdrop-blur md:top-0">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
             <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full ring-1 ring-[#f3c64f]/50" />
             <span className="font-fraunces text-base text-white">{PRODUTO}</span>
           </Link>
           <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex">
             <a href="#sistema" className={navLink}>O sistema</a>
-            <a href="#simuladores" className={navLink}>Testar ao vivo</a>
             <a href="#como-funciona" className={navLink}>Como começar</a>
             <a href="#demo" className={navLink}>Demonstração</a>
             <a href="#planos" className="font-bold text-[#f7d46c] transition-colors hover:text-white">Planos e 50% OFF</a>
@@ -260,53 +222,48 @@ export default function ClinicasPage() {
       </header>
 
       <main id="conteudo">
-        {/* Abertura: Esmeralda Profundo (#0c221d) + Destaques em Ouro Champanhe (#f7d46c), idêntico ao criativo do anúncio */}
+        {/* Abertura enxuta no celular e alinhada ao criativo do Meta Ads */}
         <section id="hero" className="relative overflow-hidden bg-gradient-to-b from-[#0c221d] via-[#112e27] to-[#0c221d] text-white">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-32 -top-32 h-[560px] w-[560px] rounded-full opacity-30 blur-3xl"
             style={{ background: "radial-gradient(circle, #f3c64f 0%, transparent 70%)" }}
           />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -left-32 bottom-0 h-[440px] w-[440px] rounded-full opacity-20 blur-3xl"
-            style={{ background: "radial-gradient(circle, #22c55e 0%, transparent 70%)" }}
-          />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pb-28 pt-12 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-20 pt-8 sm:px-6 md:pb-28 md:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
             <Reveal>
               <SeloAoVivoClinica />
 
-              <h1 className="text-balance text-[2.35rem] font-extrabold leading-[1.06] tracking-tight md:text-5xl lg:text-[3.5rem]">
+              <h1 className="text-balance text-[2.15rem] font-extrabold leading-[1.06] tracking-tight sm:text-5xl lg:text-[3.5rem]">
                 Perdeu a <em className="font-fraunces font-normal text-[#f7d46c]">ficha da paciente</em> de novo?
               </h1>
 
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#d9ebe5]">
-                Ficha assinada no celular da paciente, agenda com lembrete no WhatsApp, estoque por lote e validade e financeiro com taxa de maquininha num só sistema, com a marca da sua clínica.
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-[#d9ebe5] sm:mt-5 sm:text-lg">
+                Ficha assinada no celular da paciente, agenda com lembrete no WhatsApp, estoque por lote e validade e financeiro com taxa de maquininha num só sistema.
               </p>
 
-              {/* Resumo dos 2 planos exatamente com a estética do criativo do Meta Ads (Branco/Esmeralda + Ouro Champanhe) */}
-              <div className="mt-6 grid max-w-xl grid-cols-1 gap-3.5 sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/15 bg-white/[0.08] p-4 backdrop-blur-sm">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#86efac]">
-                    Plano mensal · Sem fidelidade
+              {/* Resumo compacto lado a lado (2 colunas mesmo no celular, igual ao criativo do anúncio) */}
+              <div className="mt-5 grid max-w-xl grid-cols-2 gap-2.5 sm:mt-6 sm:gap-3.5">
+                <div className="rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 sm:p-4">
+                  <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#86efac] sm:text-[11px]">
+                    Plano mensal
                   </span>
-                  <p className="mt-1 font-fraunces text-3xl font-bold text-white">
-                    R$ 149<span className="font-manrope text-sm font-normal text-white/75">/mês</span>
+                  <p className="mt-1 font-fraunces text-2xl font-bold text-white sm:text-3xl">
+                    R$ 149<span className="font-manrope text-xs font-normal text-white/75">/mês</span>
                   </p>
-                  <p className="mt-1 text-xs text-white/85">
-                    Implantação 50% OFF: de <s className="text-white/50">R$ 497</s> por <strong className="font-extrabold text-[#f7d46c]">R$ 248,50</strong>
+                  <p className="mt-1 text-[11px] leading-snug text-white/85 sm:text-xs">
+                    Sem fidelidade · Implantação <strong className="text-[#f7d46c]">R$ 248,50</strong> (50% off)
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-[#f3c64f]/60 bg-gradient-to-br from-[#f7d46c]/25 via-[#f3c64f]/15 to-transparent p-4 shadow-lg shadow-black/20">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#f7d46c]">
-                    Licença vitalícia · Economize R$ 700
+                <div className="rounded-2xl border border-[#f3c64f]/60 bg-gradient-to-br from-[#f7d46c]/25 via-[#f3c64f]/15 to-transparent p-3.5 shadow-lg shadow-black/20 sm:p-4">
+                  <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#f7d46c] sm:text-[11px]">
+                    Licença vitalícia
                   </span>
-                  <p className="mt-1 font-fraunces text-3xl font-bold text-[#f7d46c]">
-                    R$ 2.000 <s className="font-manrope text-sm font-normal text-white/50">R$ 2.700</s>
+                  <p className="mt-1 font-fraunces text-2xl font-bold text-[#f7d46c] sm:text-3xl">
+                    R$ 2.000
                   </p>
-                  <p className="mt-1 text-xs text-white/90">
-                    12 meses inclusos · depois R$ 97/mês
+                  <p className="mt-1 text-[11px] leading-snug text-white/90 sm:text-xs">
+                    De <s>R$ 2.700</s> · 12 meses inclusos
                   </p>
                 </div>
               </div>
@@ -314,7 +271,7 @@ export default function ClinicasPage() {
               {/* Barra elegante das 5 vagas de implantação pela metade */}
               <PainelVagasClinica />
 
-              <div className="mt-8 flex flex-col gap-3.5 sm:flex-row sm:flex-wrap">
+              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
                 <BotaoWhats
                   variante="argila"
                   origem="hero-oferta"
@@ -326,95 +283,93 @@ export default function ClinicasPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-origem="hero-demo"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/[0.05] px-7 py-4 text-[15px] font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/[0.05] px-7 py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f] sm:py-4"
                 >
                   Ver a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
               </div>
-
-              <p className="mt-5 text-sm text-[#b9d3ca]">
-                A partir de <strong className="text-white">R$ 149/mês</strong> · sem fidelidade no plano mensal · demonstração aberta, sem cadastro
-              </p>
             </Reveal>
 
             <Reveal delay={0.15} className="relative mx-auto w-full max-w-[600px]">
-              <div className="rounded-[1.9rem] border border-[#f3c64f]/35 bg-[#081714] p-2 shadow-[0_40px_90px_-25px_rgba(0,0,0,0.8)]">
-                <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.5rem]" />
+              <div className="rounded-[1.6rem] border border-[#f3c64f]/35 bg-[#081714] p-1.5 shadow-[0_40px_90px_-25px_rgba(0,0,0,0.8)] sm:rounded-[1.9rem] sm:p-2">
+                <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.3rem] sm:rounded-[1.5rem]" />
               </div>
             </Reveal>
           </div>
         </section>
 
         {/* O problema e a saída */}
-        <section id="rotina" className="relative -mt-12 scroll-mt-24 px-4 md:px-6">
-          <div className="mx-auto max-w-6xl rounded-[2rem] border border-[#1b4d42]/10 bg-white p-6 shadow-[0_30px_80px_-30px_rgba(12,34,29,0.28)] md:p-12">
+        <section id="rotina" className="relative -mt-8 scroll-mt-24 px-4 sm:px-6 md:-mt-12">
+          <div className="mx-auto max-w-6xl rounded-[1.75rem] border border-[#1b4d42]/10 bg-white p-6 shadow-[0_30px_80px_-30px_rgba(12,34,29,0.28)] sm:rounded-[2rem] md:p-12">
             <Reveal className="max-w-2xl">
               <Eyebrow>A rotina da clínica hoje</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] md:text-[2.5rem]">
+              <h2 className="text-balance text-2xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] sm:text-3xl md:text-[2.5rem]">
                 Uma única ampola vencida ou ficha perdida já custa mais que meses do sistema.
               </h2>
             </Reveal>
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
+            <div className="mt-8 grid gap-4 md:mt-10 md:grid-cols-3 md:gap-5">
               {dores.map((d, i) => (
                 <Reveal key={d.hoje} delay={i * 0.07}>
-                  <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-[#e2e8e5]">
-                    <div className="bg-[#fff4f2] p-6">
+                  <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#e2e8e5] sm:rounded-3xl">
+                    <div className="bg-[#fff4f2] p-5 sm:p-6">
                       <p className="text-xs font-extrabold uppercase tracking-wider text-[#b91c1c]">Hoje sem o sistema</p>
-                      <p className="mt-2 text-[17px] font-bold leading-snug text-[#1e2926]">{d.hoje}</p>
+                      <p className="mt-1.5 text-base font-bold leading-snug text-[#1e2926] sm:text-[17px]">{d.hoje}</p>
                     </div>
-                    <div className="flex-1 bg-[#eef7f3] p-6">
+                    <div className="flex-1 bg-[#eef7f3] p-5 sm:p-6">
                       <p className="text-xs font-extrabold uppercase tracking-wider text-[#15803d]">Com o Morph Clínica</p>
-                      <p className="mt-2 text-[15px] leading-relaxed text-[#1e2b28]">{d.morph}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-[#1e2b28] sm:text-[15px]">{d.morph}</p>
                     </div>
                   </div>
                 </Reveal>
               ))}
             </div>
-            <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <div className="mt-8 flex flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:items-center">
               <BotaoWhats
                 variante="verde"
                 origem="rotina"
                 texto={<TextoOferta durante="Quero aproveitar os 50% na implantação" depois="Quero ver funcionando" />}
                 mensagem={ofertaMessage}
               />
-              <p className="text-sm font-medium text-[#4b5e58]">Resposta direto no WhatsApp, sem formulário.</p>
+              <p className="text-center text-xs font-medium text-[#4b5e58] sm:text-left sm:text-sm">
+                Resposta direto no WhatsApp, sem formulário.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* O sistema, em quatro cartões */}
-        <section id="sistema" className="scroll-mt-20 py-24">
-          <div className="mx-auto max-w-6xl px-6">
+        {/* O sistema, em quatro cartões limpos */}
+        <section id="sistema" className="scroll-mt-20 py-16 md:py-24">
+          <div className="mx-auto max-w-6xl px-5 sm:px-6">
             <Reveal className="max-w-2xl">
               <Eyebrow>O sistema por dentro</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] md:text-[2.75rem]">
+              <h2 className="text-balance text-2xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] sm:text-3xl md:text-[2.75rem]">
                 Da ficha da paciente ao caixa do mês, tudo no mesmo lugar.
               </h2>
             </Reveal>
 
-            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            <div className="mt-10 grid gap-5 lg:mt-12 lg:grid-cols-2 lg:gap-6">
               <Reveal>
-                <article className="flex h-full flex-col overflow-hidden rounded-[2rem] bg-[#e6f3ee] ring-1 ring-[#c5dfd5]">
-                  <div className="p-8 pb-0 md:p-10 md:pb-0">
+                <article className="flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-[#e6f3ee] ring-1 ring-[#c5dfd5] sm:rounded-[2rem]">
+                  <div className="p-6 pb-0 sm:p-8 sm:pb-0 md:p-10 md:pb-0">
                     <p className="text-xs font-extrabold uppercase tracking-wider text-[#15803d]">Anamnese digital</p>
-                    <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight text-[#0c221d] md:text-[1.9rem]">
+                    <h3 className="mt-2 text-balance text-xl font-extrabold leading-tight tracking-tight text-[#0c221d] sm:text-2xl md:text-[1.9rem]">
                       A paciente assina antes de chegar.
                     </h3>
-                    <p className="mt-3 leading-relaxed text-[#2b3f39]">
+                    <p className="mt-2.5 text-sm leading-relaxed text-[#2b3f39] sm:text-base">
                       Você envia um link pelo WhatsApp. Ela responde as perguntas da sua clínica e assina com o dedo, sem baixar nada. A ficha vai direto para o prontuário.
                     </p>
-                    <ul className="mt-5 space-y-2 text-[15px] font-medium text-[#1b312b]">
+                    <ul className="mt-4 space-y-2 text-sm font-medium text-[#1b312b] sm:text-[15px]">
                       <Check>Termo de consentimento e aviso de privacidade inclusos</Check>
                       <Check>Autorização de uso de imagem, com registro de revogação</Check>
                       <Check>Você edita as perguntas da ficha, sem programador</Check>
                     </ul>
                   </div>
-                  <div className="mt-8 flex flex-1 items-end justify-center gap-4 px-8">
-                    <div className="h-[300px] w-[44%] max-w-[210px] overflow-hidden">
-                      <Img tela={telas.saudeCelular} sizes="210px" className="h-auto w-full rounded-t-[1.6rem] border-[6px] border-b-0 border-[#0c221d] shadow-2xl" />
+                  <div className="mt-6 flex flex-1 items-end justify-center gap-3 px-6 sm:mt-8 sm:gap-4 sm:px-8">
+                    <div className="h-[240px] w-[46%] max-w-[200px] overflow-hidden sm:h-[300px]">
+                      <Img tela={telas.saudeCelular} sizes="210px" className="h-auto w-full rounded-t-[1.4rem] border-[5px] border-b-0 border-[#0c221d] shadow-2xl sm:rounded-t-[1.6rem] sm:border-[6px]" />
                     </div>
-                    <div className="h-[300px] w-[44%] max-w-[210px] overflow-hidden pt-10">
-                      <Img tela={telas.assinatura} sizes="210px" className="h-auto w-full rounded-t-[1.6rem] border-[6px] border-b-0 border-[#0c221d] shadow-2xl" />
+                    <div className="h-[240px] w-[46%] max-w-[200px] overflow-hidden pt-8 sm:h-[300px] sm:pt-10">
+                      <Img tela={telas.assinatura} sizes="210px" className="h-auto w-full rounded-t-[1.4rem] border-[5px] border-b-0 border-[#0c221d] shadow-2xl sm:rounded-t-[1.6rem] sm:border-[6px]" />
                     </div>
                   </div>
                 </article>
@@ -422,237 +377,100 @@ export default function ClinicasPage() {
 
               {cartoes.map((c, i) => (
                 <Reveal key={c.id} delay={(i + 1) * 0.06}>
-                  <article id={c.id} className={`flex h-full scroll-mt-24 flex-col overflow-hidden rounded-[2rem] ${c.fundo}`}>
-                    <div className="p-8 pb-0 md:p-10 md:pb-0">
+                  <article id={c.id} className={`flex h-full scroll-mt-24 flex-col overflow-hidden rounded-[1.75rem] sm:rounded-[2rem] ${c.fundo}`}>
+                    <div className="p-6 pb-0 sm:p-8 sm:pb-0 md:p-10 md:pb-0">
                       <p className="text-xs font-extrabold uppercase tracking-wider text-[#1b4d42]">{c.eyebrow}</p>
-                      <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight text-[#0c221d] md:text-[1.9rem]">
+                      <h3 className="mt-2 text-balance text-xl font-extrabold leading-tight tracking-tight text-[#0c221d] sm:text-2xl md:text-[1.9rem]">
                         {c.titulo}
                       </h3>
-                      <p className="mt-3 leading-relaxed text-[#2b3f39]">{c.texto}</p>
-                      <ul className="mt-5 space-y-2 text-[15px] font-medium text-[#1b312b]">
+                      <p className="mt-2.5 text-sm leading-relaxed text-[#2b3f39] sm:text-base">{c.texto}</p>
+                      <ul className="mt-4 space-y-2 text-sm font-medium text-[#1b312b] sm:text-[15px]">
                         {c.itens.map((t) => (
                           <Check key={t}>{t}</Check>
                         ))}
                       </ul>
                     </div>
-                    <div className="mt-8 flex-1 px-6 pb-6 md:px-8 md:pb-8">
-                      <Img tela={c.tela} sizes="(min-width: 1024px) 520px, 100vw" className="h-auto w-full rounded-2xl shadow-[0_24px_50px_-24px_rgba(12,34,29,0.45)] ring-1 ring-black/5" />
+                    <div className="mt-6 flex-1 px-5 pb-5 sm:mt-8 sm:px-8 sm:pb-8">
+                      <Img tela={c.tela} sizes="(min-width: 1024px) 520px, 100vw" className="h-auto w-full rounded-xl shadow-[0_24px_50px_-24px_rgba(12,34,29,0.45)] ring-1 ring-black/5 sm:rounded-2xl" />
                     </div>
                   </article>
                 </Reveal>
               ))}
             </div>
 
-            <Reveal className="mt-16">
-              <p className="text-lg font-extrabold text-[#0c221d]">E ainda vem junto:</p>
-              <div className="mt-5 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+            <Reveal className="mt-12 sm:mt-16">
+              <p className="text-base font-extrabold text-[#0c221d] sm:text-lg">E ainda vem junto:</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {extras.map(({ icon: Icone, titulo: t, texto }) => (
-                  <div key={t} className="flex items-start gap-4 rounded-2xl border border-[#e2e8e5] bg-white p-5 shadow-sm">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#e6f3ee] text-[#15803d]">
+                  <div key={t} className="flex items-start gap-3.5 rounded-2xl border border-[#e2e8e5] bg-white p-4 shadow-sm sm:p-5">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#e6f3ee] text-[#15803d] sm:h-11 sm:w-11">
                       <Icone className="h-5 w-5" aria-hidden />
                     </span>
                     <div>
-                      <h3 className="font-bold text-[#0c221d]">{t}</h3>
-                      <p className="mt-0.5 text-sm text-[#4b5e58]">{texto}</p>
+                      <h3 className="text-sm font-bold text-[#0c221d] sm:text-base">{t}</h3>
+                      <p className="mt-0.5 text-xs text-[#4b5e58] sm:text-sm">{texto}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-[#647871]">
-                Os textos jurídicos podem ser ajustados pela clínica e devem ser revisados pela sua assessoria jurídica.
-              </p>
             </Reveal>
           </div>
         </section>
 
-        {/* Simuladores interativos na própria página (Ficha no celular + Estoque FEFO + Financeiro) */}
-        <section id="simuladores" className="scroll-mt-20 border-y border-[#e2e8e5] bg-[#f2f6f4] py-24">
-          <div className="mx-auto max-w-6xl space-y-20 px-6">
-            <div>
-              <Reveal className="mb-10 max-w-2xl">
-                <Eyebrow>Experimente aqui mesmo</Eyebrow>
-                <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] md:text-[2.75rem]">
-                  Simule a ficha da paciente chegando ao prontuário em tempo real.
-                </h2>
-                <p className="mt-4 text-[#374b45]">
-                  Marque <strong>“Sim”</strong> ou <strong>“Não”</strong> no celular abaixo e veja como os alertas clínicos aparecem imediatamente para a profissional:
-                </p>
-              </Reveal>
-              <TestePaciente />
-            </div>
-
-            <div>
-              <Reveal className="mb-8 max-w-2xl">
-                <Eyebrow>Simulador de Estoque FEFO</Eyebrow>
-                <h3 className="text-balance text-2xl font-extrabold leading-tight tracking-tight text-[#0c221d] md:text-4xl">
-                  Clique em “Simular baixa FEFO” e veja o lote mais próximo sair primeiro.
-                </h3>
-              </Reveal>
-              <MockupEstoque />
-            </div>
-
-            <div>
-              <Reveal className="mb-8 max-w-2xl">
-                <Eyebrow>Simulador Financeiro</Eyebrow>
-                <h3 className="text-balance text-2xl font-extrabold leading-tight tracking-tight text-[#0c221d] md:text-4xl">
-                  Alterne entre PIX, Crédito 1x e Crédito 3x para ver o cálculo líquido real.
-                </h3>
-              </Reveal>
-              <MockupFinanceiro />
-            </div>
-          </div>
-        </section>
-
-        {/* Como começar */}
-        <section id="como-funciona" className="scroll-mt-20 bg-gradient-to-b from-[#0c221d] to-[#112e27] py-24 text-white">
-          <div className="mx-auto max-w-6xl px-6">
-            <Reveal className="max-w-2xl">
-              <Eyebrow claro>Como começar</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight md:text-[2.75rem]">
-                Do primeiro contato à clínica usando, em três passos.
-              </h2>
-            </Reveal>
-            <ol className="mt-12 grid gap-5 md:grid-cols-3">
-              {passos.map((p, i) => (
-                <li key={p.titulo}>
-                  <Reveal delay={i * 0.08} className="h-full">
-                    <div className="h-full rounded-3xl border border-white/10 bg-white/[0.06] p-7">
-                      <span className="grid h-10 w-10 place-items-center rounded-full bg-[#f3c64f] text-lg font-extrabold text-[#0c221d]">
-                        {i + 1}
-                      </span>
-                      <h3 className="mt-5 text-xl font-bold text-white">{p.titulo}</h3>
-                      <p className="mt-2 leading-relaxed text-[#cfe3dc]">{p.texto}</p>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-            <Reveal className="mt-10">
-              <BotaoWhats
-                variante="argila"
-                origem="como-funciona"
-                texto={<TextoOferta durante="Começar pelo WhatsApp: 50% na implantação" depois="Começar pelo WhatsApp" />}
-                mensagem={ofertaMessage}
-              />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* Demonstração */}
-        <section id="demo" className="scroll-mt-20 py-24">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
-            <Reveal>
-              <Eyebrow>Demonstração aberta</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] md:text-[2.75rem]">
-                Teste como se fosse a sua clínica, agora.
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-[#374b45]">
-                Uma clínica de exemplo com prontuários, estoque, financeiro e agenda preenchidos. Dê baixa em um lote, cadastre uma paciente e envie uma ficha para o seu celular.
-              </p>
-              <p className="mt-4 text-sm text-[#5c706a]">Clínica e pacientes fictícios. As fichas de teste são apagadas em 24 horas.</p>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <div className="rounded-[1.75rem] border border-[#cde0d9] bg-[#eff6f3] p-9 shadow-lg shadow-[#0c221d]/5">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-[#15803d]">Acesso livre e imediato</p>
-                <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-2xl border border-[#d8e6e0] bg-white p-5 text-[15px]">
-                  <dt className="text-[#5c706a]">Usuário</dt>
-                  <dd className="font-mono font-bold text-[#0c221d]">{DEMO.usuario}</dd>
-                  <dt className="text-[#5c706a]">Senha</dt>
-                  <dd className="font-mono font-bold text-[#0c221d]">{DEMO.senha}</dd>
-                </dl>
-                <a
-                  href={DEMO.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-origem="secao-demo"
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0c221d] px-7 py-4 text-[15px] font-extrabold text-[#f7d46c] shadow-lg transition hover:bg-[#163830]"
-                >
-                  Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
-                </a>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* Planos e Oferta com Cronômetro em Blocos + Empilhamento de Entregáveis */}
-        <section id="planos" className="scroll-mt-20 border-t border-[#e2e8e5] bg-[#f2f6f4] py-24">
-          <div className="mx-auto max-w-5xl px-6">
+        {/* Planos e Oferta subiram para logo depois dos módulos do sistema: conversão direta no mobile */}
+        <section id="planos" className="scroll-mt-20 border-y border-[#e2e8e5] bg-[#f2f6f4] py-16 md:py-24">
+          <div className="mx-auto max-w-5xl px-5 sm:px-6">
             <Reveal className="text-center">
               <Eyebrow>Planos e investimento</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] md:text-[2.75rem]">
-                Tudo o que você leva ao garantir sua vaga hoje.
+              <h2 className="text-balance text-2xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] sm:text-3xl md:text-[2.75rem]">
+                Escolha como começar na sua clínica.
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-[#374b45]">
-                Prontuário, estoque e financeiro inclusos nos dois planos, sem limite de pacientes e com banco de dados próprio e isolado.
+              <p className="mx-auto mt-3 max-w-xl text-sm text-[#374b45] sm:text-base">
+                Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
               </p>
 
               {/* Cronômetro elegante em blocos Esmeralda & Ouro */}
               <CronometroPlanosClinica />
 
               <SeOferta>
-                <p className="mx-auto mt-5 inline-block rounded-full border border-[#eab308]/40 bg-[#fef9c3] px-5 py-2 text-sm font-extrabold text-[#854d0e]">
-                  Implantação pela metade (de R$ 497 por R$ 248,50 nas 5 vagas até 13/11) ou Licença Vitalícia por R$ 2.000 (até 23/12).
+                <p className="mx-auto mt-4 inline-block rounded-full border border-[#eab308]/40 bg-[#fef9c3] px-4 py-1.5 text-xs font-extrabold text-[#854d0e] sm:text-sm">
+                  Implantação pela metade (de R$ 497 por R$ 248,50 até 13/11) ou Licença Vitalícia por R$ 2.000 (até 23/12).
                 </p>
               </SeOferta>
             </Reveal>
 
-            {/* Empilhamento claro do que está incluso */}
-            <Reveal className="mt-10">
-              <div className="rounded-[1.75rem] border border-[#d8e6e0] bg-white p-6 shadow-[0_12px_36px_-16px_rgba(12,34,29,0.14)] md:p-8">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-[#15803d]">
-                  Resumo do que está incluído na sua conta:
-                </p>
-                <ul className="mt-4 divide-y divide-[#e8efec]">
-                  {entregaveisInclusos.map((item) => (
-                    <li key={item.titulo} className="py-4 first:pt-2 last:pb-0">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="flex items-center gap-2.5 text-base font-bold text-[#0c221d]">
-                          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#dcfce7] text-[#15803d]">
-                            <LuCheck className="h-3.5 w-3.5" aria-hidden />
-                          </span>
-                          {item.titulo}
-                        </span>
-                        <span className="rounded-full bg-[#fef3c7] px-3 py-0.5 text-xs font-extrabold text-[#92400e]">
-                          {item.tag}
-                        </span>
-                      </div>
-                      <p className="mt-1 pl-7 text-sm text-[#4b5e58]">{item.detalhe}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-
-            {/* Os 2 cartões de planos com alto contraste (Branco + Verde vs Esmeralda + Ouro Champanhe) */}
-            <div className="mt-10 grid gap-6 md:grid-cols-2 [&>*]:min-w-0">
+            {/* Os 2 cartões de planos com alto contraste */}
+            <div className="mt-8 grid gap-5 md:mt-10 md:grid-cols-2 md:gap-6 [&>*]:min-w-0">
               {planos.map((p, i) => (
                 <Reveal key={p.id} delay={i * 0.1}>
                   <div
-                    className={`relative flex h-full flex-col rounded-[1.75rem] p-9 ${
+                    className={`relative flex h-full flex-col rounded-[1.75rem] p-6 sm:p-9 ${
                       p.destaque
                         ? "border-2 border-[#f3c64f] bg-gradient-to-b from-[#112e27] to-[#0c221d] text-white shadow-[0_28px_60px_-20px_rgba(12,34,29,0.65)]"
                         : "border border-[#d8e6e0] bg-white text-[#0c221d] shadow-[0_12px_36px_-16px_rgba(12,34,29,0.18)]"
                     }`}
                   >
                     {p.destaque ? (
-                      <span className="absolute -top-3.5 right-8 rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#0c221d] shadow-md">
+                      <span className=" -top-3.5 right-6 inline-block self-start rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0c221d] shadow-md sm:absolute sm:right-8 sm:text-xs">
                         Economia de R$ 700 · Vitalícia
                       </span>
                     ) : (
-                      <span className="absolute -top-3.5 right-8 rounded-full bg-[#16a34a] px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-white shadow-md">
+                      <span className=" -top-3.5 right-6 inline-block self-start rounded-full bg-[#16a34a] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md sm:absolute sm:right-8 sm:text-xs">
                         Só 5 vagas com 50% na implantação
                       </span>
                     )}
-                    <p className={`text-xs font-extrabold uppercase tracking-wider ${p.destaque ? "text-[#f7d46c]" : "text-[#15803d]"}`}>
+                    <p className={`mt-3 text-xs font-extrabold uppercase tracking-wider sm:mt-0 ${p.destaque ? "text-[#f7d46c]" : "text-[#15803d]"}`}>
                       {p.nome}
                     </p>
-                    <p className="mt-4 text-5xl font-extrabold tracking-tight">{p.id === "mensal" ? p.preco : <PrecoLicenca />}</p>
-                    <p className={`mt-2 text-sm ${p.destaque ? "text-[#d8eae4]" : "text-[#4b5e58]"}`}>
+                    <p className="mt-3 text-4xl font-extrabold tracking-tight sm:mt-4 sm:text-5xl">
+                      {p.id === "mensal" ? p.preco : <PrecoLicenca />}
+                    </p>
+                    <p className={`mt-2 text-xs sm:text-sm ${p.destaque ? "text-[#d8eae4]" : "text-[#4b5e58]"}`}>
                       {p.id === "mensal" ? <PrecoImplantacao claro={p.destaque} /> : p.detalhe}
                     </p>
-                    <ul className="mt-8 flex-1 space-y-3">
+                    <ul className="mt-6 flex-1 space-y-2.5 text-sm sm:mt-8 sm:space-y-3 sm:text-[15px]">
                       {p.itens.map((item) => (
-                        <li key={item} className="flex items-center gap-3 text-[15px]">
+                        <li key={item} className="flex items-center gap-3">
                           <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${p.destaque ? "bg-[#f3c64f]/20" : "bg-[#dcfce7]"}`}>
                             <LuCheck className={`h-3.5 w-3.5 ${p.destaque ? "text-[#f7d46c]" : "text-[#15803d]"}`} aria-hidden />
                           </span>
@@ -660,10 +478,10 @@ export default function ClinicasPage() {
                         </li>
                       ))}
                     </ul>
-                    <div className="mt-9">
+                    <div className="mt-7 sm:mt-9">
                       <BotaoWhats
                         origem={p.id === "mensal" ? "plano-mensal" : "plano-licenca"}
-                        texto={p.id === "mensal" ? "Quero o plano mensal (50% na implantação)" : "Quero a licença vitalícia por R$ 2.000"}
+                        texto={p.id === "mensal" ? "Quero o plano mensal (50% OFF)" : "Quero a licença por R$ 2.000"}
                         mensagem={p.id === "mensal" ? ofertaMessage : ofertaLicencaMessage}
                         variante={p.destaque ? "argila" : "verde"}
                         className="w-full"
@@ -675,22 +493,24 @@ export default function ClinicasPage() {
             </div>
 
             {/* Garantia de tranquilidade clínica */}
-            <Reveal className="mt-8">
-              <div className="flex flex-col items-center gap-4 rounded-3xl border border-[#d8e6e0] bg-white p-6 shadow-sm sm:flex-row sm:px-8">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#dcfce7] text-[#15803d]">
+            <Reveal className="mt-6 sm:mt-8">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-[#d8e6e0] bg-white p-5 shadow-sm sm:flex-row sm:gap-4 sm:rounded-3xl sm:px-8 sm:py-6">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#dcfce7] text-[#15803d]">
                   <LuShieldCheck className="h-6 w-6" aria-hidden />
                 </span>
                 <div className="text-center sm:text-left">
-                  <p className="font-bold text-[#0c221d]">Sem fidelidade no plano mensal e seus dados sempre seus.</p>
-                  <p className="mt-0.5 text-sm text-[#4b5e58]">
-                    Você testa a demonstração antes de fechar, acompanha a implantação ao vivo e pode cancelar o plano mensal quando quiser com aviso de 30 dias, levando cópia completa de todas as fichas e fotos.
+                  <p className="text-sm font-bold text-[#0c221d] sm:text-base">
+                    Sem fidelidade no plano mensal e seus dados sempre seus.
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#4b5e58] sm:text-sm">
+                    Você testa a demonstração antes de fechar e pode cancelar o plano mensal quando quiser com aviso de 30 dias, recebendo cópia completa das fichas e fotos.
                   </p>
                 </div>
               </div>
             </Reveal>
 
-            <p className="mt-8 text-center text-sm text-[#4b5e58]">
-              Não sabe qual escolher? Conte o tamanho da sua clínica no WhatsApp e indicamos o plano.{" "}
+            <p className="mt-6 text-center text-xs text-[#4b5e58] sm:mt-8 sm:text-sm">
+              Dúvida entre mensal e licença?{" "}
               <a
                 href={whatsappLink(clinicaMessage, "clinica")}
                 target="_blank"
@@ -698,29 +518,102 @@ export default function ClinicasPage() {
                 data-origem="ajuda-planos"
                 className="inline-flex items-center gap-1 font-extrabold text-[#15803d] underline underline-offset-4"
               >
-                Falar agora <LuArrowRight className="h-3.5 w-3.5" aria-hidden />
+                Falar agora no WhatsApp <LuArrowRight className="h-3.5 w-3.5" aria-hidden />
               </a>
             </p>
           </div>
         </section>
 
+        {/* Como começar */}
+        <section id="como-funciona" className="scroll-mt-20 bg-gradient-to-b from-[#0c221d] to-[#112e27] py-16 text-white md:py-24">
+          <div className="mx-auto max-w-6xl px-5 sm:px-6">
+            <Reveal className="max-w-2xl">
+              <Eyebrow claro>Como começar</Eyebrow>
+              <h2 className="text-balance text-2xl font-extrabold leading-[1.12] tracking-tight sm:text-3xl md:text-[2.75rem]">
+                Do primeiro contato à clínica usando, em três passos.
+              </h2>
+            </Reveal>
+            <ol className="mt-8 grid gap-4 md:mt-12 md:grid-cols-3 md:gap-5">
+              {passos.map((p, i) => (
+                <li key={p.titulo}>
+                  <Reveal delay={i * 0.08} className="h-full">
+                    <div className="h-full rounded-2xl border border-white/10 bg-white/[0.06] p-6 sm:rounded-3xl sm:p-7">
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f3c64f] text-base font-extrabold text-[#0c221d] sm:h-10 sm:w-10 sm:text-lg">
+                        {i + 1}
+                      </span>
+                      <h3 className="mt-4 text-lg font-bold text-white sm:mt-5 sm:text-xl">{p.titulo}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-[#cfe3dc] sm:mt-2 sm:text-base">{p.texto}</p>
+                    </div>
+                  </Reveal>
+                </li>
+              ))}
+            </ol>
+            <Reveal className="mt-8 sm:mt-10">
+              <BotaoWhats
+                variante="argila"
+                origem="como-funciona"
+                texto={<TextoOferta durante="Começar pelo WhatsApp: 50% na implantação" depois="Começar pelo WhatsApp" />}
+                mensagem={ofertaMessage}
+              />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Demonstração pública */}
+        <section id="demo" className="scroll-mt-20 py-16 md:py-24">
+          <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-2 lg:gap-12">
+            <Reveal>
+              <Eyebrow>Demonstração aberta</Eyebrow>
+              <h2 className="text-balance text-2xl font-extrabold leading-[1.12] tracking-tight text-[#0c221d] sm:text-3xl md:text-[2.75rem]">
+                Quer testar o sistema inteiro agora?
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-[#374b45] sm:text-lg">
+                Uma clínica de exemplo com prontuários, estoque, financeiro e agenda preenchidos para você clicar e testar no seu celular ou computador.
+              </p>
+              <p className="mt-3 text-xs text-[#5c706a] sm:text-sm">
+                Clínica e pacientes fictícios. Não pede cadastro.
+              </p>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="rounded-[1.5rem] border border-[#cde0d9] bg-[#eff6f3] p-6 shadow-lg shadow-[#0c221d]/5 sm:rounded-[1.75rem] sm:p-9">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-[#15803d]">Acesso livre e imediato</p>
+                <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 rounded-2xl border border-[#d8e6e0] bg-white p-4 text-sm sm:mt-5 sm:p-5 sm:text-[15px]">
+                  <dt className="text-[#5c706a]">Usuário</dt>
+                  <dd className="font-mono font-bold text-[#0c221d]">{DEMO.usuario}</dd>
+                  <dt className="text-[#5c706a]">Senha</dt>
+                  <dd className="font-mono font-bold text-[#0c221d]">{DEMO.senha}</dd>
+                </dl>
+                <a
+                  href={DEMO.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-origem="secao-demo"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0c221d] px-7 py-4 text-[15px] font-extrabold text-[#f7d46c] shadow-lg transition hover:bg-[#163830] sm:mt-6"
+                >
+                  Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
+                </a>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
         {/* Dúvidas */}
-        <section id="duvidas" className="scroll-mt-20 py-24">
-          <div className="mx-auto max-w-3xl px-6">
+        <section id="duvidas" className="scroll-mt-20 border-t border-[#e2e8e5] py-16 md:py-24">
+          <div className="mx-auto max-w-3xl px-5 sm:px-6">
             <Reveal className="text-center">
               <Eyebrow>Tire suas dúvidas</Eyebrow>
-              <h2 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-[#0c221d] md:text-4xl">
+              <h2 className="text-balance text-2xl font-extrabold leading-tight tracking-tight text-[#0c221d] sm:text-3xl md:text-4xl">
                 Perguntas frequentes
               </h2>
             </Reveal>
-            <div className="mt-10 divide-y divide-[#e2e8e5] border-y border-[#e2e8e5]">
+            <div className="mt-8 divide-y divide-[#e2e8e5] border-y border-[#e2e8e5] sm:mt-10">
               {faqClinica.map((f) => (
-                <details key={f.q} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-[#0c221d] [&::-webkit-details-marker]:hidden">
+                <details key={f.q} className="group py-4 sm:py-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#0c221d] sm:text-base [&::-webkit-details-marker]:hidden">
                     {f.q}
                     <LuPlus className="h-5 w-5 shrink-0 text-[#15803d] transition-transform group-open:rotate-45" aria-hidden />
                   </summary>
-                  <p className="mt-3 text-[15px] leading-relaxed text-[#374b45]">{f.a}</p>
+                  <p className="mt-2.5 text-sm leading-relaxed text-[#374b45] sm:mt-3 sm:text-[15px]">{f.a}</p>
                 </details>
               ))}
             </div>
@@ -728,27 +621,27 @@ export default function ClinicasPage() {
         </section>
 
         {/* Chamada final */}
-        <section className="px-4 pb-16 md:px-6">
-          <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-[#f3c64f]/30 bg-gradient-to-b from-[#0c221d] to-[#112e27] px-8 py-16 text-center text-white shadow-2xl md:py-20">
+        <section className="px-4 pb-12 sm:px-6 md:pb-16">
+          <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#f3c64f]/30 bg-gradient-to-b from-[#0c221d] to-[#112e27] px-6 py-12 text-center text-white shadow-2xl sm:rounded-[2rem] sm:px-8 md:py-20">
             <div
               aria-hidden
               className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full opacity-35 blur-3xl"
               style={{ background: "radial-gradient(circle, #f3c64f 0%, transparent 70%)" }}
             />
             <div className="relative">
-              <div className="mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-[#f3c64f] p-1 shadow-lg shadow-black/25">
+              <div className="mx-auto h-16 w-16 overflow-hidden rounded-full border-2 border-[#f3c64f] p-1 shadow-lg shadow-black/25 sm:h-20 sm:w-20">
                 <Image src="/logo.jpeg" alt="Morph Code" width={80} height={80} className="h-full w-full rounded-full object-cover" />
               </div>
-              <h2 className="mt-6 text-balance text-3xl font-extrabold leading-[1.12] tracking-tight md:text-5xl">
+              <h2 className="mt-5 text-balance text-2xl font-extrabold leading-[1.12] tracking-tight sm:text-3xl md:text-5xl">
                 Garanta uma das 5 vagas com <span className="text-[#f7d46c]">50% na implantação</span>.
               </h2>
-              <p className="mx-auto mt-4 max-w-lg text-[#d8eae4]">
+              <p className="mx-auto mt-3 max-w-lg text-sm text-[#d8eae4] sm:mt-4 sm:text-base">
                 <TextoOferta
-                  durante="De R$ 497 por R$ 248,50 na implantação do plano mensal até sexta (13/11), ou Licença Vitalícia por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
+                  durante="De R$ 497 por R$ 248,50 na implantação do plano mensal até sexta (13/11), ou Licença Vitalícia por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos pelo WhatsApp."
                   depois="Já testado, aprovado e em uso atualmente por profissionais da área. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
                 />
               </p>
-              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:mt-9 sm:flex-row">
                 <BotaoWhats
                   variante="argila"
                   origem="chamada-final"
@@ -760,7 +653,7 @@ export default function ClinicasPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-origem="chamada-final-demo"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 px-7 py-4 text-[15px] font-bold text-white transition-colors hover:bg-white/10"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10 sm:py-4 sm:text-[15px]"
                 >
                   Explorar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
@@ -781,7 +674,7 @@ export default function ClinicasPage() {
         </section>
       </main>
 
-      {/* Toast flutuante + Barra fixa mobile com botão verde vibrante */}
+      {/* Barra fixa mobile limpa + Toast apenas no desktop */}
       <FlutuantesClinica linkWhatsOferta={linkWhatsOferta} />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(dadosEstruturados)} />
