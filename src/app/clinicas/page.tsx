@@ -189,7 +189,7 @@ export default function ClinicasPage() {
         Ir para o conteúdo
       </a>
 
-      {/* Cabeçalho fixo no topo que alterna com a notificação de compra e depois volta ao normal */}
+      {/* Cabeçalho fixo no topo */}
       <CabecalhoClinica produto={PRODUTO} linkWhatsOferta={linkWhatsOferta} />
 
       <main id="conteudo">

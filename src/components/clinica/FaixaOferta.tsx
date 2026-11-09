@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { LuBellRing, LuCheck, LuClock, LuSparkles } from "react-icons/lu";
+import { LuClock, LuSparkles } from "react-icons/lu";
 
 // Datas reais da oferta (horário de Brasília):
 // - 5 vagas de implantação pela metade (R$ 497 -> R$ 248,50) até sexta, 13/11/2026
@@ -48,37 +48,10 @@ export function VagasSemana({ className = "" }: { className?: string }) {
   return <p className={className}>Só {VAGAS_TOTAL} vagas de implantação com 50% de desconto até sexta (13/11).</p>;
 }
 
-const NOTIFICACOES_COMPRA = [
-  {
-    tempo: "Agora mesmo",
-    clinica: "Clínica de Estética · São Paulo, SP",
-    acao: "Garantiu 1 das 5 vagas com 50% OFF na implantação",
-  },
-  {
-    tempo: "Há 2 min",
-    clinica: "Dra. Biomédica Esteta · Curitiba, PR",
-    acao: "Adquiriu a Licença Vitalícia por R$ 2.000",
-  },
-  {
-    tempo: "Há 4 min",
-    clinica: "Studio de Harmonização · Belo Horizonte, MG",
-    acao: "Reservou o Plano Mensal com implantação por R$ 248,50",
-  },
-  {
-    tempo: "Há 6 min",
-    clinica: "Clínica Dermatológica · Campinas, SP",
-    acao: "Garantiu 1 das 5 vagas com 50% OFF na implantação",
-  },
-];
-
 const navLink =
   "transition-colors hover:text-[#f7d46c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f]";
 
-/**
- * Cabeçalho fixo no topo (sem faixa dourada acima) que alterna suavemente
- * entre a barra "Morph Clínica" e a notificação de compra em estilo push,
- * voltando ao normal após alguns segundos.
- */
+/** Cabeçalho fixo no topo: marca, navegação e botão de WhatsApp sempre visíveis. */
 export function CabecalhoClinica({
   produto,
   linkWhatsOferta,
@@ -86,120 +59,31 @@ export function CabecalhoClinica({
   produto: string;
   linkWhatsOferta: string;
 }) {
-  const [indice, setIndice] = useState(0);
-  const [mostrandoNotificacao, setMostrandoNotificacao] = useState(false);
-
-  useEffect(() => {
-    let tEsconder: ReturnType<typeof setTimeout>;
-
-    const disparar = (novoIndice?: number) => {
-      if (typeof novoIndice === "number") {
-        setIndice(novoIndice);
-      }
-      setMostrandoNotificacao(true);
-      tEsconder = setTimeout(() => {
-        setMostrandoNotificacao(false);
-      }, 4800);
-    };
-
-    const tInicial = setTimeout(() => disparar(0), 4500);
-
-    const intervalo = setInterval(() => {
-      setIndice((atual) => {
-        const proximo = (atual + 1) % NOTIFICACOES_COMPRA.length;
-        setMostrandoNotificacao(true);
-        clearTimeout(tEsconder);
-        tEsconder = setTimeout(() => {
-          setMostrandoNotificacao(false);
-        }, 4800);
-        return proximo;
-      });
-    }, 18000);
-
-    return () => {
-      clearTimeout(tInicial);
-      clearTimeout(tEsconder);
-      clearInterval(intervalo);
-    };
-  }, []);
-
-  const item = NOTIFICACOES_COMPRA[indice];
-
   return (
-    <header className="sticky top-0 z-40 h-16 overflow-hidden border-b border-white/10 bg-[#0c221d]/95 backdrop-blur">
-      <div className="relative mx-auto h-full max-w-6xl px-4 sm:px-6">
-        {/* Topo padrão: Morph Clínica + Navegação + Botão WhatsApp */}
-        <div
-          aria-hidden={mostrandoNotificacao}
-          className={`flex h-full items-center justify-between gap-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
-            mostrandoNotificacao
-              ? "-translate-y-full opacity-0 pointer-events-none"
-              : "translate-y-0 opacity-100"
-          }`}
+    <header className="sticky top-0 z-40 h-16 border-b border-white/10 bg-[#0c221d]/95 backdrop-blur">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
+          <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full ring-1 ring-[#f3c64f]/50" />
+          <span className="font-fraunces text-base text-white">{produto}</span>
+        </Link>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex">
+          <a href="#sistema" className={navLink}>O sistema</a>
+          <a href="#planos" className="font-bold text-[#f7d46c] transition-colors hover:text-white">Planos e 50% OFF</a>
+          <a href="#como-funciona" className={navLink}>Como começar</a>
+          <a href="#demo" className={navLink}>Demonstração</a>
+          <a href="#duvidas" className={navLink}>Dúvidas</a>
+        </nav>
+        <a
+          href={linkWhatsOferta}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-origem="cabecalho"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-4 py-2 text-xs font-extrabold text-[#0c221d] shadow-sm transition hover:brightness-105 sm:text-sm"
         >
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
-            <Image src="/logo.jpeg" alt="" width={30} height={30} className="rounded-full ring-1 ring-[#f3c64f]/50" />
-            <span className="font-fraunces text-base text-white">{produto}</span>
-          </Link>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex">
-            <a href="#sistema" className={navLink}>O sistema</a>
-            <a href="#planos" className="font-bold text-[#f7d46c] transition-colors hover:text-white">Planos e 50% OFF</a>
-            <a href="#como-funciona" className={navLink}>Como começar</a>
-            <a href="#demo" className={navLink}>Demonstração</a>
-            <a href="#duvidas" className={navLink}>Dúvidas</a>
-          </nav>
-          <a
-            href={linkWhatsOferta}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-origem="cabecalho"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#f7d46c] to-[#eab308] px-4 py-2 text-xs font-extrabold text-[#0c221d] shadow-sm transition hover:brightness-105 sm:text-sm"
-          >
-            <FaWhatsapp className="h-4 w-4" aria-hidden />
-            <span className="hidden sm:inline">Garantir 50% OFF</span>
-            <span className="sm:hidden">WhatsApp</span>
-          </a>
-        </div>
-
-        {/* Notificação superior em estilo push que substitui temporariamente o topo do Morph Clínica */}
-        <div
-          role="status"
-          aria-live="polite"
-          className={`absolute inset-x-3 inset-y-1.5 flex items-center justify-between gap-3 rounded-2xl border border-[#f3c64f]/50 bg-gradient-to-r from-[#13352d] via-[#173f35] to-[#13352d] px-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-all duration-300 ease-out motion-reduce:transition-none sm:inset-x-6 sm:px-4 ${
-            mostrandoNotificacao
-              ? "translate-y-0 opacity-100"
-              : "translate-y-full opacity-0 pointer-events-none"
-          }`}
-        >
-          <a
-            href={linkWhatsOferta}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-origem="notificacao-topo"
-            className="flex min-w-0 flex-1 items-center gap-3"
-          >
-            <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-[#0c221d] shadow-[0_0_12px_rgba(34,197,94,0.5)]">
-              <LuCheck className="h-4 w-4 stroke-[2.75]" aria-hidden />
-            </span>
-            <div className="min-w-0 flex-1 leading-tight">
-              <div className="flex items-center gap-2">
-                <span className="truncate text-[11px] font-extrabold text-[#f7d46c] sm:text-xs">
-                  {item.clinica}
-                </span>
-                <span className="shrink-0 rounded-full bg-black/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#86efac]">
-                  {item.tempo}
-                </span>
-              </div>
-              <p className="mt-0.5 truncate text-xs font-semibold text-white sm:text-[13px]">
-                {item.acao}
-              </p>
-            </div>
-            <span className="hidden shrink-0 rounded-full bg-[#f3c64f] px-3 py-1 text-[11px] font-extrabold text-[#0c221d] sm:inline-flex sm:items-center sm:gap-1">
-              <LuBellRing className="h-3 w-3" aria-hidden />
-              Ver oferta
-            </span>
-          </a>
-        </div>
+          <FaWhatsapp className="h-4 w-4" aria-hidden />
+          <span className="hidden sm:inline">Garantir 50% OFF</span>
+          <span className="sm:hidden">WhatsApp</span>
+        </a>
       </div>
     </header>
   );

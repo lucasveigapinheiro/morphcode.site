@@ -4,9 +4,13 @@ export const PHONE = "5511912150103";
 export const PHONE_CLINICA = "5511912150103";
 export const PHONE_CLINICA_TEXTO = "(11) 91215-0103";
 
-/** Endereço final no WhatsApp, já com a mensagem. */
+/**
+ * Endereço final no WhatsApp, já com a mensagem. O wa.me abre o aplicativo no celular (inclusive
+ * de dentro do navegador do Instagram e do Facebook) e, no computador, oferece o WhatsApp Desktop
+ * ou o WhatsApp Web.
+ */
 export function whatsappDireto(message: string, phone: string = PHONE) {
-  return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
 // Abre a conversa direto no WhatsApp, sem passar pela tela intermediária.
@@ -24,12 +28,14 @@ export function estimateMessage(kind: string) {
 
 export const generalMessage = `Olá, Morph Code! Vim pelo site e gostaria de tirar uma dúvida.`;
 
-export const clinicaMessage = `Olá, Morph Code! Vim pelo site e quero conhecer o Morph Clínica, o sistema para clínicas de estética.`;
+// Mensagens do Morph Clínica: curtas e no tom de quem está só perguntando, para a pessoa não
+// desistir antes de enviar.
+export const clinicaMessage = `Oi! Vi o Morph Clínica e quero saber mais.`;
 
 export function planoMessage(plano: string) {
-  return `Olá, Morph Code! Vim pelo site e tenho interesse na opção "${plano}" do Morph Clínica.`;
+  return `Oi! Vi o Morph Clínica e quero saber do "${plano}".`;
 }
 
-export const ofertaMessage = `Olá, Morph Code! Vi a oferta de fim de ano do Morph Clínica (50% na implantação) e quero aproveitar.`;
+export const ofertaMessage = `Oi! Vi o Morph Clínica e quero saber da implantação com 50% OFF.`;
 
-export const ofertaLicencaMessage = `Olá, Morph Code! Vi a oferta de fim de ano da licença vitalícia do Morph Clínica por R$ 2.000 e quero aproveitar.`;
+export const ofertaLicencaMessage = `Oi! Vi o Morph Clínica e quero saber da licença vitalícia por R$ 2.000.`;

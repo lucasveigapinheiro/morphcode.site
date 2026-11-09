@@ -3,7 +3,12 @@
 import { useEffect } from "react";
 import { track } from "@vercel/analytics";
 import { trackMetaContact, trackMetaViewContent } from "@/components/MetaPixel";
-import { enviarContatoAoServidor, guardarOrigemDoAnuncio, origemDoAnuncio } from "@/lib/atribuicao";
+import { comOrigem, enviarContatoAoServidor, guardarOrigemDoAnuncio, origemDoAnuncio } from "@/lib/atribuicao";
+
+/** Celular ou tablet: tela de toque, sem mouse. */
+function ehCelular() {
+  return window.matchMedia("(pointer: coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
 
 /**
  * Conta cada clique em um link de WhatsApp como conversão, com a origem do clique: o
@@ -20,7 +25,7 @@ export default function ConversionTracking() {
         trackMetaViewContent({ content_name: "demonstracao", origem, pagina: window.location.pathname });
         return;
       }
-      const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="/whatsapp"], a[href*="api.whatsapp.com"]');
+      const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="/whatsapp"], a[href*="api.whatsapp.com"], a[href*="wa.me/"]');
       if (!link) return;
       const origem =
         link.closest<HTMLElement>("[data-origem]")?.dataset.origem ||
@@ -32,6 +37,18 @@ export default function ConversionTracking() {
       track("whatsapp_click", params);
       trackMetaContact(params, eventId);
       enviarContatoAoServidor(eventId, params);
+
+      // Leva o criativo do anúncio no fim da mensagem: "(ref: criativo)".
+      const destino = comOrigem(link.href);
+      // No celular, abre o WhatsApp na mesma aba: nova aba dentro do navegador do Instagram e do
+      // Facebook costuma parar numa tela intermediária em vez de abrir o aplicativo.
+      if (ehCelular()) {
+        e.preventDefault();
+        // Sem atraso: o iPhone só passa o link para o app se a troca vier direto do toque.
+        window.location.assign(destino);
+      } else if (destino !== link.href) {
+        link.href = destino;
+      }
     };
     guardarOrigemDoAnuncio();
     document.addEventListener("click", onClick, { capture: true });
