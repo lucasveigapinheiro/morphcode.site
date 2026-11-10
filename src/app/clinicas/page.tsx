@@ -162,7 +162,7 @@ function BotaoWhats({
       target="_blank"
       rel="noopener noreferrer"
       data-origem={origem}
-      className={`inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 text-[15px] font-extrabold transition-[transform,filter,background-color] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f3c64f] sm:whitespace-nowrap ${cor} ${className}`}
+      className={`inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 text-[15px] font-extrabold transition-[transform,filter,background-color] hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f3c64f] sm:whitespace-nowrap ${cor} ${className}`}
     >
       <FaWhatsapp className="h-[19px] w-[19px] shrink-0" aria-hidden /> {texto}
     </a>
@@ -371,7 +371,7 @@ export default function ClinicasPage() {
                 Escolha como começar na sua clínica.
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm text-[#374b45] sm:text-base">
-                Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
+                <strong className="font-extrabold text-[#0c221d]">Sistema exclusivo para clínicas de estética.</strong> Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
               </p>
 
               {/* Cronômetro regressivo + Barra das 5 vagas da semana */}
@@ -421,7 +421,7 @@ export default function ClinicasPage() {
                     <div className="mt-7 sm:mt-9">
                       <BotaoWhats
                         origem={p.id === "mensal" ? "plano-mensal" : "plano-licenca"}
-                        texto={p.id === "mensal" ? "Quero o plano mensal (50% OFF)" : "Quero a licença por R$ 2.000"}
+                        texto={p.id === "mensal" ? "Chamar no WhatsApp · Plano Mensal (50% OFF)" : "Chamar no WhatsApp · Licença Vitalícia"}
                         mensagem={p.id === "mensal" ? ofertaMessage : ofertaLicencaMessage}
                         variante={p.destaque ? "argila" : "verde"}
                         className="w-full"
@@ -456,7 +456,7 @@ export default function ClinicasPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-origem="ajuda-planos"
-                className="inline-flex items-center gap-1 font-extrabold text-[#15803d] underline underline-offset-4"
+                className="inline-flex items-center gap-1 font-extrabold text-[#15803d] underline underline-offset-4 hover:text-[#0c221d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#15803d]"
               >
                 Falar agora no WhatsApp <LuArrowRight className="h-3.5 w-3.5" aria-hidden />
               </a>
@@ -528,7 +528,7 @@ export default function ClinicasPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-origem="secao-demo"
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0c221d] px-7 py-4 text-[15px] font-extrabold text-[#f7d46c] shadow-lg transition hover:bg-[#163830] sm:mt-6"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0c221d] px-7 py-4 text-[15px] font-extrabold text-[#f7d46c] shadow-lg transition-colors hover:bg-[#163830] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#15803d] sm:mt-6"
                 >
                   Abrir o sistema de demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>
@@ -549,7 +549,7 @@ export default function ClinicasPage() {
             <div className="mt-8 divide-y divide-[#e2e8e5] border-y border-[#e2e8e5] sm:mt-10">
               {faqClinica.map((f) => (
                 <details key={f.q} className="group py-4 sm:py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#0c221d] sm:text-base [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-[#0c221d] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#15803d] sm:text-base [&::-webkit-details-marker]:hidden">
                     {f.q}
                     <LuPlus className="h-5 w-5 shrink-0 text-[#15803d] transition-transform group-open:rotate-45" aria-hidden />
                   </summary>
@@ -593,7 +593,7 @@ export default function ClinicasPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-origem="chamada-final-demo"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10 sm:py-4 sm:text-[15px]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3c64f] sm:py-4 sm:text-[15px]"
                 >
                   Explorar a demonstração <LuArrowUpRight className="h-4 w-4" aria-hidden />
                 </a>

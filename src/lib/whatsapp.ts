@@ -30,12 +30,12 @@ export const generalMessage = `Olá, Morph Code! Vim pelo site e gostaria de tir
 
 // Mensagens do Morph Clínica: curtas e no tom de quem está só perguntando, para a pessoa não
 // desistir antes de enviar.
-export const clinicaMessage = `Oi! Vi o Morph Clínica e quero saber mais.`;
+export const clinicaMessage = `Oi! Tenho uma clínica de estética e quero conhecer o Morph Clínica.`;
 
 export function planoMessage(plano: string) {
   return `Oi! Vi o Morph Clínica e quero saber do "${plano}".`;
 }
 
-export const ofertaMessage = `Oi! Vi o Morph Clínica e quero saber da implantação com 50% OFF.`;
+export const ofertaMessage = `Oi! Vi o anúncio do Morph Clínica e quero saber como funciona a implantação com 50% OFF.`;
 
-export const ofertaLicencaMessage = `Oi! Vi o Morph Clínica e quero saber da licença vitalícia por R$ 2.000.`;
+export const ofertaLicencaMessage = `Oi! Vi o anúncio do Morph Clínica e quero saber como funciona a licença vitalícia de R$ 2.000.`;
