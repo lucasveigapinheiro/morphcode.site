@@ -21,6 +21,7 @@ import {
   FlutuantesClinica,
 } from "@/components/clinica/FaixaOferta";
 import { PrecoImplantacao, PrecoLicenca, TextoOferta } from "@/components/clinica/Oferta";
+import TelaHero from "@/components/clinica/TelaHero";
 import { fontesClinica } from "@/lib/fontes-clinica";
 import { DEMO, PRODUTO, faqClinica, planos, telas, type Tela } from "@/lib/clinica";
 import { clinicaMessage, ofertaLicencaMessage, ofertaMessage, whatsappLink } from "@/lib/whatsapp";
@@ -130,8 +131,8 @@ function Eyebrow({ children, claro = false }: { children: React.ReactNode; claro
   );
 }
 
-function Img({ tela, className = "", prioridade = false, sizes = "(min-width: 1024px) 560px, 100vw" }: { tela: Tela; className?: string; prioridade?: boolean; sizes?: string }) {
-  return <Image src={tela.src} alt={tela.alt} width={tela.width} height={tela.height} priority={prioridade} sizes={sizes} className={className} />;
+function Img({ tela, className = "", prioridade = false, sizes = "(min-width: 1024px) 640px, 100vw" }: { tela: Tela; className?: string; prioridade?: boolean; sizes?: string }) {
+  return <Image src={tela.src} alt={tela.alt} width={tela.width} height={tela.height} priority={prioridade} quality={90} sizes={sizes} className={className} />;
 }
 
 function BotaoWhats({
@@ -231,10 +232,12 @@ export default function ClinicasPage() {
               </div>
             </Reveal>
 
-            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[580px]">
-              <div className="rounded-[1.5rem] border border-[#f3c64f]/30 bg-[#081714] p-1.5 shadow-[0_32px_80px_-25px_rgba(0,0,0,0.8)] sm:rounded-[1.8rem] sm:p-2">
-                <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.2rem] sm:rounded-[1.45rem]" />
-              </div>
+            <Reveal delay={0.15} className="relative mx-auto w-full max-w-[640px]">
+              <TelaHero>
+                <div className="rounded-[1.5rem] border border-[#f3c64f]/30 bg-[#081714] p-1.5 shadow-[0_32px_80px_-25px_rgba(0,0,0,0.8)] sm:rounded-[1.8rem] sm:p-2">
+                  <Img tela={telas.painel} prioridade className="h-auto w-full rounded-[1.2rem] sm:rounded-[1.45rem]" />
+                </div>
+              </TelaHero>
             </Reveal>
           </div>
         </section>

@@ -15,7 +15,7 @@ export const DEMO = {
 export type Tela = { src: string; alt: string; width: number; height: number };
 
 export const telas = {
-  painel: { src: "/clinicas/telas/cena-painel.webp", alt: "Lista de pacientes do Morph Clínica com alerta de alergia em destaque e a ficha de anamnese aberta no celular da paciente", width: 1800, height: 1200 },
+  painel: { src: "/clinicas/telas/cena-hero.webp", alt: "Lista de pacientes do Morph Clínica com alerta de alergia em destaque e a ficha de anamnese aberta no celular da paciente", width: 1800, height: 1150 },
   pacientesNovo: { src: "/clinicas/telas/cena-prontuario.webp", alt: "Lista de pacientes com ficha assinada, alerta de alergia e medicamento contínuo em destaque e atalho para convênios", width: 1800, height: 1200 },
   estoque: { src: "/clinicas/telas/cena-estoque.webp", alt: "Estoque por lote e validade com alerta de produto que vence em 22 dias e sugestão de reposição", width: 1800, height: 1200 },
   financeiro: { src: "/clinicas/telas/cena-financeiro.webp", alt: "Financeiro com cartão parcelado parcela a parcela, valores a receber, lançamento em atraso e registro de alterações", width: 1800, height: 1200 },
