@@ -31,10 +31,15 @@ export default function HeroScene() {
         gsap.from(".hs-orb", { opacity: 0, scale: 0.4, duration: 1.2, stagger: 0.15, delay: 0.3, ease: "back.out(1.6)" });
         gsap.from(".hs-card", { opacity: 0, y: 36, duration: 0.9, stagger: 0.18, delay: 0.7, ease: "power3.out" });
 
-        gsap.to(".hs-orbit", { rotation: 360, duration: 60, repeat: -1, ease: "none", transformOrigin: "50% 50%" });
-        gsap.to(".hs-orbit-rev", { rotation: -360, duration: 90, repeat: -1, ease: "none", transformOrigin: "50% 50%" });
-        gsap.to(".hs-float-a", { y: -14, duration: 4, yoyo: true, repeat: -1, ease: "sine.inOut" });
-        gsap.to(".hs-float-b", { y: 12, duration: 5, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 0.6 });
+        // Animações infinitas: pausam quando a cena sai da tela, para não gastar quadros na rolagem.
+        const loops = [
+          gsap.to(".hs-orbit", { rotation: 360, duration: 60, repeat: -1, ease: "none", transformOrigin: "50% 50%" }),
+          gsap.to(".hs-orbit-rev", { rotation: -360, duration: 90, repeat: -1, ease: "none", transformOrigin: "50% 50%" }),
+          gsap.to(".hs-float-a", { y: -14, duration: 4, yoyo: true, repeat: -1, ease: "sine.inOut" }),
+          gsap.to(".hs-float-b", { y: 12, duration: 5, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 0.6 }),
+        ];
+        const io = new IntersectionObserver(([e]) => loops.forEach((t) => (e.isIntersecting ? t.resume() : t.pause())));
+        io.observe(el);
 
         // Parallax por camada seguindo o mouse.
         const layers = gsap.utils.toArray<HTMLElement>("[data-depth]", el);
@@ -64,6 +69,7 @@ export default function HeroScene() {
         });
 
         return () => {
+          io.disconnect();
           el.removeEventListener("pointermove", onMove);
           el.removeEventListener("pointerleave", onLeave);
         };
