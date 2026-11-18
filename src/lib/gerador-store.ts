@@ -1,10 +1,10 @@
 // Armazenamento dos pedidos do gerador. Usa o Redis da Upstash por REST (plano grátis serve).
-// Variáveis: UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN.
+// Variáveis: KV_REST_API_URL e KV_REST_API_TOKEN (criadas pela integração da Upstash na Vercel) ou UPSTASH_REDIS_REST_*.
 // Sem elas, em desenvolvimento, cai numa memória local; em produção, devolve erro claro.
 import type { Pedido } from "./gerador";
 
-const URL_REST = process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const URL_REST = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 const memoria = new Map<string, string>();
 const filaMemoria = new Set<string>();
 
