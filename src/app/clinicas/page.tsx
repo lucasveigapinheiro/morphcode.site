@@ -19,8 +19,6 @@ import {
   CabecalhoClinica,
   CronometroPlanosClinica,
   FlutuantesClinica,
-  PainelVagasClinica,
-  SeloAoVivoClinica,
 } from "@/components/clinica/FaixaOferta";
 import { PrecoImplantacao, PrecoLicenca, TextoOferta } from "@/components/clinica/Oferta";
 import { fontesClinica } from "@/lib/fontes-clinica";
@@ -53,7 +51,7 @@ const dadosEstruturados = {
       inLanguage: "pt-BR",
       provider: { "@id": `${siteUrl}/#empresa` },
       offers: [
-        { "@type": "Offer", name: "Plano mensal", price: "149", priceCurrency: "BRL", description: "R$ 149/mês + implantação de R$ 497 (R$ 248,50 para quem fechar nas 5 vagas da semana ou até 23/12/2026)" },
+        { "@type": "Offer", name: "Plano mensal", price: "149", priceCurrency: "BRL", description: "R$ 149/mês + implantação de R$ 497 (R$ 248,50 para quem fechar até 23/12/2026)" },
         { "@type": "Offer", name: "Licença vitalícia", price: "2700", priceCurrency: "BRL", description: "R$ 2.000 para quem fechar até 23/12/2026; depois R$ 97/mês de hospedagem" },
       ],
     },
@@ -80,7 +78,7 @@ const dores = [
 ];
 
 const passos = [
-  { titulo: "Você chama no WhatsApp", texto: "Uma conversa rápida para entender a sua clínica e reservar 1 das 5 vagas com 50% na implantação. Sem formulário e sem robô." },
+  { titulo: "Você chama no WhatsApp", texto: "Uma conversa rápida para entender a sua clínica e garantir os 50% na implantação até 23/12. Sem formulário e sem robô." },
   { titulo: "Vemos o sistema ao vivo", texto: "Mostramos em 20 minutos, com uma ficha de teste chegando no seu WhatsApp para você assinar no celular." },
   { titulo: "Colocamos a sua clínica nele", texto: "Passamos a sua ficha de papel, a sua marca e as suas cores para o sistema. Depois é só atender." },
 ];
@@ -202,8 +200,6 @@ export default function ClinicasPage() {
           />
           <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 pb-18 pt-8 sm:px-6 md:pb-26 md:pt-16 lg:grid-cols-[1fr_1fr] lg:gap-12">
             <Reveal>
-              <SeloAoVivoClinica />
-
               <h1 className="text-balance text-[2.15rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
                 Perdeu a <em className="font-fraunces font-normal text-[#f7d46c]">ficha da paciente</em> de novo?
               </h1>
@@ -213,14 +209,14 @@ export default function ClinicasPage() {
               </p>
 
               <p className="mt-4 text-xs font-semibold text-[#f7d46c] sm:text-sm">
-                Plano mensal por <strong className="text-white">R$ 149/mês</strong> · Implantação com <strong className="underline decoration-[#f3c64f]/60 underline-offset-4">50% OFF nas 5 vagas da semana</strong>
+                Plano mensal por <strong className="text-white">R$ 149/mês</strong> · Implantação com <strong className="underline decoration-[#f3c64f]/60 underline-offset-4">50% OFF até 23/12</strong>
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:flex-wrap">
                 <BotaoWhats
                   variante="argila"
                   origem="hero-oferta"
-                  texto={<TextoOferta durante="Garantir vaga com 50% na implantação" depois="Quero uma demonstração" />}
+                  texto={<TextoOferta durante="Garantir 50% na implantação" depois="Quero uma demonstração" />}
                   mensagem={ofertaMessage}
                 />
                 <a
@@ -362,7 +358,7 @@ export default function ClinicasPage() {
           </div>
         </section>
 
-        {/* Planos e Oferta: concentra os gatilhos de escassez (cronômetro + painel de vagas) sem poluir o Hero */}
+        {/* Planos e Oferta: concentra os gatilhos de escassez (cronômetro) sem poluir o Hero */}
         <section id="planos" className="scroll-mt-20 border-y border-[#e2e8e5] bg-[#f2f6f4] py-16 md:py-24">
           <div className="mx-auto max-w-5xl px-5 sm:px-6">
             <Reveal className="text-center">
@@ -371,12 +367,11 @@ export default function ClinicasPage() {
                 Escolha como começar na sua clínica.
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm text-[#374b45] sm:text-base">
-                <strong className="font-extrabold text-[#0c221d]">Sistema exclusivo para clínicas de estética.</strong> Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
+                <strong className="font-extrabold text-[#0c221d]">Sistema para clínicas de estética e odontológicas.</strong> Prontuário, agenda, estoque FEFO e financeiro inclusos nos dois planos, sem limite de pacientes e com a sua marca.
               </p>
 
-              {/* Cronômetro regressivo + Barra das 5 vagas da semana */}
+              {/* Cronômetro regressivo até 23/12 */}
               <CronometroPlanosClinica />
-              <PainelVagasClinica />
             </Reveal>
 
             {/* Os 2 cartões de planos com alto contraste */}
@@ -396,7 +391,7 @@ export default function ClinicasPage() {
                       </span>
                     ) : (
                       <span className="-top-3.5 right-6 inline-block self-start rounded-full bg-[#16a34a] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md sm:absolute sm:right-8 sm:text-xs">
-                        Só 5 vagas com 50% na implantação
+                        Implantação 50% OFF até 23/12
                       </span>
                     )}
                     <p className={`mt-3 text-xs font-extrabold uppercase tracking-wider sm:mt-0 ${p.destaque ? "text-[#f7d46c]" : "text-[#15803d]"}`}>
@@ -573,11 +568,11 @@ export default function ClinicasPage() {
                 <Image src="/logo.jpeg" alt="Morph Code" width={80} height={80} className="h-full w-full rounded-full object-cover" />
               </div>
               <h2 className="mt-5 text-balance text-2xl font-extrabold leading-[1.12] tracking-tight sm:text-3xl md:text-5xl">
-                Garanta uma das 5 vagas com <span className="text-[#f7d46c]">50% na implantação</span>.
+                Garanta <span className="text-[#f7d46c]">50% na implantação</span>.
               </h2>
               <p className="mx-auto mt-3 max-w-lg text-sm text-[#d8eae4] sm:mt-4 sm:text-base">
                 <TextoOferta
-                  durante="De R$ 497 por R$ 248,50 na implantação do plano mensal até sexta (13/11), ou Licença Vitalícia por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos pelo WhatsApp."
+                  durante="De R$ 497 por R$ 248,50 na implantação do plano mensal até 23/12, ou Licença Vitalícia por R$ 2.000. Mostramos o sistema ao vivo em 20 minutos pelo WhatsApp."
                   depois="Já testado, aprovado e em uso atualmente por profissionais da área. Mostramos o sistema ao vivo em 20 minutos, com uma ficha de teste no seu WhatsApp."
                 />
               </p>
@@ -585,7 +580,7 @@ export default function ClinicasPage() {
                 <BotaoWhats
                   variante="argila"
                   origem="chamada-final"
-                  texto={<TextoOferta durante="Quero garantir minha vaga pelo WhatsApp" depois="Agendar demonstração" />}
+                  texto={<TextoOferta durante="Quero garantir o desconto pelo WhatsApp" depois="Agendar demonstração" />}
                   mensagem={ofertaMessage}
                 />
                 <a
