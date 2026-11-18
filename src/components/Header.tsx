@@ -8,6 +8,7 @@ import Magnetic from "./Magnetic";
 
 const links = [
   { href: "/#produto", label: "Morph Clínica" },
+  { href: "/#gerador-leads", label: "Gerador de leads" },
   { href: "/#projetos", label: "Sites no ar" },
   { href: "/#servicos", label: "O que você recebe" },
   { href: "/#como-funciona", label: "Como funciona" },

@@ -5,6 +5,7 @@ import Services from "@/components/Services";
 import Process from "@/components/Process";
 import Faq from "@/components/Faq";
 import ProdutoDestaque from "@/components/clinica/ProdutoDestaque";
+import GeradorDestaque from "@/components/gerador/GeradorDestaque";
 import Contact from "@/components/Contact";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
@@ -17,6 +18,7 @@ export default function Home() {
       <main id="conteudo" className="pb-20 md:pb-0">
         <Hero />
         <ProdutoDestaque />
+        <GeradorDestaque />
         <Projects />
         <Services />
         <Process />
