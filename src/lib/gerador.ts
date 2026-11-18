@@ -1,6 +1,7 @@
 // Gerador de planilha de leads: tipos, nichos e validação, compartilhados entre o formulário e as rotas.
 
-export const PRECO_REAIS = 47; // hipótese de preço: ajuste conforme a conversão
+export const PRECO_REAIS = 45.99; // hipótese de preço: ajuste conforme a conversão
+export const PRECO_TEXTO = PRECO_REAIS.toFixed(2).replace(".", ","); // 45,99
 export const TOTAL_LEADS = 50;
 
 export const NICHOS = [

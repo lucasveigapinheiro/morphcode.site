@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LuCheck, LuDownload } from "react-icons/lu";
-import { MAX_MENSAGEM, NICHOS, PRECO_REAIS, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import { MAX_MENSAGEM, NICHOS, PRECO_TEXTO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
@@ -212,7 +212,7 @@ export default function Gerador() {
           className="w-fit -rotate-2 rounded-xl border-2 border-[var(--tinta)] bg-[var(--lime)] px-6 py-5 shadow-[5px_5px_0_0_var(--tinta)]"
         >
           <p className="font-[family-name:var(--f-mono)] text-[11px] font-semibold uppercase tracking-wider">Pagamento único</p>
-          <p className="text-5xl font-extrabold leading-none tracking-tight">R$ {PRECO_REAIS}</p>
+          <p className="text-5xl font-extrabold leading-none tracking-tight">R$ {PRECO_TEXTO}</p>
           <p className="mt-1 text-sm font-medium">{TOTAL_LEADS} leads na sua região</p>
         </div>
       </section>
@@ -227,7 +227,7 @@ export default function Gerador() {
               pedido-de-leads.xlsx
             </span>
             <span className="font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]">
-              {TOTAL_LEADS} leads · R$ {PRECO_REAIS}
+              {TOTAL_LEADS} leads · R$ {PRECO_TEXTO}
             </span>
           </div>
 
@@ -361,7 +361,7 @@ export default function Gerador() {
                     disabled={enviando}
                     className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[var(--verde)] px-5 text-base font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2 disabled:opacity-60"
                   >
-                    {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_REAIS}`}
+                    {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
                   </button>
                   <p className="mt-3 text-xs leading-relaxed text-[var(--suave)]">
                     Usamos seus dados só para entregar a planilha e avisar sobre o pedido. Os dados dos negócios vêm de perfis públicos do Google Maps;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
 import { FaWhatsapp } from "react-icons/fa6";
+import MorphLogo from "@/components/MorphLogo";
 import Gerador from "@/components/gerador/Gerador";
 import { whatsappLink } from "@/lib/whatsapp";
 
@@ -50,12 +51,10 @@ export default function Page() {
       <header className="border-b border-[var(--linha)]">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
-            <svg width="22" height="26" viewBox="0 0 22 26" aria-hidden>
-              <path d="M11 1C5.5 1 1.5 5 1.5 10.2 1.5 16.6 11 25 11 25s9.5-8.4 9.5-14.8C20.5 5 16.5 1 11 1Z" fill="var(--pin)" />
-              <circle cx="11" cy="10" r="3.6" fill="#fff" />
-            </svg>
+            <MorphLogo glow={false} claro className="h-14 w-14 shrink-0" label="Morph Code" />
             <span className="text-xl font-extrabold tracking-tight">
               morph<span className="text-[var(--verde)]">leads</span>
+              <span className="ml-2 hidden font-[family-name:var(--f-mono)] text-[11px] font-medium uppercase tracking-wider text-[var(--suave)] sm:inline">por Morph Code</span>
             </span>
           </Link>
           <nav className="flex items-center gap-1 text-sm">

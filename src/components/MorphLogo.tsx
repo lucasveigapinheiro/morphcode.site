@@ -13,6 +13,8 @@ type Props = {
   /** Mostra o brilho de vidro e o halo atrás do logo. */
   glow?: boolean;
   label?: string;
+  /** Versão para fundo claro: o M branco vira tinta escura. */
+  claro?: boolean;
   /** Chamado quando o dedo segura o logo no toque (para esconder a dica "aperte e segure"). */
   onPress?: () => void;
 };
@@ -21,7 +23,7 @@ type Props = {
  * Logo da Morph Code redesenhado em SVG para poder animar cada parte.
  * Hover: o anel gira, os colchetes </> se abrem e o M recebe um pulso de luz.
  */
-export default function MorphLogo({ className = "", tilt = false, glow = true, label = "Morph Code", onPress }: Props) {
+export default function MorphLogo({ className = "", tilt = false, glow = true, label = "Morph Code", claro = false, onPress }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
 
@@ -155,8 +157,8 @@ export default function MorphLogo({ className = "", tilt = false, glow = true, l
             <stop offset="1" stopColor="#a9792f" />
           </linearGradient>
           <linearGradient id="ml-white" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#ffffff" />
-            <stop offset="1" stopColor="#d9d6cf" />
+            <stop offset="0" stopColor={claro ? "#1d211e" : "#ffffff"} />
+            <stop offset="1" stopColor={claro ? "#111412" : "#d9d6cf"} />
           </linearGradient>
         </defs>
         <path

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 import Reveal from "../Reveal";
 import Magnetic from "../Magnetic";
-import { PRECO_REAIS, TOTAL_LEADS } from "@/lib/gerador";
+import { PRECO_TEXTO, TOTAL_LEADS } from "@/lib/gerador";
 
 const pontos = [
   `${TOTAL_LEADS} negócios sem site, coletados do Google Maps na região que você escolher`,
@@ -97,7 +97,7 @@ export default function GeradorDestaque() {
           </ul>
 
           <p className="mt-7 text-sm text-muted">
-            <span className="font-[var(--font-display)] text-2xl text-foreground">R$ {PRECO_REAIS}</span> por lista de {TOTAL_LEADS} leads, pagamento
+            <span className="font-[var(--font-display)] text-2xl text-foreground">R$ {PRECO_TEXTO}</span> por lista de {TOTAL_LEADS} leads, pagamento
             único
           </p>
 
