@@ -1,0 +1,48 @@
+// Rota do robô (roda no PC ou servidor da Morph Code). Autenticada por WORKER_TOKEN.
+//   GET  -> pedidos pagos aguardando geração
+//   POST -> { acao: "gerando" | "entrega" | "falha" | "pago", id, ... }
+// "pago" existe só para testar o fluxo antes do Mercado Pago e fica desligada se MP_ACCESS_TOKEN existir.
+import { timingSafeEqual } from "node:crypto";
+import { filaPagos, lerPedido, salvarArquivo, salvarPedido } from "@/lib/gerador-store";
+
+function autorizado(request: Request) {
+  const esperado = process.env.WORKER_TOKEN;
+  if (!esperado || esperado.length < 24) return false;
+  const recebido = (request.headers.get("authorization") ?? "").replace(/^Bearer /, "");
+  const a = Buffer.from(recebido);
+  const b = Buffer.from(esperado);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+export async function GET(request: Request) {
+  if (!autorizado(request)) return new Response(null, { status: 401 });
+  return Response.json({ pedidos: await filaPagos() });
+}
+
+export async function POST(request: Request) {
+  if (!autorizado(request)) return new Response(null, { status: 401 });
+  let c: Record<string, unknown>;
+  try {
+    c = await request.json();
+  } catch {
+    return new Response(null, { status: 400 });
+  }
+  const p = typeof c.id === "string" ? await lerPedido(c.id) : null;
+  if (!p) return Response.json({ erro: "Pedido não encontrado." }, { status: 404 });
+
+  if (c.acao === "pago" && !process.env.MP_ACCESS_TOKEN) {
+    if (p.status === "aguardando_pagamento") await salvarPedido({ ...p, status: "pago" });
+  } else if (c.acao === "gerando") {
+    await salvarPedido({ ...p, status: "gerando" });
+  } else if (c.acao === "entrega") {
+    const b64 = typeof c.arquivo === "string" ? c.arquivo : "";
+    if (!b64 || b64.length > 900_000) return Response.json({ erro: "Arquivo inválido." }, { status: 400 });
+    await salvarArquivo(p.id, b64);
+    await salvarPedido({ ...p, status: "pronto", leads: Number(c.leads) || undefined, erro: undefined });
+  } else if (c.acao === "falha") {
+    await salvarPedido({ ...p, status: "falhou", erro: String(c.erro ?? "Falha ao gerar").slice(0, 200) });
+  } else {
+    return Response.json({ erro: "Ação desconhecida." }, { status: 400 });
+  }
+  return Response.json({ ok: true });
+}

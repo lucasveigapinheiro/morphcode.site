@@ -8,5 +8,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: siteUrl, lastModified, changeFrequency: "monthly", priority: 1 },
     ...servicos.map((s) => ({ url: `${siteUrl}/${s.slug}`, lastModified, changeFrequency: "monthly" as const, priority: 0.9 })),
     { url: `${siteUrl}/clinicas`, lastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/gerador`, lastModified, changeFrequency: "monthly", priority: 0.6 },
   ];
 }
