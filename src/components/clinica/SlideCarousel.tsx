@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { slides } from "@/lib/clinica";
 
@@ -17,6 +17,17 @@ export default function SlideCarousel({ tema = "claro", autoplay = false, miniat
   const [atual, setAtual] = useState(0);
   const [pausado, setPausado] = useState(false);
   const reduzir = useReducedMotion();
+  const raiz = useRef<HTMLDivElement>(null);
+  const [visivel, setVisivel] = useState(false);
+
+  // Só carrega o próximo slide e roda o autoplay quando o carrossel está perto da tela.
+  useEffect(() => {
+    const el = raiz.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setVisivel(e.isIntersecting), { rootMargin: "200px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const ir = useCallback((delta: number) => {
     setAtual((i) => (i + delta + slides.length) % slides.length);
@@ -24,15 +35,16 @@ export default function SlideCarousel({ tema = "claro", autoplay = false, miniat
 
   // Carrega o próximo slide antes de ele aparecer, para a troca não piscar.
   useEffect(() => {
+    if (!visivel) return;
     const proximo = new window.Image();
     proximo.src = slides[(atual + 1) % slides.length].src;
-  }, [atual]);
+  }, [atual, visivel]);
 
   useEffect(() => {
-    if (!autoplay || pausado || reduzir) return;
+    if (!autoplay || pausado || reduzir || !visivel) return;
     const t = setInterval(() => ir(1), 4200);
     return () => clearInterval(t);
-  }, [autoplay, pausado, reduzir, ir]);
+  }, [autoplay, pausado, reduzir, visivel, ir]);
 
   const escuro = tema === "escuro";
   const botao = escuro
@@ -41,6 +53,7 @@ export default function SlideCarousel({ tema = "claro", autoplay = false, miniat
 
   return (
     <div
+      ref={raiz}
       className="w-full min-w-0"
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
@@ -70,9 +83,9 @@ export default function SlideCarousel({ tema = "claro", autoplay = false, miniat
               src={slides[atual].src}
               alt={slides[atual].alt}
               fill
-              unoptimized
+              sizes="(max-width: 1023px) 92vw, 560px"
               className="object-cover"
-              loading="eager"
+              loading={atual === 0 ? "lazy" : "eager"}
             />
           </motion.div>
         </AnimatePresence>

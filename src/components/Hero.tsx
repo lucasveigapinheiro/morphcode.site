@@ -43,7 +43,7 @@ export default function Hero() {
       <div aria-hidden className="hud-grid absolute inset-0 -z-10" />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-[-10%] -z-10 h-[620px] w-[620px] rounded-full opacity-25 blur-3xl animate-float-slow"
+        className="pointer-events-none absolute -top-40 left-[-10%] -z-10 h-[620px] w-[620px] rounded-full opacity-25 blur-3xl will-change-transform max-lg:animate-none animate-float-slow"
         style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 68%)" }}
       />
       <CursorLens className="-z-10" />

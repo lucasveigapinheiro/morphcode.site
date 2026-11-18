@@ -25,7 +25,7 @@ export default function GlassLogo({ className = "" }: { className?: string }) {
     let cancelado = false;
     let limpar = () => {};
 
-    (async () => {
+    const iniciar = async () => {
       const THREE = await import("three");
       const { RoomEnvironment } = await import("three/addons/environments/RoomEnvironment.js");
       const { RoundedBoxGeometry } = await import("three/addons/geometries/RoundedBoxGeometry.js");
@@ -220,10 +220,24 @@ export default function GlassLogo({ className = "" }: { className?: string }) {
         renderer.dispose();
         renderer.domElement.remove();
       };
-    })();
+    };
+
+    // Objeto decorativo: só carrega o three.js (~500 KB) em tela larga e quando a seção está
+    // perto de aparecer. No celular e antes disso ele não custa nada ao carregamento.
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
+    const porta = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        porta.disconnect();
+        void iniciar();
+      },
+      { rootMargin: "400px" },
+    );
+    porta.observe(el);
 
     return () => {
       cancelado = true;
+      porta.disconnect();
       limpar();
     };
   }, []);
