@@ -49,23 +49,23 @@ export default function Page() {
         Ir para o pedido
       </a>
       <header className="border-b border-[var(--linha)]">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Voltar para o site da Morph Code">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="Voltar para o site da Morph Code">
             <MorphLogo glow={false} claro className="h-14 w-14 shrink-0" label="Morph Code" />
-            <span className="text-xl font-extrabold tracking-tight">
+            <span className="flex min-w-0 items-baseline whitespace-nowrap text-lg font-extrabold tracking-tight sm:text-xl">
               morph<span className="text-[var(--verde)]">leads</span>
               <span className="ml-2 hidden font-[family-name:var(--f-mono)] text-[11px] font-medium uppercase tracking-wider text-[var(--suave)] sm:inline">por Morph Code</span>
             </span>
           </Link>
           <nav className="flex items-center gap-1 text-sm">
-            <Link href="/" className="rounded-md px-3 py-2 text-[var(--suave)] transition-colors hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]">
+            <Link href="/" className="hidden rounded-md px-3 py-2.5 text-[var(--suave)] sm:inline-flex transition-colors hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]">
               Site da Morph Code
             </Link>
             <a
               href={whatsappLink(ajuda)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-[var(--linha)] bg-white px-3 py-2 transition-colors hover:border-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[var(--linha)] bg-white px-3 py-2 transition-colors hover:border-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]"
             >
               <FaWhatsapp className="h-4 w-4 text-[var(--verde)]" aria-hidden />
               Dúvidas
@@ -81,7 +81,7 @@ export default function Page() {
       <footer className="border-t border-[var(--linha)]">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-8 text-xs text-[var(--suave)] sm:flex-row sm:items-center sm:px-6">
           <p>© {new Date().getFullYear()} Morph Code. Dados de perfis públicos do Google Maps; confirme antes de abordar.</p>
-          <Link href="/" className="underline underline-offset-4 hover:text-[var(--tinta)]">
+          <Link href="/" className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-[var(--tinta)]">
             Conheça a Morph Code
           </Link>
         </div>

@@ -63,7 +63,7 @@ function Pergunta({ i, respondida, onPerguntar, compacta = false }: { i: number;
       onClick={() => onPerguntar(i)}
       className={
         compacta
-          ? `shrink-0 snap-start rounded-full border px-4 py-2 text-left text-[13px] transition-colors ${
+          ? `min-h-11 shrink-0 snap-start rounded-full border px-4 py-2 text-left text-[13px] transition-colors ${
               respondida ? "border-white/10 text-muted" : "border-gold/40 bg-gold/10 text-foreground hover:bg-gold/20"
             }`
           : `group flex w-full items-center gap-3 border-b border-white/10 py-3.5 text-left text-[15px] transition-colors hover:text-gold ${

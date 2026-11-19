@@ -25,7 +25,7 @@ const LINHAS: [string, string, number][] = [
 export default function GeradorDestaque() {
   return (
     <section id="gerador-leads" className="section-border relative overflow-hidden py-24 md:py-32">
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-center gap-14 px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <Reveal delay={0.1} className="order-2 lg:order-1">
           <div className="overflow-hidden rounded-xl border border-[#111412] bg-white text-[#111412] shadow-[8px_8px_0_0_#D8F24A]">
             <div className="flex items-center justify-between border-b border-[#D3D6CC] bg-[#E9EBE2] px-4 py-2.5 font-mono text-xs">

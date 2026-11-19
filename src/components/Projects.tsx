@@ -73,7 +73,7 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
               href={p.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-white/15 px-4 py-2 text-xs text-foreground transition-colors duration-300 hover:border-foreground hover:bg-foreground hover:text-background"
+              className="inline-flex min-h-11 items-center rounded-full border border-white/15 px-4 py-2 text-xs text-foreground transition-colors duration-300 hover:border-foreground hover:bg-foreground hover:text-background"
             >
               {p.category.startsWith("Site") || p.category === "Landing page" ? "Abrir o site" : "Abrir o sistema"}
               <span className="sr-only">: {p.title} (abre em nova aba)</span>

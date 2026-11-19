@@ -84,14 +84,14 @@ export default function ProdutoDestaque() {
               href={DEMO.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
+              className="inline-flex min-h-11 items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
             >
               <LuArrowUpRight className="h-3.5 w-3.5" aria-hidden /> Explorar a demonstração (usuário {DEMO.usuario}, senha {DEMO.senha})
             </a>
             <a
               href={APRESENTACAO_PDF}
               download
-              className="inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
+              className="inline-flex min-h-11 items-center gap-2 text-xs text-muted transition-colors hover:text-nevoa"
             >
               <LuDownload className="h-3.5 w-3.5" aria-hidden /> Baixar a apresentação em PDF
             </a>

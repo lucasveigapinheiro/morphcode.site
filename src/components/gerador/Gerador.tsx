@@ -270,7 +270,7 @@ export default function Gerador() {
                             type="button"
                             aria-pressed={nicho === n}
                             onClick={() => setNicho(n)}
-                            className={`min-h-9 rounded-md border px-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] ${
+                            className={`min-h-11 rounded-md border px-3 text-sm sm:min-h-9 sm:px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] ${
                               nicho === n
                                 ? "border-[var(--tinta)] bg-[var(--tinta)] text-white"
                                 : "border-[var(--linha)] bg-white text-[var(--suave)] hover:border-[var(--tinta)] hover:text-[var(--tinta)]"
@@ -329,7 +329,7 @@ export default function Gerador() {
                             key={v}
                             type="button"
                             onClick={() => inserirVariavel(v)}
-                            className="min-h-8 rounded border border-[var(--linha)] px-1.5 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)] transition-colors hover:border-[var(--tinta)] hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]"
+                            className="min-h-10 rounded border border-[var(--linha)] px-2 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)] transition-colors hover:border-[var(--tinta)] hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]"
                           >
                             {v}
                           </button>
@@ -454,6 +454,8 @@ const PRIORIDADES: [string, string][] = [
   ["Média", "bg-[#FFEB9C] text-[#7A5A00]"],
   ["Baixa", "bg-[#E4E4E4] text-[#444]"],
 ];
+// Colunas Região e Nota somem no celular para a tabela caber sem rolar.
+const ESCONDE_MOBILE = [2, 4];
 const LARGURAS = [62, 48, 70, 55, 66, 44];
 
 // Estrutura da planilha, sem dados inventados: barras no lugar dos nomes.
@@ -465,20 +467,20 @@ function Previa({ nicho, regiao, mensagem }: { nicho: string; regiao: string; me
         <span className="shrink-0 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">{regiao || "Sua região"}</span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] border-collapse text-left text-xs">
+        <table className="w-full border-collapse sm:min-w-[560px] text-left text-xs">
           <thead>
             <tr aria-hidden className="bg-[var(--cab)] font-[family-name:var(--f-mono)] text-[10px] text-[var(--suave)]">
               <th className="w-9 border-b border-[var(--linha)]" />
-              {LETRAS.map((l) => (
-                <th key={l} className="border-b border-l border-[var(--linha)] py-1 text-center font-normal">
+              {LETRAS.map((l, i) => (
+                <th key={l} className={`border-b border-l border-[var(--linha)] py-1 text-center font-normal ${ESCONDE_MOBILE.includes(i) ? "hidden sm:table-cell" : ""}`}>
                   {l}
                 </th>
               ))}
             </tr>
             <tr>
               <th className="bg-[var(--cab)] text-center font-[family-name:var(--f-mono)] text-[10px] font-normal text-[var(--suave)]">1</th>
-              {COLUNAS.map((c) => (
-                <th key={c} scope="col" className="border-l border-white/20 bg-[var(--verde)] px-3 py-2.5 font-semibold text-white">
+              {COLUNAS.map((c, i) => (
+                <th key={c} scope="col" className={`border-l border-white/20 bg-[var(--verde)] px-3 py-2.5 font-semibold text-white ${ESCONDE_MOBILE.includes(i) ? "hidden sm:table-cell" : ""}`}>
                   {c}
                 </th>
               ))}
@@ -494,11 +496,11 @@ function Previa({ nicho, regiao, mensagem }: { nicho: string; regiao: string; me
                 <td className="border-l border-[var(--linha)] px-3 py-3">
                   <span className="block h-2 rounded-sm bg-[var(--tinta)]/15" style={{ width: `${LARGURAS[i]}%` }} />
                 </td>
-                <td className="border-l border-[var(--linha)] px-3 py-3">
+                <td className="hidden border-l border-[var(--linha)] px-3 py-3 sm:table-cell">
                   <span className="block h-2 w-14 rounded-sm bg-[var(--tinta)]/15" />
                 </td>
                 <td className="border-l border-[var(--linha)] px-3 py-3 text-[var(--azul)] underline underline-offset-2">Abrir conversa</td>
-                <td className="border-l border-[var(--linha)] px-3 py-3">
+                <td className="hidden border-l border-[var(--linha)] px-3 py-3 sm:table-cell">
                   <span className="block h-2 w-8 rounded-sm bg-[var(--tinta)]/15" />
                 </td>
                 <td className="border-l border-[var(--linha)] px-3 py-3 text-[var(--suave)]">Novo</td>
