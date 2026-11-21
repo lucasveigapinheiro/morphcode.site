@@ -305,7 +305,7 @@ export default function Gerador() {
 
           <div className="grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
             {andamento ? (
-              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} />
+              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} foraDoAr={online === false} />
             ) : (
               <form ref={painel} onSubmit={enviar} noValidate onFocus={moverBanda} onBlur={esconderBanda} className="relative border-b border-[var(--linha)] lg:border-b-0 lg:border-r">
                 <div
@@ -513,7 +513,7 @@ const FRASES_GERANDO = (comMensagem: boolean) => [
 ];
 
 // Bolinha em órbita (lima com borda de tinta, como o selo de preço) e frases que avançam até a última.
-function Carregando({ a, fase }: { a: Andamento; fase: "confirmando" | "pago" | "gerando" }) {
+function Carregando({ a, fase, foraDoAr }: { a: Andamento; fase: "confirmando" | "pago" | "gerando"; foraDoAr: boolean }) {
   const raiz = useRef<HTMLDivElement>(null);
   const frases =
     fase === "confirmando"
@@ -575,6 +575,13 @@ function Carregando({ a, fase }: { a: Andamento; fase: "confirmando" | "pago" | 
         </p>
       </div>
 
+      {foraDoAr && (
+        <p role="alert" className="mt-4 rounded-md border border-[var(--linha)] bg-[var(--cab)] p-3 text-sm leading-relaxed">
+          Nosso sistema está fora do ar por um tempo. Seu pagamento está confirmado e a planilha sai assim que voltarmos. Pode fechar esta página: o pedido
+          fica salvo neste navegador.
+        </p>
+      )}
+
       <p className="mt-4 text-sm leading-relaxed text-[var(--suave)]">
         Leva só alguns minutos. Pode deixar esta página aberta: o botão de download aparece aqui quando a planilha ficar pronta. Se fechar, é só voltar neste
         navegador, o pedido fica salvo.
@@ -589,15 +596,17 @@ function Acompanhamento({
   onPagar,
   erro,
   confirmando,
+  foraDoAr,
 }: {
   a: Andamento;
   onNovo: () => void;
   onPagar: () => void;
   erro: string;
   confirmando: boolean;
+  foraDoAr: boolean;
 }) {
   const fase = a.status === "gerando" ? "gerando" : a.status === "pago" ? "pago" : a.status === "aguardando_pagamento" && confirmando ? "confirmando" : null;
-  if (fase) return <Carregando key={fase} a={a} fase={fase} />;
+  if (fase) return <Carregando key={fase} a={a} fase={fase} foraDoAr={foraDoAr && fase !== "confirmando"} />;
   const falhou = a.status === "falhou";
   return (
     <div className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r" aria-live="polite">

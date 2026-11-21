@@ -22,10 +22,15 @@ async function mp<T>(caminho: string, init?: RequestInit): Promise<T> {
 export async function criarCheckout(pedido: Pedido, baseUrl: string): Promise<string> {
   const local = /localhost|127\.0\.0\.1/.test(baseUrl);
   const volta = `${baseUrl}/gerador`;
+  // O link vale 30 min: quem abre o checkout com o robô no ar não consegue pagar horas depois, com o robô fora.
+  const agora = Date.now();
+  const iso = (ms: number) => new Date(ms).toISOString().replace("Z", "+00:00");
   const pref = await mp<{ init_point: string; sandbox_init_point: string }>("/checkout/preferences", {
     method: "POST",
-    headers: { "X-Idempotency-Key": `pref-${pedido.id}` },
     body: JSON.stringify({
+      expires: true,
+      expiration_date_from: iso(agora),
+      expiration_date_to: iso(agora + 30 * 60 * 1000),
       items: [
         {
           id: "morph-leads",

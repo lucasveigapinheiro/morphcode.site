@@ -17,6 +17,8 @@ function autorizado(request: Request) {
 export async function GET(request: Request) {
   if (!autorizado(request)) return new Response(null, { status: 401 });
   await baterPulso(); // a consulta da fila é o sinal de que o robô está vivo
+  // ?pulso=1: só o sinal de vida, sem ler a fila. O robô manda de uma linha à parte enquanto está ocupado coletando.
+  if (new URL(request.url).searchParams.has("pulso")) return Response.json({ ok: true });
   return Response.json({ pedidos: await filaPagos() });
 }
 
