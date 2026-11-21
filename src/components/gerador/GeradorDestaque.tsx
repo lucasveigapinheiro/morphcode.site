@@ -5,7 +5,7 @@ import Magnetic from "../Magnetic";
 import { PRECO_TEXTO, TOTAL_LEADS } from "@/lib/gerador";
 
 const pontos = [
-  `${TOTAL_LEADS} negócios sem site, coletados do Google Maps na região que você escolher`,
+  `${TOTAL_LEADS} negócios do Google Maps na região que você escolher (para quem vende sites, só os que não têm site)`,
   "Nota, avaliações e telefone de cada um, com prioridade por cor",
   "Botão que abre o WhatsApp com a sua mensagem já escrita (opcional)",
   "Funil de vendas e aba Resumo com taxa de fechamento e receita",
@@ -81,7 +81,7 @@ export default function GeradorDestaque() {
             Morph Leads: {TOTAL_LEADS} clientes do seu nicho, <span className="gold-gradient-text">numa planilha pronta.</span>
           </h2>
           <p className="mt-5 max-w-lg leading-relaxed text-muted">
-            Você escolhe o nicho e a região, e a gente entrega a lista de negócios sem site, com WhatsApp e funil de vendas. Serve para quem vende
+            Você escolhe o nicho e a região, e a gente entrega a lista de negócios, com WhatsApp e funil de vendas. Serve para quem vende
             site, tráfego, sistema ou qualquer outro serviço.
           </p>
 

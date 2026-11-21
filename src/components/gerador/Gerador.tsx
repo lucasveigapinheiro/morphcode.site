@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LuCheck, LuDownload } from "react-icons/lu";
-import { MAX_MENSAGEM, NICHOS, PRECO_TEXTO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import { MAX_MENSAGEM, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
@@ -44,6 +44,8 @@ export default function Gerador() {
   const [outro, setOutro] = useState("");
   const [cidade, setCidade] = useState("");
   const [bairro, setBairro] = useState("");
+  const [servico, setServico] = useState<string>(SERVICOS[0]);
+  const [servicoOutro, setServicoOutro] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -54,6 +56,7 @@ export default function Gerador() {
 
   const nichoFinal = nicho === OUTRO ? outro.trim() : nicho;
   const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
+  const servicoFinal = servico === SERVICO_OUTRO ? servicoOutro.trim() : servico;
   const textoMensagem = mensagem
     .replaceAll("{nome}", "Nome do negócio")
     .replaceAll("{nota}", "4,9")
@@ -145,7 +148,9 @@ export default function Gerador() {
         ? ["g-outro", "Escolha um nicho ou digite o seu."]
         : cidade.trim().length < 3
           ? ["g-cidade", "Informe a cidade."]
-          : nome.trim().length < 2
+          : servicoFinal.length < 3
+            ? ["g-servico", "Diga o que você vende."]
+            : nome.trim().length < 2
             ? ["g-nome", "Informe seu nome."]
             : digitos.length !== 11 || digitos[2] !== "9"
               ? ["g-whats", "Informe o WhatsApp com DDD, 11 dígitos."]
@@ -162,7 +167,7 @@ export default function Gerador() {
       const r = await fetch("/api/gerador/pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nicho: nichoFinal, regiao: regiaoFinal, nome, whatsapp, email, mensagem }),
+        body: JSON.stringify({ nicho: nichoFinal, regiao: regiaoFinal, cidade, bairro, servico: servicoFinal, nome, whatsapp, email, mensagem }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.erro ?? "Não foi possível registrar o pedido.");
@@ -221,7 +226,7 @@ export default function Gerador() {
           </span>
         </h1>
         <p data-g="titulo" className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--suave)]">
-          Escolha o nicho e a região. Você recebe negócios sem site, direto do Google Maps, com WhatsApp, nota e funil de vendas.
+          Escolha o nicho e a região. Você recebe negócios direto do Google Maps, com WhatsApp, nota e funil de vendas. Quem vende sites recebe só os que não têm site.
         </p>
         </div>
         <div
@@ -324,6 +329,52 @@ export default function Gerador() {
                 <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
                   <span className={gutter}>4</span>
                   <div className="min-w-0">
+                    <p className={`${rotulo} h-8 border-b border-[var(--linha)]`} id="g-servico-r">
+                      O que você vende?
+                    </p>
+                    <div className={`${celula} px-2 py-2`} role="group" aria-labelledby="g-servico-r">
+                      <div className="flex flex-wrap gap-1.5">
+                        {[...SERVICOS, SERVICO_OUTRO].map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            aria-pressed={servico === s}
+                            onClick={() => setServico(s)}
+                            className={`min-h-11 rounded-md border px-3 text-sm sm:min-h-9 sm:px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] ${
+                              servico === s
+                                ? "border-[var(--tinta)] bg-[var(--tinta)] text-white"
+                                : "border-[var(--linha)] bg-white text-[var(--suave)] hover:border-[var(--tinta)] hover:text-[var(--tinta)]"
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                      {servico === SERVICO_OUTRO && (
+                        <input
+                          id="g-servico"
+                          name="servico-outro"
+                          autoComplete="off"
+                          aria-label="Qual serviço você vende?"
+                          className={`${entrada} mt-2 rounded-md border border-[var(--linha)]`}
+                          value={servicoOutro}
+                          onChange={(e) => setServicoOutro(e.target.value)}
+                          maxLength={60}
+                          placeholder="Ex.: contabilidade, seguros…"
+                        />
+                      )}
+                      <p aria-live="polite" className="mt-2 text-xs leading-relaxed text-[var(--suave)]">
+                        {servico === SERVICOS[0]
+                          ? "Para quem vende sites, a lista traz só negócios sem site."
+                          : "A lista traz negócios com ou sem site: o que importa é o nicho e a região."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
+                  <span className={gutter}>5</span>
+                  <div className="min-w-0">
                     <label htmlFor="g-msg" className={`${rotulo} h-8 border-b border-[var(--linha)]`}>
                       Mensagem do WhatsApp (opcional)
                     </label>
@@ -359,13 +410,13 @@ export default function Gerador() {
                   </div>
                 </div>
 
-                <Linha n={5} data="Seu nome" htmlFor="g-nome">
+                <Linha n={6} data="Seu nome" htmlFor="g-nome">
                   <input id="g-nome" name="nome" className={entrada} value={nome} onChange={(e) => setNome(e.target.value)} maxLength={80} autoComplete="name" />
                 </Linha>
-                <Linha n={6} data="WhatsApp" htmlFor="g-whats">
+                <Linha n={7} data="WhatsApp" htmlFor="g-whats">
                   <input id="g-whats" name="whatsapp" type="tel" className={entrada} value={whatsapp} onChange={(e) => setWhatsapp(mascaraWhatsapp(e.target.value))} autoComplete="tel-national" placeholder="(11) 90000-0000…" />
                 </Linha>
-                <Linha n={7} data="E-mail" htmlFor="g-email">
+                <Linha n={8} data="E-mail" htmlFor="g-email">
                   <input id="g-email" name="email" type="email" spellCheck={false} className={entrada} value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} autoComplete="email" placeholder="voce@empresa.com…" />
                 </Linha>
 

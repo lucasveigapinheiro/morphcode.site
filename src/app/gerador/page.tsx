@@ -11,7 +11,7 @@ const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], 
 
 export const metadata: Metadata = {
   title: "Morph Leads: gerador de planilha de leads",
-  description: "Escolha o nicho e a região e receba uma planilha com 50 negócios sem site, com WhatsApp, nota e funil de vendas.",
+  description: "Escolha o nicho e a região e receba uma planilha com 50 negócios, com WhatsApp, nota e funil de vendas. Para quem vende sites, só negócios sem site.",
   alternates: { canonical: "/gerador" },
 };
 
