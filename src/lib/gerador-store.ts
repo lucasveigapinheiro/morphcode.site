@@ -34,8 +34,83 @@ async function get(chave: string): Promise<string | null> {
   return (await cmd("GET", chave)) as string | null;
 }
 
+// Vagas: conjunto ordenado "gerador:ocupacao". Cada pedido ocupa uma vaga.
+//  - quem abriu o pagamento reserva a vaga até a hora em que o link expira (nota = hora de expiração);
+//  - pedido pago ou em geração ocupa a vaga sem prazo (nota PERMANENTE) até ficar pronto ou falhar.
+// O pagamento só abre se couber no limite, então tudo que for pago cabe na fila.
+const CHAVE_OCUP = "gerador:ocupacao";
+const PERMANENTE = 9_000_000_000_000_000;
+const RESERVA_MS = 35 * 60 * 1000; // um pouco mais que os 30 min de validade do link
+const memOcup = new Map<string, number>();
+
+export const limiteFila = () => Math.max(1, Number(process.env.GERADOR_LIMITE_FILA) || 6);
+
+const LUA_RESERVAR = `
+redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[1])
+local atual = redis.call('ZSCORE', KEYS[1], ARGV[3])
+if atual then
+  if tonumber(atual) < tonumber(ARGV[2]) then redis.call('ZADD', KEYS[1], ARGV[2], ARGV[3]) end
+  return 1
+end
+if redis.call('ZCARD', KEYS[1]) >= tonumber(ARGV[4]) then return 0 end
+redis.call('ZADD', KEYS[1], ARGV[2], ARGV[3])
+return 1`;
+
+/** Reserva uma vaga para o pedido. Falso se a fila está cheia. */
+export async function reservarVaga(id: string): Promise<boolean> {
+  const agora = Date.now();
+  const ate = agora + RESERVA_MS;
+  const limite = limiteFila();
+  if (URL_REST) return (await cmd("EVAL", LUA_RESERVAR, 1, CHAVE_OCUP, agora, ate, id, limite)) === 1;
+  for (const [k, v] of memOcup) if (v <= agora) memOcup.delete(k);
+  const atual = memOcup.get(id);
+  if (atual === undefined && memOcup.size >= limite) return false;
+  if (atual === undefined || atual < ate) memOcup.set(id, ate);
+  return true;
+}
+
+export async function liberarVaga(id: string) {
+  if (URL_REST) await cmd("ZREM", CHAVE_OCUP, id);
+  else memOcup.delete(id);
+}
+
+async function ocuparVaga(id: string) {
+  if (URL_REST) await cmd("ZADD", CHAVE_OCUP, PERMANENTE, id);
+  else memOcup.set(id, PERMANENTE);
+}
+
+/** total = vagas usadas (reservas + pagos); fila = só pedidos pagos esperando ou sendo gerados. */
+export async function ocupacao(): Promise<{ total: number; fila: number }> {
+  const agora = Date.now();
+  if (!URL_REST) {
+    const v = [...memOcup.values()];
+    return { total: v.filter((n) => n > agora).length, fila: v.filter((n) => n >= PERMANENTE).length };
+  }
+  const [total, fila] = (await Promise.all([
+    cmd("ZCOUNT", CHAVE_OCUP, agora, "+inf"),
+    cmd("ZCOUNT", CHAVE_OCUP, 1_000_000_000_000_000, "+inf"),
+  ])) as number[];
+  return { total, fila };
+}
+
+// Tempo médio por pedido, em minutos, aprendido com os pedidos que o robô entrega (média móvel).
+// Antes do primeiro pedido vale 5 min: hipótese, ainda não medida.
+const CHAVE_TEMPO = "gerador:tempo";
+export async function tempoMedioMin(): Promise<number> {
+  const n = Number(await get(CHAVE_TEMPO));
+  return n > 0 ? n : 5;
+}
+export async function registrarTempo(segundos: number) {
+  if (!(segundos > 0)) return;
+  const min = Math.min(30, Math.max(0.5, segundos / 60));
+  const antes = Number(await get(CHAVE_TEMPO));
+  await set(CHAVE_TEMPO, (antes > 0 ? antes * 0.7 + min * 0.3 : min).toFixed(2), 60 * 60 * 24 * 90);
+}
+
 export async function salvarPedido(p: Pedido) {
   await set(`gerador:pedido:${p.id}`, JSON.stringify(p), TTL_PEDIDO);
+  if (p.status === "pago" || p.status === "gerando") await ocuparVaga(p.id);
+  else if (p.status === "pronto" || p.status === "falhou") await liberarVaga(p.id);
   if (p.status === "pago") {
     if (!URL_REST) filaMemoria.add(p.id);
     else await cmd("SADD", "gerador:fila", p.id);

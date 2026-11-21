@@ -4,12 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LuCheck, LuDownload } from "react-icons/lu";
-import { MAX_MENSAGEM, MSG_FORA_DO_AR, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import { MAX_MENSAGEM, MSG_FORA_DO_AR, msgFilaCheia, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
 const OUTRO = "Outro";
 const CHAVE = "gerador:pedido";
+
+/** Resposta de /api/gerador/status. */
+type Estado = { online: boolean; aceita: boolean; fila: number; minPorPedido: number };
 
 type Andamento = {
   id: string;
@@ -65,8 +68,13 @@ export default function Gerador() {
   const [andamento, setAndamento] = useState<Andamento | null>(null);
   // O cliente acabou de voltar do checkout com pagamento aprovado: o webhook pode levar alguns segundos.
   const [confirmando, setConfirmando] = useState(false);
-  // null = ainda não sabemos; false = o robô está fora do ar e o site não vende.
-  const [online, setOnline] = useState<boolean | null>(null);
+  // Estado da operação (robô no ar, vaga livre, tamanho da fila). null = ainda não sabemos.
+  const [estado, setEstado] = useState<Estado | null>(null);
+  const foraDoAr = estado?.online === false;
+  const lotado = estado ? estado.online && !estado.aceita : false;
+  const avisoVenda = foraDoAr ? MSG_FORA_DO_AR : lotado ? msgFilaCheia(estado?.minPorPedido ?? 5) : "";
+  // Minutos até receber a planilha: quem já está na fila ganha de quem entra agora.
+  const previsaoNovo = estado ? Math.ceil((estado.fila + 1) * estado.minPorPedido) : null;
 
   const nichoFinal = nicho === OUTRO ? outro.trim() : nicho;
   const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
@@ -122,7 +130,7 @@ export default function Gerador() {
     const checar = () =>
       fetch("/api/gerador/status", { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
-        .then((s) => s && setOnline(Boolean(s.online)))
+        .then((s) => s && setEstado(s as Estado))
         .catch(() => {});
     checar();
     const t = setInterval(checar, 30000);
@@ -305,7 +313,7 @@ export default function Gerador() {
 
           <div className="grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
             {andamento ? (
-              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} foraDoAr={online === false} />
+              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} foraDoAr={foraDoAr} estado={estado} />
             ) : (
               <form ref={painel} onSubmit={enviar} noValidate onFocus={moverBanda} onBlur={esconderBanda} className="relative border-b border-[var(--linha)] lg:border-b-0 lg:border-r">
                 <div
@@ -465,15 +473,20 @@ export default function Gerador() {
 
                 <div className="p-4">
                   <p role="alert" className="mb-3 min-h-5 text-sm font-medium text-[var(--erro)]">
-                    {online === false ? MSG_FORA_DO_AR : erro}
+                    {avisoVenda || erro}
                   </p>
                   <button
                     type="submit"
-                    disabled={enviando || online === false}
+                    disabled={enviando || Boolean(avisoVenda)}
                     className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[var(--verde)] px-5 text-base font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2 disabled:opacity-60"
                   >
                     {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
                   </button>
+                  {previsaoNovo !== null && !avisoVenda && (
+                    <p className="mt-3 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
+                      Previsão: cerca de {previsaoNovo} min depois do pagamento.
+                    </p>
+                  )}
                   <p className="mt-3 text-xs leading-relaxed text-[var(--suave)]">
                     Usamos seus dados só para entregar a planilha e avisar sobre o pedido. Os dados dos negócios vêm de perfis públicos do Google Maps;
                     confirme antes de abordar cada um.
@@ -513,7 +526,10 @@ const FRASES_GERANDO = (comMensagem: boolean) => [
 ];
 
 // Bolinha em órbita (lima com borda de tinta, como o selo de preço) e frases que avançam até a última.
-function Carregando({ a, fase, foraDoAr }: { a: Andamento; fase: "confirmando" | "pago" | "gerando"; foraDoAr: boolean }) {
+function Carregando({ a, fase, foraDoAr, estado }: { a: Andamento; fase: "confirmando" | "pago" | "gerando"; foraDoAr: boolean; estado: Estado | null }) {
+  // Pedido pago já conta na fila: quem está na frente e quanto falta, pelo tempo médio real dos pedidos.
+  const naFrente = estado && fase !== "confirmando" ? Math.max(0, estado.fila - 1) : 0;
+  const previsao = estado && fase !== "confirmando" ? Math.ceil(Math.max(1, estado.fila) * estado.minPorPedido) : null;
   const raiz = useRef<HTMLDivElement>(null);
   const frases =
     fase === "confirmando"
@@ -583,7 +599,8 @@ function Carregando({ a, fase, foraDoAr }: { a: Andamento; fase: "confirmando" |
       )}
 
       <p className="mt-4 text-sm leading-relaxed text-[var(--suave)]">
-        Leva só alguns minutos. Pode deixar esta página aberta: o botão de download aparece aqui quando a planilha ficar pronta. Se fechar, é só voltar neste
+        {previsao !== null ? `Previsão: cerca de ${previsao} min.` : "Leva só alguns minutos."}
+        {naFrente > 0 && ` Há ${naFrente} ${naFrente === 1 ? "pedido" : "pedidos"} na sua frente.`} Pode deixar esta página aberta: o botão de download aparece aqui quando a planilha ficar pronta. Se fechar, é só voltar neste
         navegador, o pedido fica salvo.
       </p>
     </div>
@@ -597,6 +614,7 @@ function Acompanhamento({
   erro,
   confirmando,
   foraDoAr,
+  estado,
 }: {
   a: Andamento;
   onNovo: () => void;
@@ -604,9 +622,10 @@ function Acompanhamento({
   erro: string;
   confirmando: boolean;
   foraDoAr: boolean;
+  estado: Estado | null;
 }) {
   const fase = a.status === "gerando" ? "gerando" : a.status === "pago" ? "pago" : a.status === "aguardando_pagamento" && confirmando ? "confirmando" : null;
-  if (fase) return <Carregando key={fase} a={a} fase={fase} foraDoAr={foraDoAr && fase !== "confirmando"} />;
+  if (fase) return <Carregando key={fase} a={a} fase={fase} foraDoAr={foraDoAr && fase !== "confirmando"} estado={estado} />;
   const falhou = a.status === "falhou";
   return (
     <div className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r" aria-live="polite">

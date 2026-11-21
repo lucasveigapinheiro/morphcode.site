@@ -28,6 +28,8 @@ export async function criarCheckout(pedido: Pedido, baseUrl: string): Promise<st
   const pref = await mp<{ init_point: string; sandbox_init_point: string }>("/checkout/preferences", {
     method: "POST",
     body: JSON.stringify({
+      // Só pagamento na hora (Pix e cartão): boleto e lotérica demoram dias e quebrariam "pagou, gera na hora".
+      payment_methods: { excluded_payment_types: [{ id: "ticket" }] },
       expires: true,
       expiration_date_from: iso(agora),
       expiration_date_to: iso(agora + 30 * 60 * 1000),
