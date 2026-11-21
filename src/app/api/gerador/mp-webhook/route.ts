@@ -17,6 +17,7 @@ async function tratar(request: Request) {
   try {
     pag = await buscarPagamento(id);
   } catch (e) {
+    if ((e as { status?: number }).status === 404) return new Response(null, { status: 200 }); // pagamento desconhecido (ex.: simulação)
     console.error("[gerador] webhook: falha ao buscar pagamento", id, e);
     return new Response(null, { status: 502 }); // o MP tenta de novo
   }

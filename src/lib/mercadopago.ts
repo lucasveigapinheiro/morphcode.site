@@ -14,7 +14,7 @@ async function mp<T>(caminho: string, init?: RequestInit): Promise<T> {
     headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`, "Content-Type": "application/json", ...init?.headers },
     cache: "no-store",
   });
-  if (!r.ok) throw new Error(`Mercado Pago ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(`Mercado Pago ${r.status}`), { status: r.status });
   return (await r.json()) as T;
 }
 
