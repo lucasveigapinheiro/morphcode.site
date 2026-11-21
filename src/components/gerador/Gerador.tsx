@@ -170,10 +170,27 @@ export default function Gerador() {
         localStorage.setItem(CHAVE, d.id);
       } catch {}
       setAndamento({ id: d.id, status: d.status, nicho: nichoFinal, regiao: regiaoFinal, pagamentoAtivo: d.pagamentoAtivo });
+      if (d.pagamentoAtivo) await irParaPagamento(d.id);
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Não foi possível registrar o pedido.");
     } finally {
       setEnviando(false);
+    }
+  }
+
+  // Pede o link do Mercado Pago e leva o cliente ao checkout; ao voltar, o acompanhamento retoma pelo localStorage.
+  async function irParaPagamento(id: string) {
+    try {
+      const r = await fetch("/api/gerador/pagar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const d = await r.json();
+      if (!r.ok || !d.url) throw new Error(d.erro ?? "Não foi possível abrir o pagamento.");
+      window.location.assign(d.url);
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : "Não foi possível abrir o pagamento.");
     }
   }
 
@@ -240,7 +257,7 @@ export default function Gerador() {
 
           <div className="grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
             {andamento ? (
-              <Acompanhamento a={andamento} onNovo={novoPedido} />
+              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} />
             ) : (
               <form ref={painel} onSubmit={enviar} noValidate onFocus={moverBanda} onBlur={esconderBanda} className="relative border-b border-[var(--linha)] lg:border-b-0 lg:border-r">
                 <div
@@ -393,7 +410,7 @@ function Linha({ n, data, htmlFor, children }: { n: number; data: string; htmlFo
   );
 }
 
-function Acompanhamento({ a, onNovo }: { a: Andamento; onNovo: () => void }) {
+function Acompanhamento({ a, onNovo, onPagar, erro }: { a: Andamento; onNovo: () => void; onPagar: () => void; erro: string }) {
   const falhou = a.status === "falhou";
   return (
     <div className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r" aria-live="polite">
@@ -426,8 +443,22 @@ function Acompanhamento({ a, onNovo }: { a: Andamento; onNovo: () => void }) {
         </p>
       )}
       {falhou && <p className="mt-5 text-sm font-medium text-[var(--erro)]">{a.erro ?? "Tente de novo ou fale com a gente."}</p>}
+      {erro && a.status === "aguardando_pagamento" && (
+        <p role="alert" className="mt-3 text-sm font-medium text-[var(--erro)]">
+          {erro}
+        </p>
+      )}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
+        {a.status === "aguardando_pagamento" && a.pagamentoAtivo && (
+          <button
+            type="button"
+            onClick={onPagar}
+            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[var(--verde)] px-5 font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2"
+          >
+            Pagar agora · R$ {PRECO_TEXTO}
+          </button>
+        )}
         {a.status === "pronto" && (
           <a
             href={`/api/gerador/arquivo/${a.id}`}
