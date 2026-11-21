@@ -11,7 +11,17 @@ gsap.registerPlugin(useGSAP);
 const OUTRO = "Outro";
 const CHAVE = "gerador:pedido";
 
-type Andamento = { id: string; status: Status; nicho: string; regiao: string; leads?: number; erro?: string; pagamentoAtivo?: boolean };
+type Andamento = {
+  id: string;
+  status: Status;
+  nicho: string;
+  regiao: string;
+  leads?: number;
+  erro?: string;
+  pagamentoAtivo?: boolean;
+  /** O cliente escreveu uma mensagem de abordagem; define se a tela de carregamento fala dela. */
+  comMensagem?: boolean;
+};
 
 const ETAPAS: { status: Status[]; rotulo: string }[] = [
   { status: ["aguardando_pagamento", "pago", "gerando", "pronto"], rotulo: "Pedido recebido" },
@@ -53,6 +63,8 @@ export default function Gerador() {
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [andamento, setAndamento] = useState<Andamento | null>(null);
+  // O cliente acabou de voltar do checkout com pagamento aprovado: o webhook pode levar alguns segundos.
+  const [confirmando, setConfirmando] = useState(false);
 
   const nichoFinal = nicho === OUTRO ? outro.trim() : nicho;
   const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
@@ -112,7 +124,17 @@ export default function Gerador() {
     if (!salvo) return;
     fetch(`/api/gerador/pedido/${salvo}`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((p) => p && setAndamento(p))
+      .then((p) => {
+        if (!p) return;
+        setAndamento(p);
+        // O Mercado Pago volta para /gerador?status=approved&...: mostra o carregamento e limpa a URL.
+        const q = new URLSearchParams(window.location.search);
+        if ((q.get("status") ?? q.get("collection_status")) === "approved") {
+          setConfirmando(true);
+          window.history.replaceState(null, "", window.location.pathname);
+          requestAnimationFrame(() => document.getElementById("pedido")?.scrollIntoView({ behavior: "smooth" }));
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -124,7 +146,7 @@ export default function Gerador() {
         .then((r) => (r.ok ? r.json() : null))
         .then((p) => p && setAndamento((a) => (a ? { ...a, ...p } : p)))
         .catch(() => {});
-    }, 6000);
+    }, 4000);
     return () => clearInterval(t);
   }, [andamento]);
 
@@ -174,7 +196,14 @@ export default function Gerador() {
       try {
         localStorage.setItem(CHAVE, d.id);
       } catch {}
-      setAndamento({ id: d.id, status: d.status, nicho: nichoFinal, regiao: regiaoFinal, pagamentoAtivo: d.pagamentoAtivo });
+      setAndamento({
+        id: d.id,
+        status: d.status,
+        nicho: nichoFinal,
+        regiao: regiaoFinal,
+        pagamentoAtivo: d.pagamentoAtivo,
+        comMensagem: mensagem.trim().length > 0,
+      });
       if (d.pagamentoAtivo) await irParaPagamento(d.id);
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Não foi possível registrar o pedido.");
@@ -262,7 +291,7 @@ export default function Gerador() {
 
           <div className="grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
             {andamento ? (
-              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} />
+              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} />
             ) : (
               <form ref={painel} onSubmit={enviar} noValidate onFocus={moverBanda} onBlur={esconderBanda} className="relative border-b border-[var(--linha)] lg:border-b-0 lg:border-r">
                 <div
@@ -439,7 +468,7 @@ export default function Gerador() {
               </form>
             )}
 
-            <Previa nicho={nichoFinal} regiao={regiaoFinal} mensagem={textoMensagem} />
+            <Previa nicho={andamento?.nicho ?? nichoFinal} regiao={andamento?.regiao ?? regiaoFinal} mensagem={textoMensagem} />
           </div>
         </div>
       </section>
@@ -461,7 +490,100 @@ function Linha({ n, data, htmlFor, children }: { n: number; data: string; htmlFo
   );
 }
 
-function Acompanhamento({ a, onNovo, onPagar, erro }: { a: Andamento; onNovo: () => void; onPagar: () => void; erro: string }) {
+const FRASES_GERANDO = (comMensagem: boolean) => [
+  "Planilha sendo gerada…",
+  "Coletando os leads no Google Maps…",
+  "Separando os contatos com WhatsApp…",
+  comMensagem ? "Escrevendo as mensagens de abordagem…" : "Montando o funil e o resumo…",
+  "Dando os últimos detalhes…",
+];
+
+// Bolinha em órbita (lima com borda de tinta, como o selo de preço) e frases que avançam até a última.
+function Carregando({ a, fase }: { a: Andamento; fase: "confirmando" | "pago" | "gerando" }) {
+  const raiz = useRef<HTMLDivElement>(null);
+  const frases =
+    fase === "confirmando"
+      ? ["Confirmando o seu pagamento…"]
+      : fase === "pago"
+        ? ["Pagamento confirmado. Preparando o pedido…"]
+        : FRASES_GERANDO(Boolean(a.comMensagem));
+  const [i, setI] = useState(0);
+  const atual = frases[Math.min(i, frases.length - 1)];
+
+  // Avança uma frase a cada 5 s e para na última.
+  useEffect(() => {
+    if (i >= frases.length - 1) return;
+    const t = setTimeout(() => setI((n) => n + 1), 5000);
+    return () => clearTimeout(t);
+  }, [i, frases.length]);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to("[data-g='orbita']", { rotation: 360, duration: 1.2, ease: "none", repeat: -1, transformOrigin: "50% 50%" });
+      });
+    },
+    { scope: raiz },
+  );
+
+  // Cada frase nova entra de baixo.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo("[data-g='frase']", { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" });
+      });
+    },
+    { scope: raiz, dependencies: [atual], revertOnUpdate: false },
+  );
+
+  return (
+    <div ref={raiz} className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r">
+      <h2 className="text-2xl font-extrabold tracking-tight">Estamos montando sua planilha</h2>
+      <p className="mt-1 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
+        {a.nicho} · {a.regiao}
+      </p>
+
+      <div className="mt-6 grid place-items-center gap-5 border border-[var(--linha)] bg-white px-4 py-9">
+        <div aria-hidden className="relative h-16 w-16">
+          <span className="absolute inset-0 rounded-full border-[3px] border-[var(--tinta)]/15" />
+          <span data-g="orbita" className="absolute inset-0">
+            <span className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--tinta)] bg-[var(--lime)]" />
+          </span>
+        </div>
+        {/* A frase visível troca sozinha; o leitor de tela recebe só um aviso fixo. */}
+        <p role="status" className="sr-only">
+          Gerando sua planilha. Isso leva alguns minutos.
+        </p>
+        <p aria-hidden data-g="frase" className="min-h-[1.75rem] text-center text-lg font-bold leading-snug">
+          {atual}
+        </p>
+      </div>
+
+      <p className="mt-4 text-sm leading-relaxed text-[var(--suave)]">
+        Leva só alguns minutos. Pode deixar esta página aberta: o botão de download aparece aqui quando a planilha ficar pronta. Se fechar, é só voltar neste
+        navegador, o pedido fica salvo.
+      </p>
+    </div>
+  );
+}
+
+function Acompanhamento({
+  a,
+  onNovo,
+  onPagar,
+  erro,
+  confirmando,
+}: {
+  a: Andamento;
+  onNovo: () => void;
+  onPagar: () => void;
+  erro: string;
+  confirmando: boolean;
+}) {
+  const fase = a.status === "gerando" ? "gerando" : a.status === "pago" ? "pago" : a.status === "aguardando_pagamento" && confirmando ? "confirmando" : null;
+  if (fase) return <Carregando key={fase} a={a} fase={fase} />;
   const falhou = a.status === "falhou";
   return (
     <div className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r" aria-live="polite">

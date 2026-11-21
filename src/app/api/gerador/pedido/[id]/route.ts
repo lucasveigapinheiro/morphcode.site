@@ -5,5 +5,5 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const p = await lerPedido(id);
   if (!p) return Response.json({ erro: "Pedido não encontrado." }, { status: 404 });
   // Só o necessário para a tela: nada de contato de volta.
-  return Response.json({ id: p.id, status: p.status, nicho: p.nicho, regiao: p.regiao, leads: p.leads, erro: p.erro });
+  return Response.json({ id: p.id, status: p.status, nicho: p.nicho, regiao: p.regiao, leads: p.leads, erro: p.erro, comMensagem: Boolean(p.mensagem) });
 }
