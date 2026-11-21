@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { validarEntrada, type Pedido } from "@/lib/gerador";
-import { contar, salvarPedido, storeConfigurado } from "@/lib/gerador-store";
+import { MSG_FORA_DO_AR, validarEntrada, type Pedido } from "@/lib/gerador";
+import { contar, roboOnline, salvarPedido, storeConfigurado } from "@/lib/gerador-store";
 
 const ORIGENS = ["morphcode.com.br", "localhost"];
 
@@ -8,6 +8,7 @@ export async function POST(request: Request) {
   const origem = request.headers.get("origin") ?? "";
   if (!ORIGENS.some((o) => origem.includes(o))) return Response.json({ erro: "Origem não permitida." }, { status: 403 });
   if (!storeConfigurado) return Response.json({ erro: "Serviço indisponível no momento." }, { status: 503 });
+  if (!(await roboOnline())) return Response.json({ erro: MSG_FORA_DO_AR }, { status: 503 });
 
   let corpo: unknown;
   try {

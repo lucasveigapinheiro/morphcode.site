@@ -1,5 +1,6 @@
 import { criarCheckout, mpConfigurado, urlBase } from "@/lib/mercadopago";
-import { lerPedido } from "@/lib/gerador-store";
+import { lerPedido, roboOnline } from "@/lib/gerador-store";
+import { MSG_FORA_DO_AR } from "@/lib/gerador";
 
 const ORIGENS = ["morphcode.com.br", "localhost"];
 
@@ -8,6 +9,7 @@ export async function POST(request: Request) {
   const origem = request.headers.get("origin") ?? "";
   if (!ORIGENS.some((o) => origem.includes(o))) return Response.json({ erro: "Origem não permitida." }, { status: 403 });
   if (!mpConfigurado()) return Response.json({ erro: "Pagamento indisponível no momento." }, { status: 503 });
+  if (!(await roboOnline())) return Response.json({ erro: MSG_FORA_DO_AR }, { status: 503 });
 
   const corpo = (await request.json().catch(() => ({}))) as { id?: unknown };
   const pedido = typeof corpo.id === "string" ? await lerPedido(corpo.id) : null;

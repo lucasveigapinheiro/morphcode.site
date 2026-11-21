@@ -3,6 +3,7 @@
 export const PRECO_REAIS = 45.99; // hipótese de preço: ajuste conforme a conversão
 export const PRECO_TEXTO = PRECO_REAIS.toFixed(2).replace(".", ","); // 45,99
 export const TOTAL_LEADS = 50;
+export const MSG_FORA_DO_AR = "Estamos fora do ar por alguns minutos. Tente de novo daqui a pouco.";
 
 export const NICHOS = [
   "Estética automotiva",

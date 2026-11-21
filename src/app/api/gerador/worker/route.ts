@@ -3,7 +3,7 @@
 //   POST -> { acao: "gerando" | "entrega" | "falha" | "pago", id, ... }
 // "pago" existe só para testar o fluxo antes do Mercado Pago e fica desligada se MP_ACCESS_TOKEN existir.
 import { timingSafeEqual } from "node:crypto";
-import { filaPagos, lerPedido, salvarArquivo, salvarPedido } from "@/lib/gerador-store";
+import { baterPulso, filaPagos, lerPedido, salvarArquivo, salvarPedido } from "@/lib/gerador-store";
 
 function autorizado(request: Request) {
   const esperado = process.env.WORKER_TOKEN;
@@ -16,6 +16,7 @@ function autorizado(request: Request) {
 
 export async function GET(request: Request) {
   if (!autorizado(request)) return new Response(null, { status: 401 });
+  await baterPulso(); // a consulta da fila é o sinal de que o robô está vivo
   return Response.json({ pedidos: await filaPagos() });
 }
 

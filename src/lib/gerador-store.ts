@@ -66,6 +66,21 @@ export async function lerArquivo(id: string): Promise<string | null> {
   return get(`gerador:arquivo:${id}`);
 }
 
+// Pulso do robô: cada consulta dele à fila grava a hora aqui. Sem pulso recente, o site não vende.
+const CHAVE_PULSO = "gerador:pulso";
+const PULSO_VALIDO_MS = 2 * 60 * 1000;
+
+export async function baterPulso() {
+  await set(CHAVE_PULSO, String(Date.now()), 600);
+}
+
+/** O robô consultou a fila nos últimos 2 minutos? Em desenvolvimento (ou com GERADOR_SEM_PULSO=1) sempre vale. */
+export async function roboOnline(): Promise<boolean> {
+  if (process.env.NODE_ENV !== "production" || process.env.GERADOR_SEM_PULSO === "1") return true;
+  const v = await get(CHAVE_PULSO);
+  return v !== null && Date.now() - Number(v) < PULSO_VALIDO_MS;
+}
+
 /** Contador por chave com expiração, para limitar pedidos por IP. */
 export async function contar(chave: string, janelaSegundos: number): Promise<number> {
   if (!URL_REST) {

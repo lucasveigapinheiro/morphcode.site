@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LuCheck, LuDownload } from "react-icons/lu";
-import { MAX_MENSAGEM, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import { MAX_MENSAGEM, MSG_FORA_DO_AR, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
@@ -65,6 +65,8 @@ export default function Gerador() {
   const [andamento, setAndamento] = useState<Andamento | null>(null);
   // O cliente acabou de voltar do checkout com pagamento aprovado: o webhook pode levar alguns segundos.
   const [confirmando, setConfirmando] = useState(false);
+  // null = ainda não sabemos; false = o robô está fora do ar e o site não vende.
+  const [online, setOnline] = useState<boolean | null>(null);
 
   const nichoFinal = nicho === OUTRO ? outro.trim() : nicho;
   const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
@@ -114,6 +116,18 @@ export default function Gerador() {
   function esconderBanda(e: React.FocusEvent<HTMLFormElement>) {
     if (!painel.current?.contains(e.relatedTarget as Node | null)) gsap.to(banda.current, { autoAlpha: 0, duration: 0.25 });
   }
+
+  // Confere se o robô está no ar, agora e a cada 30 s, para avisar antes de o cliente pagar.
+  useEffect(() => {
+    const checar = () =>
+      fetch("/api/gerador/status", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((s) => s && setOnline(Boolean(s.online)))
+        .catch(() => {});
+    checar();
+    const t = setInterval(checar, 30000);
+    return () => clearInterval(t);
+  }, []);
 
   // Retoma o pedido salvo neste navegador.
   useEffect(() => {
@@ -451,11 +465,11 @@ export default function Gerador() {
 
                 <div className="p-4">
                   <p role="alert" className="mb-3 min-h-5 text-sm font-medium text-[var(--erro)]">
-                    {erro}
+                    {online === false ? MSG_FORA_DO_AR : erro}
                   </p>
                   <button
                     type="submit"
-                    disabled={enviando}
+                    disabled={enviando || online === false}
                     className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[var(--verde)] px-5 text-base font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2 disabled:opacity-60"
                   >
                     {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
