@@ -3,13 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { LuCheck, LuDownload } from "react-icons/lu";
-import { MAX_MENSAGEM, MSG_FORA_DO_AR, msgFilaCheia, NICHOS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import { LuCheck, LuDownload, LuLock, LuPlus } from "react-icons/lu";
+import { trackMetaInitiateCheckout, trackMetaPurchase, trackMetaViewContent } from "@/components/MetaPixel";
+import { MAX_MENSAGEM, MSG_FORA_DO_AR, msgFilaCheia, NICHOS, PRECO_REAIS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
 const OUTRO = "Outro";
 const CHAVE = "gerador:pedido";
+// Marca no navegador que a compra deste pedido já foi contada no pixel, para não contar de novo ao voltar à página.
+const chaveCompra = (id: string) => `gerador:compra:${id}`;
+const PIXEL_PRODUTO = { value: PRECO_REAIS, currency: "BRL", content_name: `Planilha com ${TOTAL_LEADS} leads`, content_ids: "morph-leads", content_type: "product" };
 
 /** Resposta de /api/gerador/status. */
 type Estado = { online: boolean; aceita: boolean; fila: number; minPorPedido: number };
@@ -60,6 +64,8 @@ export default function Gerador() {
   const [servico, setServico] = useState<string>(SERVICOS[0]);
   const [servicoOutro, setServicoOutro] = useState("");
   const [mensagem, setMensagem] = useState("");
+  // A mensagem é opcional: fica recolhida para o formulário ficar curto até o botão.
+  const [comMsg, setComMsg] = useState(false);
   const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
@@ -160,6 +166,22 @@ export default function Gerador() {
       .catch(() => {});
   }, []);
 
+  // Quem abre a página viu o produto: ajuda o Meta a achar gente parecida.
+  useEffect(() => {
+    trackMetaViewContent({ content_name: "gerador", pagina: "/gerador" });
+  }, []);
+
+  // Pagamento confirmado (pago, gerando ou pronto): conta a compra uma vez por pedido neste navegador.
+  // O eventID é o mesmo que o webhook manda pela API de Conversões, então o Meta conta uma compra só.
+  useEffect(() => {
+    if (!andamento || !["pago", "gerando", "pronto"].includes(andamento.status)) return;
+    try {
+      if (localStorage.getItem(chaveCompra(andamento.id))) return;
+      localStorage.setItem(chaveCompra(andamento.id), "1");
+    } catch {}
+    trackMetaPurchase({ ...PIXEL_PRODUTO, num_items: 1 }, `compra-${andamento.id}`);
+  }, [andamento]);
+
   // Acompanha o pedido até ficar pronto.
   useEffect(() => {
     if (!andamento || andamento.status === "pronto" || andamento.status === "falhou") return;
@@ -244,6 +266,7 @@ export default function Gerador() {
       });
       const d = await r.json();
       if (!r.ok || !d.url) throw new Error(d.erro ?? "Não foi possível abrir o pagamento.");
+      trackMetaInitiateCheckout({ ...PIXEL_PRODUTO, num_items: 1 }, `checkout-${id}`);
       window.location.assign(d.url);
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Não foi possível abrir o pagamento.");
@@ -277,14 +300,18 @@ export default function Gerador() {
           </span>
         </h1>
         <p data-g="titulo" className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--suave)]">
-          Escolha o nicho e a região. Você recebe negócios direto do Google Maps, com WhatsApp, nota e funil de vendas. Quem vende sites recebe só os que não têm site.
+          Pare de copiar número do Google Maps. Escolha o nicho e a região e receba {TOTAL_LEADS} negócios com WhatsApp, nota e funil de vendas. Quem vende sites
+          recebe só os que não têm site.
+        </p>
+        <p data-g="titulo" className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--suave)]">
+          Para quem vende site, tráfego pago, social media ou sistemas para negócios locais.
         </p>
         </div>
         <div
           data-g="titulo"
           className="w-fit -rotate-2 rounded-xl border-2 border-[var(--tinta)] bg-[var(--lime)] px-6 py-5 shadow-[5px_5px_0_0_var(--tinta)]"
         >
-          <p className="font-[family-name:var(--f-mono)] text-[11px] font-semibold uppercase tracking-wider">Pagamento único</p>
+          <p className="font-[family-name:var(--f-mono)] text-[11px] font-semibold uppercase tracking-wider">Pagamento único · sem mensalidade</p>
           <p className="text-5xl font-extrabold leading-none tracking-tight">R$ {PRECO_TEXTO}</p>
           <p className="mt-1 text-sm font-medium">{TOTAL_LEADS} leads na sua região</p>
         </div>
@@ -426,6 +453,20 @@ export default function Gerador() {
                 <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
                   <span className={gutter}>5</span>
                   <div className="min-w-0">
+                    {!comMsg ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setComMsg(true);
+                          requestAnimationFrame(() => msgRef.current?.focus());
+                        }}
+                        className="flex min-h-11 w-full items-center gap-2 border-l border-[var(--linha)] bg-white px-3 text-left text-sm text-[var(--suave)] transition-colors hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--azul)]"
+                      >
+                        <LuPlus aria-hidden className="h-4 w-4 shrink-0" />
+                        Escrever a mensagem do WhatsApp (opcional)
+                      </button>
+                    ) : (
+                    <>
                     <label htmlFor="g-msg" className={`${rotulo} h-8 border-b border-[var(--linha)]`}>
                       Mensagem do WhatsApp (opcional)
                     </label>
@@ -458,6 +499,8 @@ export default function Gerador() {
                         </span>
                       </div>
                     </div>
+                    </>
+                    )}
                   </div>
                 </div>
 
@@ -482,6 +525,13 @@ export default function Gerador() {
                   >
                     {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
                   </button>
+                  <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--tinta)]">
+                    <LuLock aria-hidden className="h-3.5 w-3.5 shrink-0 text-[var(--verde)]" />
+                    Pagamento seguro pelo Mercado Pago · Pix ou cartão
+                  </p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-[var(--suave)]">
+                    Vieram menos de {TOTAL_LEADS}? Completamos com bairros e cidades vizinhas, sem custo.
+                  </p>
                   {previsaoNovo !== null && !avisoVenda && (
                     <p className="mt-3 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
                       Previsão: cerca de {previsaoNovo} min depois do pagamento.
@@ -499,7 +549,113 @@ export default function Gerador() {
           </div>
         </div>
       </section>
+
+      <Exemplo />
+      <Perguntas />
     </div>
+  );
+}
+
+// Trecho de uma planilha que o robô gerou de verdade (Estética automotiva, SP e ABC). Os dados são de perfis públicos
+// do Google Maps; aqui o telefone fica parcialmente oculto, na planilha do cliente ele vem completo.
+const EXEMPLO: { nome: string; regiao: string; tel: string; nota: string; aval: number }[] = [
+  { nome: "Box Detail - Estética Automotiva", regiao: "Vila Mariana", tel: "(11) 9••••-3850", nota: "4,9", aval: 416 },
+  { nome: "Uehara Estética Automotiva", regiao: "Zona Norte (Santana)", tel: "(11) 9••••-5209", nota: "4,9", aval: 254 },
+  { nome: "3° Millenium Estética Automotiva", regiao: "Penha", tel: "(11) 9••••-8974", nota: "4,9", aval: 171 },
+  { nome: "WA Estética Automotiva", regiao: "São Caetano do Sul", tel: "(11) 9••••-5796", nota: "4,9", aval: 161 },
+  { nome: "RS17 Estetica Automotiva", regiao: "Santo Amaro", tel: "(11) 9••••-8186", nota: "5,0", aval: 140 },
+];
+
+function Exemplo() {
+  return (
+    <section aria-labelledby="exemplo-titulo" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+      <p className="font-[family-name:var(--f-mono)] text-xs uppercase tracking-[0.18em] text-[var(--verde)]">Exemplo real</p>
+      <h2 id="exemplo-titulo" className="mt-3 text-balance text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight tracking-[-0.02em]">
+        Trecho de uma planilha que o robô gerou
+      </h2>
+      <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--suave)]">
+        Estética automotiva em São Paulo e ABC. Os telefones estão ocultos aqui; na sua planilha eles vêm completos, com o botão que abre a conversa no WhatsApp.
+      </p>
+      <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--tinta)]/80 bg-white shadow-[6px_6px_0_0_var(--tinta)]">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead>
+            <tr className="bg-[var(--verde)] text-white">
+              <th scope="col" className="px-3 py-2.5 font-semibold">Prioridade</th>
+              <th scope="col" className="px-3 py-2.5 font-semibold">Nome</th>
+              <th scope="col" className="hidden px-3 py-2.5 font-semibold sm:table-cell">Região</th>
+              <th scope="col" className="px-3 py-2.5 font-semibold">Telefone</th>
+              <th scope="col" className="hidden px-3 py-2.5 font-semibold sm:table-cell">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            {EXEMPLO.map((l) => (
+              <tr key={l.nome} className="border-t border-[var(--linha)]">
+                <td className="px-3 py-3">
+                  <span className="rounded bg-[#C6EFCE] px-2 py-0.5 text-xs font-semibold text-[#0B5A2F]">Alta</span>
+                </td>
+                <td className="px-3 py-3 font-medium">{l.nome}</td>
+                <td className="hidden px-3 py-3 text-[var(--suave)] sm:table-cell">{l.regiao}</td>
+                <td className="whitespace-nowrap px-3 py-3 font-[family-name:var(--f-mono)] text-xs tabular-nums">{l.tel}</td>
+                <td className="hidden whitespace-nowrap px-3 py-3 tabular-nums sm:table-cell">
+                  {l.nota} <span className="text-[var(--suave)]">({l.aval})</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-3 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]">5 de {TOTAL_LEADS} linhas · dados de perfis públicos do Google Maps</p>
+    </section>
+  );
+}
+
+const PERGUNTAS: { p: string; r: string }[] = [
+  {
+    p: "Os negócios da planilha são reais?",
+    r: "Sim. O robô busca no Google Maps, na hora do seu pedido, negócios do nicho e da região que você escolheu, com nome, telefone, nota e número de avaliações do perfil público. Confirme os dados antes de abordar.",
+  },
+  {
+    p: `E se o meu nicho tiver menos de ${TOTAL_LEADS} negócios na região?`,
+    r: `Completamos a planilha com bairros e cidades vizinhas, sem custo. Fale com a gente pelo WhatsApp em “Dúvidas”, no topo da página.`,
+  },
+  {
+    p: "Como eu recebo a planilha?",
+    r: "Nesta mesma página. Depois do pagamento, o botão de download aparece aqui quando a planilha fica pronta, em alguns minutos. Se fechar a página, é só voltar neste navegador: o pedido fica salvo.",
+  },
+  {
+    p: "E se der erro na geração?",
+    r: "Você vê o aviso nesta página e a gente é avisado na hora. Resolvemos o pedido ou devolvemos o valor pelo Mercado Pago.",
+  },
+  {
+    p: "Como funciona o pagamento?",
+    r: `Pagamento único de R$00A0${PRECO_TEXTO}, sem mensalidade, por Pix ou cartão no Mercado Pago.`,
+  },
+];
+
+function Perguntas() {
+  return (
+    <section aria-labelledby="faq-titulo" className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+      <h2 id="faq-titulo" className="text-balance text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight tracking-[-0.02em]">
+        Perguntas frequentes
+      </h2>
+      <div className="mt-6 divide-y divide-[var(--linha)] border-y border-[var(--linha)]">
+        {PERGUNTAS.map((q) => (
+          <details key={q.p} className="group py-1">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-base font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] [&::-webkit-details-marker]:hidden">
+              {q.p}
+              <LuPlus aria-hidden className="h-4 w-4 shrink-0 transition-transform group-open:rotate-45" />
+            </summary>
+            <p className="max-w-3xl pb-4 text-base leading-relaxed text-[var(--suave)]">{q.r}</p>
+          </details>
+        ))}
+      </div>
+      <a
+        href="#pedido"
+        className="mt-8 inline-flex min-h-12 items-center rounded-lg bg-[var(--verde)] px-5 font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2"
+      >
+        Gerar minha planilha · R$ {PRECO_TEXTO}
+      </a>
+    </section>
   );
 }
 

@@ -22,6 +22,16 @@ export function trackMetaViewContent(params: Record<string, string>) {
   window.fbq?.("track", "ViewContent", params);
 }
 
+/** Início do pagamento: a pessoa preencheu o pedido e vai para o checkout. */
+export function trackMetaInitiateCheckout(params: Record<string, string | number>, eventId: string) {
+  window.fbq?.("track", "InitiateCheckout", params, { eventID: eventId });
+}
+
+/** Compra confirmada. O servidor manda a mesma compra pela API de Conversões com o mesmo eventID. */
+export function trackMetaPurchase(params: Record<string, string | number>, eventId: string) {
+  window.fbq?.("track", "Purchase", params, { eventID: eventId });
+}
+
 /** Carrega o Meta Pixel e conta cada página vista. Só liga quando NEXT_PUBLIC_META_PIXEL_ID existe. */
 export default function MetaPixel() {
   const pathname = usePathname();

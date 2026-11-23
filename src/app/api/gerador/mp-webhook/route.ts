@@ -3,6 +3,7 @@ import { PRECO_REAIS } from "@/lib/gerador";
 import { alertar } from "@/lib/alerta";
 import { lerPedido, roboOnline, salvarPedido } from "@/lib/gerador-store";
 import { assinaturaValida, buscarPagamento, mpConfigurado } from "@/lib/mercadopago";
+import { enviarCompraMeta } from "@/lib/meta-capi";
 
 async function tratar(request: Request) {
   if (!mpConfigurado()) return new Response(null, { status: 503 });
@@ -29,6 +30,7 @@ async function tratar(request: Request) {
   const valorOk = pag.currency_id === "BRL" && Math.abs(pag.transaction_amount - PRECO_REAIS) < 0.005;
   if (pag.status === "approved" && valorOk && pedido.status === "aguardando_pagamento") {
     await salvarPedido({ ...pedido, status: "pago" });
+    await enviarCompraMeta(pedido);
     const robo = (await roboOnline()) ? "robô no ar, já vai gerar" : "ROBÔ FORA DO AR: ligue o PC agora";
     await alertar(`Morph Leads: pedido PAGO (R$ ${PRECO_REAIS.toFixed(2).replace(".", ",")}). ${pedido.nicho} em ${pedido.regiao}. ${robo}.`);
   } else if (pag.status === "approved" && !valorOk) {

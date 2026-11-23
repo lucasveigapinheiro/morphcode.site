@@ -46,6 +46,8 @@ export type Pedido = {
   criadoEm: string;
   leads?: number;
   erro?: string;
+  /** Sinais do navegador de quem fez o pedido, para a API de Conversões do Meta atribuir a compra ao anúncio. */
+  meta?: { fbp?: string; fbc?: string; ip?: string; ua?: string; url?: string };
 };
 
 export type EntradaPedido = Pick<Pedido, "nicho" | "regiao" | "cidade" | "bairro" | "servico" | "semSite" | "nome" | "whatsapp" | "email" | "mensagem">;
