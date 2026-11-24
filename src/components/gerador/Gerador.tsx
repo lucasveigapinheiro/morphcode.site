@@ -1877,8 +1877,8 @@ function Acompanhamento({
       {a.status === "aguardando_pagamento" && (
         <p className="mt-5 rounded-xl bg-white p-3.5 text-sm text-[var(--w-body)]">
           {a.pagamentoAtivo
-            ? "Falta só confirmar o pagamento para o robô começar a coleta."
-            : "O pagamento ainda está sendo ativado. Seu pedido ficou registrado e entramos em contato pelo WhatsApp informado."}
+            ? "Falta só confirmar o pagamento pelo Mercado Pago (Pix ou cartão) para o robô começar a coleta."
+            : "O pagamento está temporariamente indisponível. Tente novamente em instantes ou fale com a gente no WhatsApp."}
         </p>
       )}
       {falhou && (
