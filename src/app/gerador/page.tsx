@@ -4,6 +4,7 @@ import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
 import { FaWhatsapp } from "react-icons/fa6";
 import MorphLogo from "@/components/MorphLogo";
 import Gerador from "@/components/gerador/Gerador";
+import { PRECO_TEXTO, PROMO_BLACK_FRIDAY } from "@/lib/gerador";
 import { whatsappLink } from "@/lib/whatsapp";
 
 const display = Bricolage_Grotesque({
@@ -152,6 +153,34 @@ export default function Page() {
       >
         Ir para o pedido
       </a>
+
+      {PROMO_BLACK_FRIDAY.ativa && (
+        <div
+          role="region"
+          aria-label="Promoção Black Friday"
+          className="border-b border-[var(--w-primary)]/25 bg-[var(--w-ink)] text-white"
+        >
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-2.5 text-center text-xs sm:px-6 sm:text-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-2.5 py-0.5 font-[family-name:var(--f-mono)] text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--w-ink)]">
+              {PROMO_BLACK_FRIDAY.rotulo} · {PROMO_BLACK_FRIDAY.descontoPercentual}% OFF
+            </span>
+            <p className="font-medium text-white/90">
+              Planilha com 50 leads de{" "}
+              <span className="tabular-nums text-white/55 line-through">R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}</span>{" "}
+              por{" "}
+              <strong className="font-[family-name:var(--f-display)] text-sm font-extrabold tabular-nums text-[var(--w-primary)] sm:text-base">
+                R$&nbsp;{PRECO_TEXTO}
+              </strong>
+            </p>
+            <a
+              href="#pedido"
+              className="hidden font-semibold text-[var(--w-primary)] underline decoration-[var(--w-primary)]/60 underline-offset-4 transition-colors hover:text-white sm:inline-flex"
+            >
+              Aproveitar agora →
+            </a>
+          </div>
+        </div>
+      )}
 
       <header className="sticky top-0 z-40 border-b border-[var(--w-ink)]/10 bg-[var(--w-canvas)]/95 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">

@@ -18,6 +18,7 @@ import {
   LuPlus,
   LuShieldCheck,
   LuSparkles,
+  LuTag,
   LuX,
 } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa6";
@@ -29,6 +30,7 @@ import {
   NICHOS,
   PRECO_REAIS,
   PRECO_TEXTO,
+  PROMO_BLACK_FRIDAY,
   SERVICOS,
   SERVICO_OUTRO,
   TOTAL_LEADS,
@@ -92,14 +94,24 @@ const LINHAS_HERO = [
   { prio: "Média", nome: "Prime Car Studio", regiao: "Mooca, SP", tel: "(11) 9••••-4412", nota: "4,8", aval: 98, semSite: true },
 ];
 
-const FAIXA_BENEFICIOS = [
-  `50 LEADS POR R$ ${PRECO_TEXTO}`,
-  `R$ ${PRECO_POR_LEAD} POR CONTATO`,
-  "FILTRO AUTOMÁTICO SÓ SEM SITE",
-  "PAGAMENTO ÚNICO · SEM MENSALIDADE",
-  "BOTÃO DE 1 CLIQUE PRO WHATSAPP",
-  "GARANTIA DE 50 LEADS COMPLETOS",
-];
+const FAIXA_BENEFICIOS = PROMO_BLACK_FRIDAY.ativa
+  ? [
+      `BLACK FRIDAY · ${PROMO_BLACK_FRIDAY.descontoPercentual}% OFF`,
+      `DE R$ ${PROMO_BLACK_FRIDAY.precoOriginalTexto} POR R$ ${PRECO_TEXTO}`,
+      `ECONOMIZE R$ ${PROMO_BLACK_FRIDAY.economiaTexto}`,
+      `R$ ${PRECO_POR_LEAD} POR CONTATO`,
+      "FILTRO AUTOMÁTICO SÓ SEM SITE",
+      "PAGAMENTO ÚNICO · SEM MENSALIDADE",
+      "GARANTIA DE 50 LEADS COMPLETOS",
+    ]
+  : [
+      `50 LEADS POR R$ ${PRECO_TEXTO}`,
+      `R$ ${PRECO_POR_LEAD} POR CONTATO`,
+      "FILTRO AUTOMÁTICO SÓ SEM SITE",
+      "PAGAMENTO ÚNICO · SEM MENSALIDADE",
+      "BOTÃO DE 1 CLIQUE PRO WHATSAPP",
+      "GARANTIA DE 50 LEADS COMPLETOS",
+    ];
 
 const FAIXA_NICHOS = [
   "Estética automotiva",
@@ -467,10 +479,42 @@ export default function Gerador() {
               prioridade e funil. <strong className="font-semibold text-[var(--w-ink)]">Vende sites? Filtramos só quem não tem site.</strong>
             </p>
 
+            {/* Destaque de Oferta Black Friday */}
+            {PROMO_BLACK_FRIDAY.ativa && (
+              <div
+                data-hero="item"
+                className="mt-6 inline-flex w-full max-w-2xl flex-col items-start justify-between gap-3 rounded-[22px] border border-[var(--w-primary)]/40 bg-[var(--w-ink)] px-5 py-4 text-left text-white shadow-[0_22px_50px_-20px_rgba(14,15,12,0.55)] sm:flex-row sm:items-center sm:px-6"
+              >
+                <div className="space-y-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-2.5 py-0.5 font-[family-name:var(--f-mono)] text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--w-ink)]">
+                    <LuTag className="h-3 w-3" aria-hidden />
+                    {PROMO_BLACK_FRIDAY.rotulo} · {PROMO_BLACK_FRIDAY.descontoPercentual}% OFF
+                  </span>
+                  <p className="text-xs font-medium text-[var(--w-canvas-soft)]/80 sm:text-sm">
+                    Economize <strong className="font-bold text-white">R$&nbsp;{PROMO_BLACK_FRIDAY.economiaTexto}</strong> · apenas{" "}
+                    <span className="font-[family-name:var(--f-mono)] font-semibold text-[var(--w-primary)]">R$&nbsp;{PRECO_POR_LEAD}/lead</span>
+                  </p>
+                </div>
+
+                <div className="flex items-baseline gap-2.5 self-start sm:self-center">
+                  <span className="font-[family-name:var(--f-mono)] text-sm font-medium tabular-nums text-white/50 line-through">
+                    R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}
+                  </span>
+                  <span className="font-[family-name:var(--f-display)] text-3xl font-extrabold leading-none tracking-tight tabular-nums text-[var(--w-primary)] sm:text-4xl">
+                    R$&nbsp;{PRECO_TEXTO}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Bloco da Oferta + CTAs Brilhantes */}
-            <div data-hero="item" className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:justify-center">
+            <div data-hero="item" className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:justify-center">
               <BotaoBrilho href="#pedido" className="min-h-14 px-8 text-base">
-                <span>Montar minha planilha · R$&nbsp;{PRECO_TEXTO}</span>
+                <span>
+                  {PROMO_BLACK_FRIDAY.ativa
+                    ? `Aproveitar Black Friday · R$ ${PRECO_TEXTO}`
+                    : `Montar minha planilha · R$ ${PRECO_TEXTO}`}
+                </span>
                 <LuArrowRight className="h-4 w-4" aria-hidden />
               </BotaoBrilho>
 
@@ -575,9 +619,16 @@ export default function Gerador() {
                         </p>
                       </div>
                     </div>
-                    <span className="rounded-full bg-white px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold tabular-nums text-[var(--w-ink)]">
-                      R$&nbsp;{PRECO_TEXTO}
-                    </span>
+                    {PROMO_BLACK_FRIDAY.ativa ? (
+                      <div className="flex items-center gap-2 rounded-full bg-[var(--w-ink)] px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold tabular-nums">
+                        <span className="text-white/50 line-through">R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}</span>
+                        <span className="text-[var(--w-primary)]">R$&nbsp;{PRECO_TEXTO}</span>
+                      </div>
+                    ) : (
+                      <span className="rounded-full bg-white px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold tabular-nums text-[var(--w-ink)]">
+                        R$&nbsp;{PRECO_TEXTO}
+                      </span>
+                    )}
                   </div>
 
                   {etapa === 1 ? (
@@ -864,7 +915,13 @@ export default function Gerador() {
                       )}
 
                       <BotaoBrilho type="submit" disabled={enviando || Boolean(avisoVenda)} className="min-h-14 w-full px-6 text-base">
-                        <span>{enviando ? "Abrindo pagamento…" : `Gerar e pagar · R$ ${PRECO_TEXTO}`}</span>
+                        <span>
+                          {enviando
+                            ? "Abrindo pagamento…"
+                            : PROMO_BLACK_FRIDAY.ativa
+                              ? `Garantir Black Friday · R$ ${PRECO_TEXTO}`
+                              : `Gerar e pagar · R$ ${PRECO_TEXTO}`}
+                        </span>
                         {!enviando && <LuArrowRight className="h-4 w-4" aria-hidden />}
                       </BotaoBrilho>
 
@@ -887,12 +944,23 @@ export default function Gerador() {
 
             {/* Coluna direita do pedido: Resumo Vivo da Oferta + Confiança */}
             <aside className="space-y-4 lg:sticky lg:top-20">
-              <div className="rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-7">
+              <div
+                className={`rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-7 ${
+                  PROMO_BLACK_FRIDAY.ativa ? "ring-1 ring-[var(--w-primary)]/45 shadow-[0_24px_60px_-24px_rgba(14,15,12,0.55)]" : ""
+                }`}
+              >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
-                    <LuSparkles className="h-3.5 w-3.5" aria-hidden />
-                    Resumo do seu pedido
-                  </span>
+                  {PROMO_BLACK_FRIDAY.ativa ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-bold uppercase tracking-[0.08em] text-[var(--w-ink)]">
+                      <LuTag className="h-3.5 w-3.5" aria-hidden />
+                      {PROMO_BLACK_FRIDAY.rotulo} · {PROMO_BLACK_FRIDAY.descontoPercentual}% OFF
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                      <LuSparkles className="h-3.5 w-3.5" aria-hidden />
+                      Resumo do seu pedido
+                    </span>
+                  )}
                   <span className="font-[family-name:var(--f-mono)] text-xs text-[var(--w-canvas-soft)]/70">.xlsx</span>
                 </div>
 
@@ -916,6 +984,22 @@ export default function Gerador() {
                     <span className="text-[var(--w-canvas-soft)]/80">Aba Resumo + Funil</span>
                     <span className="font-semibold text-white">Inclusa</span>
                   </div>
+                  {PROMO_BLACK_FRIDAY.ativa && (
+                    <>
+                      <div className="flex items-center justify-between pt-2">
+                        <span className="text-[var(--w-canvas-soft)]/70">Preço normal</span>
+                        <span className="font-[family-name:var(--f-mono)] text-xs tabular-nums text-white/55 line-through">
+                          R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--w-primary)]">Desconto {PROMO_BLACK_FRIDAY.rotulo}</span>
+                        <span className="font-[family-name:var(--f-mono)] text-xs font-bold tabular-nums text-[var(--w-primary)]">
+                          − R$&nbsp;{PROMO_BLACK_FRIDAY.economiaTexto}
+                        </span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex items-center justify-between pt-2">
                     <span className="font-semibold text-white">Pagamento único</span>
                     <span className="font-[family-name:var(--f-display)] text-2xl font-extrabold tabular-nums text-[var(--w-primary)]">
@@ -1011,18 +1095,31 @@ export default function Gerador() {
 
             <div className="flex flex-col justify-between rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-8">
               <div>
-                <span className="inline-flex rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
-                  R$&nbsp;{PRECO_POR_LEAD} por contato
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                  {PROMO_BLACK_FRIDAY.ativa
+                    ? `${PROMO_BLACK_FRIDAY.rotulo.toUpperCase()} · R$ ${PRECO_POR_LEAD} por contato`
+                    : `R$ ${PRECO_POR_LEAD} por contato`}
                 </span>
                 <p className="mt-5 font-[family-name:var(--f-display)] text-3xl font-extrabold leading-[1.08] tracking-tight text-[var(--w-primary)] sm:text-4xl">
                   1 cliente fechado paga a planilha dezenas de vezes.
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-[var(--w-canvas-soft)]/80">
-                  Você paga R$&nbsp;{PRECO_TEXTO} uma única vez. Sem mensalidade, sem fidelidade, sem ferramenta complicada pra configurar.
+                  {PROMO_BLACK_FRIDAY.ativa ? (
+                    <>
+                      Na Black Friday, de{" "}
+                      <span className="tabular-nums text-white/55 line-through">R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}</span> por{" "}
+                      <strong className="font-bold text-white">R$&nbsp;{PRECO_TEXTO}</strong> uma única vez. Sem mensalidade, sem fidelidade, sem
+                      ferramenta complicada pra configurar.
+                    </>
+                  ) : (
+                    <>
+                      Você paga R$&nbsp;{PRECO_TEXTO} uma única vez. Sem mensalidade, sem fidelidade, sem ferramenta complicada pra configurar.
+                    </>
+                  )}
                 </p>
               </div>
               <BotaoBrilho href="#pedido" className="mt-7 min-h-12 w-full px-6 text-sm">
-                <span>Montar minha lista agora</span>
+                <span>{PROMO_BLACK_FRIDAY.ativa ? "Aproveitar Black Friday" : "Montar minha lista agora"}</span>
                 <LuArrowRight className="h-4 w-4" aria-hidden />
               </BotaoBrilho>
             </div>
@@ -1133,13 +1230,28 @@ export default function Gerador() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--w-ink)]/10 bg-[var(--w-canvas)]/95 px-4 py-3 backdrop-blur-sm lg:hidden">
           <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
             <div>
-              <p className="font-[family-name:var(--f-display)] text-lg font-extrabold leading-none tabular-nums text-[var(--w-ink)]">
-                R$&nbsp;{PRECO_TEXTO}
+              <div className="flex items-baseline gap-2">
+                {PROMO_BLACK_FRIDAY.ativa && (
+                  <span className="font-[family-name:var(--f-mono)] text-xs tabular-nums text-[var(--w-mute)] line-through">
+                    R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}
+                  </span>
+                )}
+                <p className="font-[family-name:var(--f-display)] text-lg font-extrabold leading-none tabular-nums text-[var(--w-ink)]">
+                  R$&nbsp;{PRECO_TEXTO}
+                </p>
+                {PROMO_BLACK_FRIDAY.ativa && (
+                  <span className="rounded-full bg-[var(--w-ink)] px-2 py-0.5 font-[family-name:var(--f-mono)] text-[10px] font-bold uppercase text-[var(--w-primary)]">
+                    -{PROMO_BLACK_FRIDAY.descontoPercentual}%
+                  </span>
+                )}
+              </div>
+              <p className="mt-0.5 text-xs text-[var(--w-mute)]">
+                {PROMO_BLACK_FRIDAY.ativa ? `${PROMO_BLACK_FRIDAY.rotulo} · ` : ""}
+                {TOTAL_LEADS} leads · pagamento único
               </p>
-              <p className="mt-0.5 text-xs text-[var(--w-mute)]">{TOTAL_LEADS} leads · pagamento único</p>
             </div>
             <BotaoBrilho href="#pedido" className="min-h-11 px-5 text-sm">
-              <span>Montar lista</span>
+              <span>{PROMO_BLACK_FRIDAY.ativa ? "Aproveitar" : "Montar lista"}</span>
               <LuArrowRight className="h-4 w-4" aria-hidden />
             </BotaoBrilho>
           </div>
@@ -1543,7 +1655,9 @@ const PERGUNTAS: { p: string; r: string }[] = [
   },
   {
     p: "Como funciona o pagamento?",
-    r: `Pagamento único de R$\u00A0${PRECO_TEXTO}, sem mensalidade e sem cobrança recorrente, por Pix ou cartão no Mercado Pago.`,
+    r: PROMO_BLACK_FRIDAY.ativa
+      ? `Na Black Friday, pagamento único de R$\u00A0${PRECO_TEXTO} (de R$\u00A0${PROMO_BLACK_FRIDAY.precoOriginalTexto} — ${PROMO_BLACK_FRIDAY.descontoPercentual}% OFF), sem mensalidade e sem cobrança recorrente, por Pix ou cartão no Mercado Pago.`
+      : `Pagamento único de R$\u00A0${PRECO_TEXTO}, sem mensalidade e sem cobrança recorrente, por Pix ou cartão no Mercado Pago.`,
   },
 ];
 
@@ -1583,15 +1697,27 @@ function Perguntas() {
         {/* Bloco final de fechamento */}
         <div className="mt-14 flex flex-col items-start justify-between gap-6 rounded-[24px] bg-[var(--w-ink)] p-7 text-white sm:p-10 md:flex-row md:items-center">
           <div className="max-w-xl">
+            {PROMO_BLACK_FRIDAY.ativa && (
+              <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-3 py-1 font-[family-name:var(--f-mono)] text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--w-ink)]">
+                <LuTag className="h-3 w-3" aria-hidden />
+                {PROMO_BLACK_FRIDAY.rotulo} · {PROMO_BLACK_FRIDAY.descontoPercentual}% OFF
+              </span>
+            )}
             <h3 className="font-[family-name:var(--f-display)] text-2xl font-extrabold leading-tight tracking-tight text-[var(--w-primary)] sm:text-3xl">
               Comece a prospectar hoje com {TOTAL_LEADS} contatos organizados.
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[var(--w-canvas-soft)]/80">
-              R$&nbsp;{PRECO_TEXTO} uma única vez · entrega em minutos nesta página · garantia de {TOTAL_LEADS} leads.
+              {PROMO_BLACK_FRIDAY.ativa && (
+                <>
+                  De <span className="tabular-nums text-white/55 line-through">R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}</span> por{" "}
+                </>
+              )}
+              <strong className="font-bold text-white">R$&nbsp;{PRECO_TEXTO}</strong> uma única vez · entrega em minutos nesta página · garantia de{" "}
+              {TOTAL_LEADS} leads.
             </p>
           </div>
           <BotaoBrilho href="#pedido" className="min-h-13 shrink-0 px-7 text-base">
-            <span>Gerar minha planilha</span>
+            <span>{PROMO_BLACK_FRIDAY.ativa ? `Aproveitar · R$ ${PRECO_TEXTO}` : "Gerar minha planilha"}</span>
             <LuArrowRight className="h-4 w-4" aria-hidden />
           </BotaoBrilho>
         </div>

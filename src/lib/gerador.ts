@@ -1,7 +1,20 @@
 // Gerador de planilha de leads: tipos, nichos e validação, compartilhados entre o formulário e as rotas.
 
-export const PRECO_REAIS = 45.99; // hipótese de preço: ajuste conforme a conversão
-export const PRECO_TEXTO = PRECO_REAIS.toFixed(2).replace(".", ","); // 45,99
+export const PROMO_BLACK_FRIDAY = {
+  ativa: true,
+  rotulo: "Black Friday",
+  precoOriginalReais: 45.99,
+  precoOriginalTexto: "45,99",
+  precoPromoReais: 25.99,
+  economiaReais: 20,
+  economiaTexto: "20,00",
+  descontoPercentual: Math.round(((45.99 - 25.99) / 45.99) * 100),
+} as const;
+
+export const PRECO_REAIS = PROMO_BLACK_FRIDAY.ativa
+  ? PROMO_BLACK_FRIDAY.precoPromoReais
+  : PROMO_BLACK_FRIDAY.precoOriginalReais;
+export const PRECO_TEXTO = PRECO_REAIS.toFixed(2).replace(".", ","); // 25,99 na Black Friday (45,99 normal)
 export const TOTAL_LEADS = 50;
 export const MSG_FORA_DO_AR = "Estamos fora do ar por alguns minutos. Tente de novo daqui a pouco.";
 export const msgFilaCheia = (minutos: number) =>

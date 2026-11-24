@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 import Reveal from "../Reveal";
 import Magnetic from "../Magnetic";
-import { PRECO_TEXTO, TOTAL_LEADS } from "@/lib/gerador";
+import { PRECO_TEXTO, PROMO_BLACK_FRIDAY, TOTAL_LEADS } from "@/lib/gerador";
 
 const pontos = [
   `${TOTAL_LEADS} negócios do Google Maps na região que você escolher (para quem vende sites, só os que não têm site)`,
@@ -74,9 +74,22 @@ export default function GeradorDestaque() {
         </Reveal>
 
         <Reveal className="order-1 lg:order-2">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-md bg-[#D8F24A] px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#111412]">
-            Novo
-          </p>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            {PROMO_BLACK_FRIDAY.ativa ? (
+              <>
+                <span className="inline-flex items-center gap-2 rounded-md bg-[#D8F24A] px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[#111412] shadow-[0_0_24px_rgba(216,242,74,0.3)]">
+                  {PROMO_BLACK_FRIDAY.rotulo} · {PROMO_BLACK_FRIDAY.descontoPercentual}% OFF
+                </span>
+                <span className="inline-flex items-center rounded-md border border-[#D8F24A]/35 bg-[#D8F24A]/10 px-2.5 py-1 font-mono text-xs font-semibold text-[#D8F24A]">
+                  Economize R$&nbsp;{PROMO_BLACK_FRIDAY.economiaTexto}
+                </span>
+              </>
+            ) : (
+              <p className="inline-flex items-center gap-2 rounded-md bg-[#D8F24A] px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#111412]">
+                Novo
+              </p>
+            )}
+          </div>
           <h2 className="font-[var(--font-display)] text-3xl leading-tight md:text-5xl">
             Morph Leads: {TOTAL_LEADS} clientes do seu nicho, <span className="gold-gradient-text">numa planilha pronta.</span>
           </h2>
@@ -96,10 +109,17 @@ export default function GeradorDestaque() {
             ))}
           </ul>
 
-          <p className="mt-7 text-sm text-muted">
-            <span className="font-[var(--font-display)] text-2xl text-foreground">R$ {PRECO_TEXTO}</span> por lista de {TOTAL_LEADS} leads, pagamento
-            único
-          </p>
+          <div className="mt-7 flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-sm text-muted">
+            {PROMO_BLACK_FRIDAY.ativa && (
+              <span className="font-mono text-base tabular-nums text-muted/70 line-through">
+                R$&nbsp;{PROMO_BLACK_FRIDAY.precoOriginalTexto}
+              </span>
+            )}
+            <span className="font-[var(--font-display)] text-3xl font-bold tabular-nums text-[#D8F24A]">
+              R$&nbsp;{PRECO_TEXTO}
+            </span>
+            <span>por lista de {TOTAL_LEADS} leads, pagamento único</span>
+          </div>
 
           <div className="mt-6">
             <Magnetic strength={0.25}>
@@ -107,7 +127,8 @@ export default function GeradorDestaque() {
                 href="/gerador"
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#D8F24A] px-7 py-3.5 text-sm font-bold text-[#111412] transition-[background-color,box-shadow] hover:bg-[#e6ff63] hover:shadow-[0_0_30px_rgba(216,242,74,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D8F24A] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                Gerar minha planilha <LuArrowRight className="h-4 w-4" aria-hidden />
+                {PROMO_BLACK_FRIDAY.ativa ? "Aproveitar Black Friday" : "Gerar minha planilha"}{" "}
+                <LuArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </Magnetic>
           </div>
