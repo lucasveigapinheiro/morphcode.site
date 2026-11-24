@@ -61,6 +61,89 @@ export default function Page() {
         html { background: #E8EBE6; color-scheme: light; }
         .morph-leads-page ::selection { background: #9FE870; color: #0E0F0C; }
         .morph-leads-page :focus-visible { outline: 2px solid #163300; outline-offset: 2px; }
+
+        /* Hover brilhante nos botões primários e escuros */
+        .ml-btn-glow::before,
+        .ml-btn-glow-dark::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+        .ml-btn-glow::before {
+          background: radial-gradient(160px circle at var(--bx, 50%) var(--by, 50%), rgba(255, 255, 255, 0.72), transparent 65%);
+        }
+        .ml-btn-glow-dark::before {
+          background: radial-gradient(160px circle at var(--bx, 50%) var(--by, 50%), rgba(159, 232, 112, 0.35), transparent 65%);
+        }
+        .ml-btn-glow:hover::before,
+        .ml-btn-glow-dark:hover::before {
+          opacity: 1;
+        }
+        .ml-btn-glow::after,
+        .ml-btn-glow-dark::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          transform: translateX(-125%) skewX(-20deg);
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+          transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .ml-btn-glow:hover::after,
+        .ml-btn-glow-dark:hover::after {
+          transform: translateX(125%) skewX(-20deg);
+        }
+
+        /* Faixas passando (Marquee infinito em transform para 60fps) */
+        @keyframes ml-marquee-left {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        @keyframes ml-marquee-right {
+          0% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(0, 0, 0); }
+        }
+        .ml-marquee-track {
+          display: flex;
+          width: max-content;
+          will-change: transform;
+          animation: ml-marquee-left 30s linear infinite;
+        }
+        .ml-marquee-track-rev {
+          display: flex;
+          width: max-content;
+          will-change: transform;
+          animation: ml-marquee-right 34s linear infinite;
+        }
+        .ml-marquee-wrap:hover .ml-marquee-track,
+        .ml-marquee-wrap:hover .ml-marquee-track-rev {
+          animation-play-state: paused;
+        }
+
+        /* Pulso suave do indicador ao vivo */
+        @keyframes ml-ping-soft {
+          0%, 100% { transform: scale(1); opacity: 0.85; }
+          50% { transform: scale(1.7); opacity: 0; }
+        }
+        .ml-ping {
+          animation: ml-ping-soft 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        /* Respeito total a prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+          .ml-marquee-track,
+          .ml-marquee-track-rev,
+          .ml-ping {
+            animation: none !important;
+          }
+          .ml-btn-glow::after,
+          .ml-btn-glow-dark::after {
+            transition: none !important;
+          }
+        }
       `}</style>
 
       <a
@@ -103,7 +186,8 @@ export default function Page() {
               className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--w-ink)]/20 bg-[var(--w-canvas)] px-4 py-2 text-[var(--w-ink)] transition-colors hover:border-[var(--w-ink)] hover:bg-[var(--w-canvas-soft)]"
             >
               <FaWhatsapp className="h-4 w-4 text-[var(--w-positive-deep)]" aria-hidden />
-              <span>Falar no WhatsApp</span>
+              <span className="hidden sm:inline">Falar no WhatsApp</span>
+              <span className="sm:hidden">WhatsApp</span>
             </a>
           </nav>
         </div>

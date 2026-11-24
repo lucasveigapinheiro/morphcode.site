@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import {
   LuArrowLeft,
@@ -16,6 +17,7 @@ import {
   LuMessageSquare,
   LuPlus,
   LuShieldCheck,
+  LuSparkles,
   LuX,
 } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa6";
@@ -33,8 +35,10 @@ import {
   VARIAVEIS,
   type Status,
 } from "@/lib/gerador";
+import HeroLeads3D from "./HeroLeads3D";
+import BotaoBrilho from "./BotaoBrilho";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const OUTRO = "Outro";
 const CHAVE = "gerador:pedido";
@@ -67,6 +71,47 @@ const ETAPAS: { status: Status[]; rotulo: string }[] = [
   { status: ["pago", "gerando", "pronto"], rotulo: "Pagamento confirmado" },
   { status: ["gerando", "pronto"], rotulo: "Coletando os leads no Google Maps" },
   { status: ["pronto"], rotulo: "Planilha pronta para baixar" },
+];
+
+// Eventos ilustrativos de atividade ao vivo (urgência / prova social dinâmica)
+const ATIVIDADES_RECENTES = [
+  { pessoa: "Mariana S.", cidade: "São Paulo", nicho: "Clínica de estética", tempo: "há 2 min" },
+  { pessoa: "Rafael M.", cidade: "Curitiba", nicho: "Barbearia", tempo: "há 4 min" },
+  { pessoa: "Lucas P.", cidade: "Belo Horizonte", nicho: "Estética automotiva", tempo: "há 6 min" },
+  { pessoa: "Camila R.", cidade: "Porto Alegre", nicho: "Clínica odontológica", tempo: "há 8 min" },
+  { pessoa: "Thiago A.", cidade: "Campinas", nicho: "Oficina mecânica", tempo: "há 11 min" },
+];
+
+// Linhas fictícias/demonstrativas que vão sendo montadas na hero
+const LINHAS_HERO = [
+  { prio: "Alta", nome: "Box Detail Estética Automotiva", regiao: "Vila Mariana, SP", tel: "(11) 9••••-3850", nota: "4,9", aval: 416, semSite: true },
+  { prio: "Alta", nome: "Uehara Estética Automotiva", regiao: "Santana, SP", tel: "(11) 9••••-5209", nota: "4,9", aval: 254, semSite: true },
+  { prio: "Alta", nome: "3° Millenium Polimentos", regiao: "Penha, SP", tel: "(11) 9••••-8974", nota: "4,9", aval: 171, semSite: true },
+  { prio: "Alta", nome: "WA Estética Automotiva", regiao: "São Caetano do Sul", tel: "(11) 9••••-5796", nota: "4,9", aval: 161, semSite: true },
+  { prio: "Média", nome: "RS17 Detalhamento", regiao: "Santo Amaro, SP", tel: "(11) 9••••-8186", nota: "5,0", aval: 140, semSite: true },
+  { prio: "Média", nome: "Prime Car Studio", regiao: "Mooca, SP", tel: "(11) 9••••-4412", nota: "4,8", aval: 98, semSite: true },
+];
+
+const FAIXA_BENEFICIOS = [
+  `50 LEADS POR R$ ${PRECO_TEXTO}`,
+  `R$ ${PRECO_POR_LEAD} POR CONTATO`,
+  "FILTRO AUTOMÁTICO SÓ SEM SITE",
+  "PAGAMENTO ÚNICO · SEM MENSALIDADE",
+  "BOTÃO DE 1 CLIQUE PRO WHATSAPP",
+  "GARANTIA DE 50 LEADS COMPLETOS",
+];
+
+const FAIXA_NICHOS = [
+  "Estética automotiva",
+  "Clínica de estética",
+  "Clínica odontológica",
+  "Barbearia",
+  "Salão de beleza",
+  "Academia",
+  "Pet shop",
+  "Oficina mecânica",
+  "Nutricionista",
+  "Fisioterapia",
 ];
 
 function mascaraWhatsapp(v: string) {
@@ -105,6 +150,12 @@ export default function Gerador() {
   const [estado, setEstado] = useState<Estado | null>(null);
   const [mostrarSticky, setMostrarSticky] = useState(false);
 
+  // Urgência ao vivo + toast discreto no desktop
+  const [pessoasAgora, setPessoasAgora] = useState(5);
+  const [atividadeIdx, setAtividadeIdx] = useState(0);
+  const [toastVisivel, setToastVisivel] = useState(true);
+  const [toastFechado, setToastFechado] = useState(false);
+
   const foraDoAr = estado?.online === false;
   const lotado = estado ? estado.online && !estado.aceita : false;
   const avisoVenda = foraDoAr ? MSG_FORA_DO_AR : lotado ? msgFilaCheia(estado?.minPorPedido ?? 5) : "";
@@ -122,34 +173,75 @@ export default function Gerador() {
     .replaceAll("{avaliacoes}", "416")
     .replaceAll("{regiao}", regiaoEnvio || "sua região");
 
-  // Entrada limpa e contida da hero.
+  // Oscilação natural do contador "X pessoas montando lista agora" e rotação do toast
+  useEffect(() => {
+    const tCount = setInterval(() => {
+      setPessoasAgora((atual) => {
+        const opcoes = [4, 5, 6, 7, 5, 6];
+        const prox = opcoes[(opcoes.indexOf(atual) + 1) % opcoes.length];
+        return prox ?? 5;
+      });
+    }, 11000);
+
+    const tToast = setInterval(() => {
+      setToastVisivel(false);
+      setTimeout(() => {
+        setAtividadeIdx((i) => (i + 1) % ATIVIDADES_RECENTES.length);
+        setToastVisivel(true);
+      }, 450);
+    }, 9000);
+
+    return () => {
+      clearInterval(tCount);
+      clearInterval(tToast);
+    };
+  }, []);
+
+  // Animações GSAP de entrada + ScrollTrigger (somente transform e opacity, com reduced-motion)
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-        tl.from("[data-hero='texto']", { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.08 })
-          .from("[data-hero='card']", { y: 24, autoAlpha: 0, duration: 0.65 }, "-=0.4");
+        tl.from("[data-hero='item']", { y: 24, autoAlpha: 0, duration: 0.65, stagger: 0.08 }).from(
+          "[data-hero='planilha']",
+          { y: 32, scale: 0.98, autoAlpha: 0, duration: 0.75 },
+          "-=0.4",
+        );
+
+        gsap.utils.toArray<HTMLElement>("[data-revelar]").forEach((bloco) => {
+          gsap.from(bloco, {
+            y: 28,
+            autoAlpha: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: bloco,
+              start: "top 86%",
+              once: true,
+            },
+          });
+        });
       });
     },
     { scope: raiz },
   );
 
-  // Mostra barra fixa no mobile só depois que o card do pedido sair da tela.
+  // Mostra barra fixa no mobile quando o formulário não está na tela
   useEffect(() => {
     const el = pedidoRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        setMostrarSticky(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+        setMostrarSticky(!entry.isIntersecting);
       },
-      { threshold: 0.05 },
+      { threshold: 0.1 },
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  // Confere status do robô a cada 30s.
+  // Confere status do robô a cada 30s
   useEffect(() => {
     const checar = () =>
       fetch("/api/gerador/status", { cache: "no-store" })
@@ -161,7 +253,7 @@ export default function Gerador() {
     return () => clearInterval(t);
   }, []);
 
-  // Retoma pedido salvo no navegador.
+  // Retoma pedido salvo no navegador
   useEffect(() => {
     let salvo: string | null = null;
     try {
@@ -183,12 +275,12 @@ export default function Gerador() {
       .catch(() => {});
   }, []);
 
-  // Meta Pixel: ViewContent.
+  // Meta Pixel: ViewContent
   useEffect(() => {
     trackMetaViewContent({ content_name: "gerador", pagina: "/gerador" });
   }, []);
 
-  // Meta Pixel: Purchase deduplicado por pedido.
+  // Meta Pixel: Purchase deduplicado por pedido
   useEffect(() => {
     if (!andamento || !["pago", "gerando", "pronto"].includes(andamento.status)) return;
     try {
@@ -198,7 +290,7 @@ export default function Gerador() {
     trackMetaPurchase({ ...PIXEL_PRODUTO, num_items: 1 }, `compra-${andamento.id}`);
   }, [andamento]);
 
-  // Acompanha status até finalizar.
+  // Acompanha status até finalizar
   useEffect(() => {
     if (!andamento || andamento.status === "pronto" || andamento.status === "falhou") return;
     const t = setInterval(() => {
@@ -334,458 +426,539 @@ export default function Gerador() {
     setErro("");
   }
 
+  const atividadeAtual = ATIVIDADES_RECENTES[atividadeIdx];
+
   return (
-    <div ref={raiz}>
-      {/* HERO BAND (Sage Canvas — assinatura visual Wise) */}
-      <section className="bg-[var(--w-canvas-soft)] pb-14 pt-10 md:pb-20 md:pt-14">
-        <div className="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-12">
-          {/* Coluna esquerda: promessa clara, ancoragem de preço e garantias reais */}
-          <div className="lg:pt-4">
+    <div ref={raiz} className="overflow-x-clip">
+      {/* HERO SECTION: 3D + Planilha fictícia sendo montada ao vivo no desktop; limpa e rápida no celular */}
+      <section className="relative overflow-hidden bg-[var(--w-canvas-soft)] pb-14 pt-8 md:pb-20 md:pt-12">
+        {/* Objetos 3D flutuantes (somente desktop >= 1024px) */}
+        <HeroLeads3D />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
+          {/* Topo da Hero: Pílula ao vivo de atividade + oferta */}
+          <div className="mx-auto max-w-4xl text-left lg:text-center">
+            <div
+              data-hero="item"
+              className="inline-flex items-center gap-2.5 rounded-full border border-[var(--w-ink)]/10 bg-white/95 px-4 py-2 text-xs font-semibold text-[var(--w-ink)] shadow-[0_8px_24px_-12px_rgba(14,15,12,0.18)] backdrop-blur-sm sm:text-sm"
+            >
+              <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden>
+                <span className="ml-ping absolute inline-flex h-full w-full rounded-full bg-[var(--w-positive)]" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--w-positive)]" />
+              </span>
+              <span className="tabular-nums">
+                <strong>{pessoasAgora} pessoas</strong> montando planilha agora
+              </span>
+              <span className="hidden text-[var(--w-mute)] sm:inline">·</span>
+              <span className="hidden text-[var(--w-body)] sm:inline">
+                Última lista: {atividadeAtual.nicho} ({atividadeAtual.cidade})
+              </span>
+            </div>
+
             <h1
-              data-hero="texto"
-              className="font-[family-name:var(--f-display)] text-[clamp(2.35rem,5.2vw,4.1rem)] font-extrabold leading-[1.01] tracking-[-0.035em] text-[var(--w-ink)]"
+              data-hero="item"
+              className="mt-5 font-[family-name:var(--f-display)] text-[clamp(2.3rem,5.4vw,4.5rem)] font-extrabold leading-[0.99] tracking-[-0.035em] text-[var(--w-ink)]"
             >
               {TOTAL_LEADS} clientes locais prontos pro seu WhatsApp, em minutos.
             </h1>
 
-            <p data-hero="texto" className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--w-body)]">
-              Pare de passar a tarde copiando número do Google Maps. Escolha o nicho e a cidade e baixe um Excel organizado com telefone, nota, prioridade e
-              funil de vendas.
+            <p data-hero="item" className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--w-body)] sm:text-lg lg:mx-auto">
+              Pare de perder a tarde copiando número do Google Maps. Escolha o nicho e a cidade e baixe um Excel montado na hora com WhatsApp, nota,
+              prioridade e funil. <strong className="font-semibold text-[var(--w-ink)]">Vende sites? Filtramos só quem não tem site.</strong>
             </p>
 
-            {/* Destaque de preço transparente (Wise style: clareza total) */}
-            <div data-hero="texto" className="mt-7 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="font-[family-name:var(--f-display)] text-4xl font-extrabold tracking-tight tabular-nums text-[var(--w-ink)] sm:text-5xl">
-                R$&nbsp;{PRECO_TEXTO}
-              </span>
-              <span className="rounded-full bg-[var(--w-primary-pale)] px-3 py-1 text-sm font-semibold text-[var(--w-positive-deep)]">
-                R$&nbsp;{PRECO_POR_LEAD} por lead · pagamento único
-              </span>
+            {/* Bloco da Oferta + CTAs Brilhantes */}
+            <div data-hero="item" className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:justify-center">
+              <BotaoBrilho href="#pedido" className="min-h-14 px-8 text-base">
+                <span>Montar minha planilha · R$&nbsp;{PRECO_TEXTO}</span>
+                <LuArrowRight className="h-4 w-4" aria-hidden />
+              </BotaoBrilho>
+
+              <a
+                href="#exemplo"
+                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-full border border-[var(--w-ink)]/20 bg-white/90 px-6 text-sm font-bold text-[var(--w-ink)] transition-colors hover:border-[var(--w-ink)] hover:bg-white"
+              >
+                <LuFileSpreadsheet className="h-4 w-4 text-[var(--w-positive-deep)]" aria-hidden />
+                Ver exemplo real
+              </a>
             </div>
 
-            {/* 3 garantias reais e verificáveis antes do CTA */}
-            <ul data-hero="texto" className="mt-7 space-y-3 text-sm text-[var(--w-ink)] sm:text-base">
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
-                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
-                </span>
-                <span>
-                  <strong className="font-semibold">Vende sites?</strong> Filtramos automaticamente só os negócios que ainda não têm site.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
-                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
-                </span>
-                <span>
-                  <strong className="font-semibold">Garantia de {TOTAL_LEADS} leads:</strong> veio menos na sua região? Completamos com vizinhos sem custo.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
-                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
-                </span>
-                <span>
-                  <strong className="font-semibold">Sem mensalidade:</strong> pague uma vez no Pix ou cartão pelo Mercado Pago e baixe aqui mesmo.
-                </span>
-              </li>
-            </ul>
-
-            {/* Indicador vivo de fila/operação (transparência gera confiança) */}
-            {estado && (
-              <div
-                data-hero="texto"
-                className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-[var(--w-canvas)] px-4 py-2 text-xs font-medium text-[var(--w-body)]"
-              >
-                <span
-                  aria-hidden
-                  className={`h-2.5 w-2.5 rounded-full ${foraDoAr ? "bg-[var(--w-negative)]" : lotado ? "bg-amber-500" : "bg-[var(--w-positive)]"}`}
-                />
-                {foraDoAr ? (
-                  <span>Sistema em manutenção rápida — tente em instantes</span>
-                ) : lotado ? (
-                  <span>Fila cheia agora — libera em ~{Math.max(1, Math.ceil(estado.minPorPedido))} min</span>
-                ) : (
-                  <span className="tabular-nums">
-                    Robô ativo agora · entrega em cerca de {previsaoNovo} min após o pagamento
-                  </span>
-                )}
-              </div>
-            )}
+            {/* Micro-ancoragem de preço e garantias logo abaixo do CTA */}
+            <div
+              data-hero="item"
+              className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-semibold text-[var(--w-body)] lg:justify-center sm:text-sm"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <LuCheck className="h-4 w-4 text-[var(--w-positive-deep)]" aria-hidden />
+                R$&nbsp;{PRECO_POR_LEAD} por lead (pagamento único)
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <LuCheck className="h-4 w-4 text-[var(--w-positive-deep)]" aria-hidden />
+                Garantia de {TOTAL_LEADS} leads ou completamos grátis
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <LuLock className="h-3.5 w-3.5 text-[var(--w-positive-deep)]" aria-hidden />
+                Pix ou cartão via Mercado Pago
+              </span>
+            </div>
           </div>
 
-          {/* Coluna direita: Card Interativo de 2 Etapas (estilo Converter Card da Wise) */}
-          <div
-            id="pedido"
-            ref={pedidoRef}
-            data-hero="card"
-            className="scroll-mt-20 rounded-[24px] bg-[var(--w-canvas)] p-6 shadow-[0_20px_50px_-24px_rgba(14,15,12,0.18)] sm:p-7"
-          >
-            {andamento ? (
-              <Acompanhamento
-                a={andamento}
-                onNovo={novoPedido}
-                onPagar={() => irParaPagamento(andamento.id)}
-                erro={erro}
-                confirmando={confirmando}
-                foraDoAr={foraDoAr}
-                estado={estado}
-              />
-            ) : (
-              <form onSubmit={enviar} noValidate>
-                {/* Cabeçalho com indicador de 2 etapas */}
-                <div className="mb-6 flex items-center justify-between gap-3 border-b border-[var(--w-canvas-soft)] pb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--w-ink)] font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
-                      {etapa}/2
+          {/* Palco Visual: Planilha fictícia sendo montada ao vivo */}
+          <PlanilhaVivaHero previsaoNovo={previsaoNovo} foraDoAr={foraDoAr} lotado={lotado} />
+        </div>
+      </section>
+
+      {/* FAIXAS PASSANDO (Marquee duplo em CSS puro — 60fps e pausa no hover) */}
+      <div aria-hidden="true" className="ml-marquee-wrap select-none overflow-hidden">
+        <div className="bg-[var(--w-ink)] py-3.5 text-white">
+          <div className="ml-marquee-track flex items-center gap-8 font-[family-name:var(--f-mono)] text-xs font-semibold uppercase tracking-[0.14em]">
+            {[...FAIXA_BENEFICIOS, ...FAIXA_BENEFICIOS].map((item, idx) => (
+              <span key={idx} className="inline-flex shrink-0 items-center gap-8">
+                <span className={idx % 2 === 0 ? "text-[var(--w-primary)]" : "text-white"}>{item}</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--w-primary)]/60" />
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="border-y border-[var(--w-ink)]/10 bg-[var(--w-primary)] py-2.5 text-[var(--w-ink)]">
+          <div className="ml-marquee-track-rev flex items-center gap-6 text-xs font-bold tracking-tight sm:text-sm">
+            {[...FAIXA_NICHOS, ...FAIXA_NICHOS].map((item, idx) => (
+              <span key={idx} className="inline-flex shrink-0 items-center gap-6">
+                <span>{item}</span>
+                <span className="text-[var(--w-ink)]/40">/</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* SEÇÃO DO PEDIDO: Configurador em 2 Etapas + Card de Oferta & Resumo Vivo */}
+      <section id="pedido" ref={pedidoRef} className="scroll-mt-20 bg-[var(--w-canvas)] py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div data-revelar className="mb-10 max-w-2xl">
+            <h2 className="font-[family-name:var(--f-display)] text-[clamp(1.9rem,3.8vw,2.9rem)] font-extrabold leading-[1.06] tracking-[-0.03em] text-[var(--w-ink)]">
+              Monte sua planilha em 30 segundos.
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--w-body)]">
+              Escolha o nicho, a cidade e o que você vende. Assim que o Pix ou cartão confirma, o robô coleta os {TOTAL_LEADS} negócios na hora e libera o
+              download aqui mesmo.
+            </p>
+          </div>
+
+          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            {/* Formulário em 2 Etapas */}
+            <div className="rounded-[24px] border border-[var(--w-ink)]/12 bg-[var(--w-canvas-soft)]/55 p-5 sm:p-8">
+              {andamento ? (
+                <Acompanhamento
+                  a={andamento}
+                  onNovo={novoPedido}
+                  onPagar={() => irParaPagamento(andamento.id)}
+                  erro={erro}
+                  confirmando={confirmando}
+                  foraDoAr={foraDoAr}
+                  estado={estado}
+                />
+              ) : (
+                <form onSubmit={enviar} noValidate>
+                  {/* Barra de progresso das 2 etapas */}
+                  <div className="mb-6 flex items-center justify-between gap-3 border-b border-[var(--w-border)] pb-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="grid h-8 w-8 place-items-center rounded-full bg-[var(--w-ink)] font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                        {etapa}/2
+                      </span>
+                      <div>
+                        <p className="text-base font-bold text-[var(--w-ink)]">
+                          {etapa === 1 ? "Configure sua lista" : "Para onde enviamos o arquivo?"}
+                        </p>
+                        <p className="text-xs text-[var(--w-mute)]">
+                          {etapa === 1 ? "Sem dados pessoais neste passo" : "Falta só confirmar seus dados e gerar"}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="rounded-full bg-white px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold tabular-nums text-[var(--w-ink)]">
+                      R$&nbsp;{PRECO_TEXTO}
                     </span>
-                    <h2 className="text-base font-bold text-[var(--w-ink)]">
-                      {etapa === 1 ? "Monte sua planilha" : "Onde entregamos a lista?"}
-                    </h2>
                   </div>
-                  <span className="font-[family-name:var(--f-mono)] text-xs font-medium tabular-nums text-[var(--w-mute)]">
-                    R$&nbsp;{PRECO_TEXTO}
-                  </span>
-                </div>
 
-                {etapa === 1 ? (
-                  <div className="space-y-5">
-                    {/* 1. Nicho */}
-                    <div>
-                      <p id="g-nicho-r" className={labelBase}>
-                        1. Qual nicho você quer prospectar?
-                      </p>
-                      <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-nicho-r">
-                        {[...NICHOS, OUTRO].map((n) => (
-                          <button
-                            key={n}
-                            type="button"
-                            aria-pressed={nicho === n}
-                            onClick={() => setNicho(n)}
-                            className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
-                              nicho === n
-                                ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
-                                : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
-                            }`}
-                          >
-                            {n}
-                          </button>
-                        ))}
-                      </div>
-                      {nicho === OUTRO && (
-                        <input
-                          id="g-outro"
-                          name="nicho-outro"
-                          autoComplete="off"
-                          aria-label="Qual nicho?"
-                          className={`${inputBase} mt-2.5`}
-                          value={outro}
-                          onChange={(e) => setOutro(e.target.value)}
-                          maxLength={60}
-                          placeholder="Ex.: loja de bicicletas, hamburgueria…"
-                        />
-                      )}
-                    </div>
-
-                    {/* 2. Cidade e Bairro */}
-                    <div className="grid gap-3 sm:grid-cols-2">
+                  {etapa === 1 ? (
+                    <div className="space-y-5">
+                      {/* 1. Nicho */}
                       <div>
-                        <label htmlFor="g-cidade" className={labelBase}>
-                          2. Cidade
-                        </label>
-                        <input
-                          id="g-cidade"
-                          name="cidade"
-                          className={inputBase}
-                          value={cidade}
-                          onChange={(e) => setCidade(e.target.value)}
-                          maxLength={50}
-                          placeholder="Ex.: São Paulo"
-                          autoComplete="address-level2"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="g-bairro" className={labelBase}>
-                          Bairro <span className="font-normal text-[var(--w-mute)]">(opcional)</span>
-                        </label>
-                        <input
-                          id="g-bairro"
-                          name="bairro"
-                          autoComplete="off"
-                          className={inputBase}
-                          value={bairro}
-                          onChange={(e) => setBairro(e.target.value)}
-                          maxLength={50}
-                          placeholder="Ex.: Mooca"
-                        />
-                      </div>
-                    </div>
-
-                    {/* 3. O que você vende */}
-                    <div>
-                      <p id="g-servico-r" className={labelBase}>
-                        3. O que você vende?
-                      </p>
-                      <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-servico-r">
-                        {[...SERVICOS, SERVICO_OUTRO].map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            aria-pressed={servico === s}
-                            onClick={() => setServico(s)}
-                            className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
-                              servico === s
-                                ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
-                                : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
-                            }`}
-                          >
-                            {s}
-                          </button>
-                        ))}
-                      </div>
-                      {servico === SERVICO_OUTRO && (
-                        <input
-                          id="g-servico"
-                          name="servico-outro"
-                          autoComplete="off"
-                          aria-label="Qual serviço você vende?"
-                          className={`${inputBase} mt-2.5`}
-                          value={servicoOutro}
-                          onChange={(e) => setServicoOutro(e.target.value)}
-                          maxLength={60}
-                          placeholder="Ex.: contabilidade, energia solar…"
-                        />
-                      )}
-                      <p
-                        aria-live="polite"
-                        className={`mt-2.5 flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium ${
-                          filtraSemSite
-                            ? "bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]"
-                            : "bg-[var(--w-canvas-soft)] text-[var(--w-body)]"
-                        }`}
-                      >
-                        <LuFilter className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {filtraSemSite
-                          ? "Filtro ativo: a planilha trará só negócios que ainda não têm site."
-                          : "A planilha trará os melhores negócios do nicho, com ou sem site."}
-                      </p>
-                    </div>
-
-                    {/* Resumo dinâmico do que será montado */}
-                    <div className="rounded-2xl bg-[var(--w-canvas-soft)] p-4">
-                      <div className="flex items-center justify-between gap-2 text-xs font-medium text-[var(--w-body)]">
-                        <span>Sua planilha (.xlsx)</span>
-                        <span className="font-[family-name:var(--f-mono)] tabular-nums text-[var(--w-ink)]">{TOTAL_LEADS} leads</span>
-                      </div>
-                      <p className="mt-1 truncate text-sm font-bold text-[var(--w-ink)]">
-                        {nichoFinal || "Escolha um nicho"} · {regiaoFinal || "Digite a cidade"}
-                      </p>
-                    </div>
-
-                    {erro && (
-                      <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
-                        {erro}
-                      </p>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={avancarEtapa}
-                      className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 py-3.5 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-                    >
-                      <span>Continuar para entrega</span>
-                      <LuArrowRight className="h-4 w-4" aria-hidden />
-                    </button>
-
-                    <p className="text-center text-xs text-[var(--w-mute)]">
-                      Sem cadastro longo · pagamento só no próximo passo
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Resumo editável da Etapa 1 */}
-                    <div className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--w-canvas-soft)] px-4 py-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[var(--w-ink)]">
-                          {TOTAL_LEADS} leads · {nichoFinal}
+                        <p id="g-nicho-r" className={labelBase}>
+                          1. Qual nicho você quer prospectar?
                         </p>
-                        <p className="truncate text-xs text-[var(--w-body)]">
-                          {regiaoFinal} · {servicoFinal}
+                        <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-nicho-r">
+                          {[...NICHOS, OUTRO].map((n) => (
+                            <button
+                              key={n}
+                              type="button"
+                              aria-pressed={nicho === n}
+                              onClick={() => setNicho(n)}
+                              className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
+                                nicho === n
+                                  ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
+                                  : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
+                              }`}
+                            >
+                              {n}
+                            </button>
+                          ))}
+                        </div>
+                        {nicho === OUTRO && (
+                          <input
+                            id="g-outro"
+                            name="nicho-outro"
+                            autoComplete="off"
+                            aria-label="Qual nicho?"
+                            className={`${inputBase} mt-2.5`}
+                            value={outro}
+                            onChange={(e) => setOutro(e.target.value)}
+                            maxLength={60}
+                            placeholder="Ex.: loja de bicicletas, hamburgueria…"
+                          />
+                        )}
+                      </div>
+
+                      {/* 2. Cidade e Bairro */}
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <label htmlFor="g-cidade" className={labelBase}>
+                            2. Cidade
+                          </label>
+                          <input
+                            id="g-cidade"
+                            name="cidade"
+                            className={inputBase}
+                            value={cidade}
+                            onChange={(e) => setCidade(e.target.value)}
+                            maxLength={50}
+                            placeholder="Ex.: São Paulo"
+                            autoComplete="address-level2"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="g-bairro" className={labelBase}>
+                            Bairro <span className="font-normal text-[var(--w-mute)]">(opcional)</span>
+                          </label>
+                          <input
+                            id="g-bairro"
+                            name="bairro"
+                            autoComplete="off"
+                            className={inputBase}
+                            value={bairro}
+                            onChange={(e) => setBairro(e.target.value)}
+                            maxLength={50}
+                            placeholder="Ex.: Mooca"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 3. O que você vende */}
+                      <div>
+                        <p id="g-servico-r" className={labelBase}>
+                          3. O que você vende?
+                        </p>
+                        <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-servico-r">
+                          {[...SERVICOS, SERVICO_OUTRO].map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              aria-pressed={servico === s}
+                              onClick={() => setServico(s)}
+                              className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
+                                servico === s
+                                  ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
+                                  : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                        {servico === SERVICO_OUTRO && (
+                          <input
+                            id="g-servico"
+                            name="servico-outro"
+                            autoComplete="off"
+                            aria-label="Qual serviço você vende?"
+                            className={`${inputBase} mt-2.5`}
+                            value={servicoOutro}
+                            onChange={(e) => setServicoOutro(e.target.value)}
+                            maxLength={60}
+                            placeholder="Ex.: contabilidade, energia solar…"
+                          />
+                        )}
+                        <p
+                          aria-live="polite"
+                          className={`mt-2.5 flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-semibold ${
+                            filtraSemSite
+                              ? "bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]"
+                              : "bg-white text-[var(--w-body)]"
+                          }`}
+                        >
+                          <LuFilter className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          {filtraSemSite
+                            ? "Filtro ativo: a planilha trará só negócios que ainda não têm site."
+                            : "A planilha trará os melhores negócios do nicho, com ou sem site."}
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEtapa(1);
-                          setErro("");
-                        }}
-                        className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-xs font-semibold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-pale)]"
-                      >
-                        <LuArrowLeft className="h-3.5 w-3.5" aria-hidden />
-                        Alterar
-                      </button>
-                    </div>
 
-                    <div>
-                      <label htmlFor="g-nome" className={labelBase}>
-                        Seu nome
-                      </label>
-                      <input
-                        id="g-nome"
-                        name="nome"
-                        className={inputBase}
-                        value={nome}
-                        onChange={(e) => setNome(e.target.value)}
-                        maxLength={80}
-                        autoComplete="name"
-                        placeholder="Como podemos te chamar?"
-                      />
-                    </div>
+                      {erro && (
+                        <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
+                          {erro}
+                        </p>
+                      )}
 
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div>
-                        <label htmlFor="g-whats" className={labelBase}>
-                          WhatsApp
-                        </label>
-                        <input
-                          id="g-whats"
-                          name="whatsapp"
-                          type="tel"
-                          inputMode="numeric"
-                          className={inputBase}
-                          value={whatsapp}
-                          onChange={(e) => setWhatsapp(mascaraWhatsapp(e.target.value))}
-                          autoComplete="tel-national"
-                          placeholder="(11) 90000-0000"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="g-email" className={labelBase}>
-                          E-mail
-                        </label>
-                        <input
-                          id="g-email"
-                          name="email"
-                          type="email"
-                          spellCheck={false}
-                          className={inputBase}
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          maxLength={120}
-                          autoComplete="email"
-                          placeholder="voce@empresa.com"
-                        />
-                      </div>
+                      <BotaoBrilho type="button" onClick={avancarEtapa} className="min-h-14 w-full px-6 text-base">
+                        <span>Continuar para entrega</span>
+                        <LuArrowRight className="h-4 w-4" aria-hidden />
+                      </BotaoBrilho>
                     </div>
-
-                    {/* Mensagem personalizada do WhatsApp (opcional e recolhida) */}
-                    <div>
-                      {!comMsg ? (
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Resumo editável da Etapa 1 */}
+                      <div className="flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-[var(--w-ink)]">
+                            {TOTAL_LEADS} leads · {nichoFinal}
+                          </p>
+                          <p className="truncate text-xs text-[var(--w-body)]">
+                            {regiaoFinal} · {servicoFinal}
+                          </p>
+                        </div>
                         <button
                           type="button"
                           onClick={() => {
-                            setComMsg(true);
-                            requestAnimationFrame(() => msgRef.current?.focus());
+                            setEtapa(1);
+                            setErro("");
                           }}
-                          className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-dashed border-[var(--w-border)] bg-[var(--w-canvas-soft)]/50 px-3.5 py-2.5 text-left text-sm font-medium text-[var(--w-body)] transition-colors hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
+                          className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-full bg-[var(--w-canvas-soft)] px-3.5 text-xs font-semibold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-pale)]"
                         >
-                          <LuPlus className="h-4 w-4 shrink-0" aria-hidden />
-                          <span>Personalizar mensagem do WhatsApp (opcional)</span>
+                          <LuArrowLeft className="h-3.5 w-3.5" aria-hidden />
+                          Alterar
                         </button>
-                      ) : (
-                        <div className="rounded-2xl border border-[var(--w-border)] p-3.5">
-                          <div className="mb-2 flex items-center justify-between gap-2">
-                            <label htmlFor="g-msg" className="text-xs font-semibold text-[var(--w-ink)]">
-                              Mensagem automática ao clicar em &ldquo;Abrir conversa&rdquo;
-                            </label>
-                            <button
-                              type="button"
-                              onClick={() => setComMsg(false)}
-                              aria-label="Recolher campo de mensagem"
-                              className="rounded-full p-1 text-[var(--w-mute)] hover:bg-[var(--w-canvas-soft)] hover:text-[var(--w-ink)]"
-                            >
-                              <LuX className="h-4 w-4" aria-hidden />
-                            </button>
-                          </div>
-                          <textarea
-                            id="g-msg"
-                            name="mensagem"
-                            ref={msgRef}
-                            rows={3}
-                            maxLength={MAX_MENSAGEM}
-                            autoComplete="off"
-                            value={mensagem}
-                            onChange={(e) => setMensagem(e.target.value)}
-                            placeholder="Oi! Vi a {nome} no Google ({nota} estrelas) e…"
-                            className={`${inputBase} resize-none text-sm`}
+                      </div>
+
+                      <div>
+                        <label htmlFor="g-nome" className={labelBase}>
+                          Seu nome
+                        </label>
+                        <input
+                          id="g-nome"
+                          name="nome"
+                          className={inputBase}
+                          value={nome}
+                          onChange={(e) => setNome(e.target.value)}
+                          maxLength={80}
+                          autoComplete="name"
+                          placeholder="Como podemos te chamar?"
+                        />
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <label htmlFor="g-whats" className={labelBase}>
+                            WhatsApp
+                          </label>
+                          <input
+                            id="g-whats"
+                            name="whatsapp"
+                            type="tel"
+                            inputMode="numeric"
+                            className={inputBase}
+                            value={whatsapp}
+                            onChange={(e) => setWhatsapp(mascaraWhatsapp(e.target.value))}
+                            autoComplete="tel-national"
+                            placeholder="(11) 90000-0000"
                           />
-                          <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                            {VARIAVEIS.map((v) => (
-                              <button
-                                key={v}
-                                type="button"
-                                onClick={() => inserirVariavel(v)}
-                                className="min-h-8 rounded-full border border-[var(--w-border)] bg-[var(--w-canvas-soft)] px-2.5 font-[family-name:var(--f-mono)] text-[11px] font-medium text-[var(--w-ink)] transition-colors hover:border-[var(--w-ink)]"
-                              >
-                                {v}
-                              </button>
-                            ))}
-                            <span className="ml-auto font-[family-name:var(--f-mono)] text-[11px] tabular-nums text-[var(--w-mute)]">
-                              {mensagem.length}/{MAX_MENSAGEM}
-                            </span>
-                          </div>
-                          {mensagem.trim() && (
-                            <div className="mt-3 rounded-xl rounded-tl-sm bg-[#DCF8C6] px-3 py-2 text-xs leading-relaxed text-[#163300]">
-                              <span className="mb-0.5 block font-semibold">Prévia no WhatsApp:</span>
-                              <span className="whitespace-pre-line">{textoMensagem}</span>
-                            </div>
-                          )}
                         </div>
-                      )}
-                    </div>
+                        <div>
+                          <label htmlFor="g-email" className={labelBase}>
+                            E-mail
+                          </label>
+                          <input
+                            id="g-email"
+                            name="email"
+                            type="email"
+                            spellCheck={false}
+                            className={inputBase}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            maxLength={120}
+                            autoComplete="email"
+                            placeholder="voce@empresa.com"
+                          />
+                        </div>
+                      </div>
 
-                    {(avisoVenda || erro) && (
-                      <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
-                        {avisoVenda || erro}
-                      </p>
-                    )}
+                      {/* Mensagem personalizada do WhatsApp */}
+                      <div>
+                        {!comMsg ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setComMsg(true);
+                              requestAnimationFrame(() => msgRef.current?.focus());
+                            }}
+                            className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-dashed border-[var(--w-border)] bg-white px-3.5 py-2.5 text-left text-sm font-medium text-[var(--w-body)] transition-colors hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
+                          >
+                            <LuPlus className="h-4 w-4 shrink-0" aria-hidden />
+                            <span>Personalizar mensagem do WhatsApp (opcional)</span>
+                          </button>
+                        ) : (
+                          <div className="rounded-2xl border border-[var(--w-border)] bg-white p-3.5">
+                            <div className="mb-2 flex items-center justify-between gap-2">
+                              <label htmlFor="g-msg" className="text-xs font-semibold text-[var(--w-ink)]">
+                                Mensagem automática ao clicar em &ldquo;Abrir conversa&rdquo;
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => setComMsg(false)}
+                                aria-label="Recolher campo de mensagem"
+                                className="rounded-full p-1 text-[var(--w-mute)] hover:bg-[var(--w-canvas-soft)] hover:text-[var(--w-ink)]"
+                              >
+                                <LuX className="h-4 w-4" aria-hidden />
+                              </button>
+                            </div>
+                            <textarea
+                              id="g-msg"
+                              name="mensagem"
+                              ref={msgRef}
+                              rows={3}
+                              maxLength={MAX_MENSAGEM}
+                              autoComplete="off"
+                              value={mensagem}
+                              onChange={(e) => setMensagem(e.target.value)}
+                              placeholder="Oi! Vi a {nome} no Google ({nota} estrelas) e…"
+                              className={`${inputBase} resize-none text-sm`}
+                            />
+                            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                              {VARIAVEIS.map((v) => (
+                                <button
+                                  key={v}
+                                  type="button"
+                                  onClick={() => inserirVariavel(v)}
+                                  className="min-h-9 rounded-full border border-[var(--w-border)] bg-[var(--w-canvas-soft)] px-2.5 font-[family-name:var(--f-mono)] text-[11px] font-medium text-[var(--w-ink)] transition-colors hover:border-[var(--w-ink)]"
+                                >
+                                  {v}
+                                </button>
+                              ))}
+                              <span className="ml-auto font-[family-name:var(--f-mono)] text-[11px] tabular-nums text-[var(--w-mute)]">
+                                {mensagem.length}/{MAX_MENSAGEM}
+                              </span>
+                            </div>
+                            {mensagem.trim() && (
+                              <div className="mt-3 rounded-xl rounded-tl-sm bg-[#DCF8C6] px-3 py-2 text-xs leading-relaxed text-[#163300]">
+                                <span className="mb-0.5 block font-semibold">Prévia no WhatsApp:</span>
+                                <span className="whitespace-pre-line">{textoMensagem}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
 
-                    <button
-                      type="submit"
-                      disabled={enviando || Boolean(avisoVenda)}
-                      className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 py-3.5 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)] disabled:opacity-60"
-                    >
-                      {enviando ? "Abrindo pagamento…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
-                    </button>
-
-                    <div className="space-y-1.5 pt-1 text-xs text-[var(--w-body)]">
-                      <p className="flex items-center justify-center gap-1.5 font-semibold text-[var(--w-ink)]">
-                        <LuLock className="h-3.5 w-3.5 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
-                        Pagamento seguro pelo Mercado Pago · Pix ou cartão
-                      </p>
-                      {previsaoNovo !== null && !avisoVenda && (
-                        <p className="text-center font-[family-name:var(--f-mono)] text-[11px] text-[var(--w-mute)]">
-                          Previsão de entrega: ~{previsaoNovo} min após confirmação
+                      {(avisoVenda || erro) && (
+                        <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
+                          {avisoVenda || erro}
                         </p>
                       )}
-                      <p className="text-center text-[11px] leading-relaxed text-[var(--w-mute)]">
-                        Usamos seus dados só para entregar a planilha e avisar sobre o pedido.
-                      </p>
+
+                      <BotaoBrilho type="submit" disabled={enviando || Boolean(avisoVenda)} className="min-h-14 w-full px-6 text-base">
+                        <span>{enviando ? "Abrindo pagamento…" : `Gerar e pagar · R$ ${PRECO_TEXTO}`}</span>
+                        {!enviando && <LuArrowRight className="h-4 w-4" aria-hidden />}
+                      </BotaoBrilho>
+
+                      <div className="space-y-1.5 pt-1 text-xs text-[var(--w-body)]">
+                        <p className="flex items-center justify-center gap-1.5 font-semibold text-[var(--w-ink)]">
+                          <LuLock className="h-3.5 w-3.5 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                          Pagamento seguro pelo Mercado Pago · Pix ou cartão
+                        </p>
+                        {previsaoNovo !== null && !avisoVenda && (
+                          <p className="text-center font-[family-name:var(--f-mono)] text-[11px] text-[var(--w-mute)]">
+                            Previsão de entrega: ~{previsaoNovo} min após confirmação
+                          </p>
+                        )}
+                      </div>
                     </div>
+                  )}
+                </form>
+              )}
+            </div>
+
+            {/* Coluna direita do pedido: Resumo Vivo da Oferta + Confiança */}
+            <aside className="space-y-4 lg:sticky lg:top-20">
+              <div className="rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-7">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                    <LuSparkles className="h-3.5 w-3.5" aria-hidden />
+                    Resumo do seu pedido
+                  </span>
+                  <span className="font-[family-name:var(--f-mono)] text-xs text-[var(--w-canvas-soft)]/70">.xlsx</span>
+                </div>
+
+                <p className="mt-4 font-[family-name:var(--f-display)] text-2xl font-extrabold leading-tight text-white">
+                  {nichoFinal || "Seu nicho"}
+                </p>
+                <p className="mt-1 text-sm text-[var(--w-canvas-soft)]/75">
+                  {regiaoFinal || "Escolha sua cidade ao lado"} · {servicoFinal}
+                </p>
+
+                <div className="mt-5 space-y-2.5 border-y border-white/10 py-4 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--w-canvas-soft)]/80">Quantidade garantida</span>
+                    <span className="font-bold text-white">{TOTAL_LEADS} leads reais</span>
                   </div>
-                )}
-              </form>
-            )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--w-canvas-soft)]/80">Filtro sem site</span>
+                    <span className="font-semibold text-[var(--w-primary)]">{filtraSemSite ? "Ativado" : "Todos do nicho"}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--w-canvas-soft)]/80">Aba Resumo + Funil</span>
+                    <span className="font-semibold text-white">Inclusa</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="font-semibold text-white">Pagamento único</span>
+                    <span className="font-[family-name:var(--f-display)] text-2xl font-extrabold tabular-nums text-[var(--w-primary)]">
+                      R$&nbsp;{PRECO_TEXTO}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-xs leading-relaxed text-[var(--w-canvas-soft)]/75">
+                  <strong className="font-semibold text-white">Risco zero:</strong> vieram menos de {TOTAL_LEADS} leads na região? Completamos com vizinhos
+                  sem custo. Deu erro? Devolvemos 100% pelo Mercado Pago.
+                </p>
+              </div>
+
+              {/* Status real do robô */}
+              {estado && (
+                <div className="flex items-center gap-3 rounded-2xl border border-[var(--w-border)] bg-white px-4 py-3.5 text-xs font-medium text-[var(--w-body)]">
+                  <span
+                    aria-hidden
+                    className={`h-2.5 w-2.5 shrink-0 rounded-full ${foraDoAr ? "bg-[var(--w-negative)]" : lotado ? "bg-amber-500" : "bg-[var(--w-positive)]"}`}
+                  />
+                  {foraDoAr ? (
+                    <span>Sistema em manutenção rápida — tente em instantes.</span>
+                  ) : lotado ? (
+                    <span>Fila cheia agora — libera em cerca de {Math.max(1, Math.ceil(estado.minPorPedido))} min.</span>
+                  ) : (
+                    <span className="tabular-nums">
+                      Robô online agora · entrega estimada em <strong className="text-[var(--w-ink)]">{previsaoNovo} min</strong> após o pagamento.
+                    </span>
+                  )}
+                </div>
+              )}
+            </aside>
           </div>
         </div>
       </section>
 
-      {/* FAIXA 2 (Branco puro): Demonstração real interativa — o que você baixa */}
+      {/* FAIXA DE DEMONSTRAÇÃO REAL: O que vem dentro das 2 abas */}
       <DemonstracaoPlanilha mensagem={textoMensagem} />
 
-      {/* FAIXA 3 (Sálvia): Antes x Depois + Conta de ROI (Card Dark Wise) */}
+      {/* ANTES X DEPOIS + CARD ESCURO DE ROI */}
       <section className="bg-[var(--w-canvas-soft)] py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div data-revelar className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="max-w-2xl">
             <h2 className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]">
               Menos tempo garimpando. Mais tempo fechando cliente.
@@ -796,7 +969,6 @@ export default function Gerador() {
           </div>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-            {/* Comparativo limpo em card branco */}
             <div className="rounded-[24px] bg-[var(--w-canvas)] p-6 sm:p-8">
               <div className="grid gap-8 sm:grid-cols-2">
                 <div>
@@ -837,7 +1009,6 @@ export default function Gerador() {
               </div>
             </div>
 
-            {/* Card escuro de ancoragem de ROI (assinatura Wise card-feature-dark) */}
             <div className="flex flex-col justify-between rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-8">
               <div>
                 <span className="inline-flex rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
@@ -850,21 +1021,18 @@ export default function Gerador() {
                   Você paga R$&nbsp;{PRECO_TEXTO} uma única vez. Sem mensalidade, sem fidelidade, sem ferramenta complicada pra configurar.
                 </p>
               </div>
-              <a
-                href="#pedido"
-                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 text-sm font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-              >
-                Montar minha lista agora
+              <BotaoBrilho href="#pedido" className="mt-7 min-h-12 w-full px-6 text-sm">
+                <span>Montar minha lista agora</span>
                 <LuArrowRight className="h-4 w-4" aria-hidden />
-              </a>
+              </BotaoBrilho>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAIXA 4 (Branco puro): Para quem serve + honestidade sobre limitações */}
+      {/* PARA QUEM SERVE + TRANSPARÊNCIA */}
       <section className="bg-[var(--w-canvas)] py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div data-revelar className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
             <div>
               <h2 className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]">
@@ -890,7 +1058,6 @@ export default function Gerador() {
               </div>
             </div>
 
-            {/* Transparência / Limitações (Ogilvy/Halbert: admitir limites gera confiança) */}
             <div className="rounded-[24px] border border-[var(--w-border)] bg-[var(--w-canvas)] p-6 sm:p-8">
               <div className="flex items-center gap-3">
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]">
@@ -910,8 +1077,8 @@ export default function Gerador() {
                 <li className="flex items-start gap-3">
                   <LuFileSpreadsheet className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-ink)]" aria-hidden />
                   <span>
-                    <strong className="font-semibold text-[var(--w-ink)]">Abre em qualquer lugar:</strong> arquivo <code className="font-[family-name:var(--f-mono)] text-xs">.xlsx</code> pronto
-                    para Excel, Google Planilhas ou LibreOffice.
+                    <strong className="font-semibold text-[var(--w-ink)]">Abre em qualquer lugar:</strong> arquivo{" "}
+                    <code className="font-[family-name:var(--f-mono)] text-xs">.xlsx</code> pronto para Excel, Google Planilhas ou LibreOffice.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -927,10 +1094,41 @@ export default function Gerador() {
         </div>
       </section>
 
-      {/* FAIXA 5 (Sálvia): FAQ + Fechamento */}
+      {/* FAQ + FECHAMENTO */}
       <Perguntas />
 
-      {/* Barra sticky no mobile quando o formulário saiu da tela */}
+      {/* Toast discreto de prova social ao vivo no desktop (pode ser fechado) */}
+      {!toastFechado && (
+        <div
+          aria-live="polite"
+          className={`fixed bottom-5 left-5 z-40 hidden max-w-xs items-center gap-3 rounded-2xl border border-[var(--w-ink)]/10 bg-white/95 p-3.5 shadow-[0_18px_40px_-16px_rgba(14,15,12,0.28)] backdrop-blur-sm transition-[opacity,transform] duration-300 lg:flex ${
+            toastVisivel ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+          }`}
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]">
+            <LuFileSpreadsheet className="h-4 w-4" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1 text-xs">
+            <p className="truncate font-bold text-[var(--w-ink)]">
+              {atividadeAtual.pessoa} · {atividadeAtual.cidade}
+            </p>
+            <p className="truncate text-[var(--w-body)]">
+              Gerou {TOTAL_LEADS} leads de {atividadeAtual.nicho}
+            </p>
+            <p className="mt-0.5 font-[family-name:var(--f-mono)] text-[10px] text-[var(--w-mute)]">{atividadeAtual.tempo}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setToastFechado(true)}
+            aria-label="Fechar aviso"
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-[var(--w-mute)] hover:bg-[var(--w-canvas-soft)] hover:text-[var(--w-ink)]"
+          >
+            <LuX className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        </div>
+      )}
+
+      {/* Barra sticky no mobile quando o formulário não está na tela */}
       {!andamento && mostrarSticky && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--w-ink)]/10 bg-[var(--w-canvas)]/95 px-4 py-3 backdrop-blur-sm lg:hidden">
           <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
@@ -940,16 +1138,212 @@ export default function Gerador() {
               </p>
               <p className="mt-0.5 text-xs text-[var(--w-mute)]">{TOTAL_LEADS} leads · pagamento único</p>
             </div>
-            <a
-              href="#pedido"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-5 text-sm font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-            >
-              Montar lista
+            <BotaoBrilho href="#pedido" className="min-h-11 px-5 text-sm">
+              <span>Montar lista</span>
               <LuArrowRight className="h-4 w-4" aria-hidden />
-            </a>
+            </BotaoBrilho>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Planilha fictícia sendo montada ao vivo na Hero:
+ * - No desktop: janela ampla em toda a largura da hero com barra de fórmula,
+ *   contador subindo até 50/50, barra de progresso e linhas entrando em sequência.
+ * - No celular: versão enxuta e bonita com 3 linhas animadas, rápida e legível.
+ */
+function PlanilhaVivaHero({
+  previsaoNovo,
+  foraDoAr,
+  lotado,
+}: {
+  previsaoNovo: number | null;
+  foraDoAr: boolean;
+  lotado: boolean;
+}) {
+  const [linhasVisiveis, setLinhasVisiveis] = useState(LINHAS_HERO.length);
+  const [contadorLeads, setContadorLeads] = useState(TOTAL_LEADS);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const t = setInterval(() => {
+      setLinhasVisiveis((atual) => (atual >= LINHAS_HERO.length ? 1 : atual + 1));
+      setContadorLeads((c) => (c >= TOTAL_LEADS ? 9 : Math.min(TOTAL_LEADS, c + 8)));
+    }, 1500);
+
+    return () => clearInterval(t);
+  }, []);
+
+  const progresso = Math.min(1, contadorLeads / TOTAL_LEADS);
+
+  return (
+    <div data-hero="planilha" className="mt-10 lg:mt-12">
+      {/* Versão Desktop completa: planilha ampla ocupando toda a hero */}
+      <div className="hidden overflow-hidden rounded-[24px] border border-[var(--w-ink)]/15 bg-white/95 shadow-[0_32px_80px_-28px_rgba(14,15,12,0.28)] backdrop-blur-md lg:block">
+        {/* Topo da janela Excel */}
+        <div className="flex items-center justify-between gap-4 border-b border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/70 px-5 py-3">
+          <div className="flex items-center gap-3">
+            <span className="grid h-6 w-6 place-items-center rounded-md bg-[var(--w-positive-deep)] font-[family-name:var(--f-mono)] text-xs font-bold text-white">
+              X
+            </span>
+            <span className="font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-ink)]">
+              morph-leads-estetica-automotiva-sp.xlsx
+            </span>
+            <span className="rounded-full bg-[var(--w-primary-pale)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--w-positive-deep)]">
+              Filtro: só sem site
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="font-[family-name:var(--f-mono)] text-xs font-semibold tabular-nums text-[var(--w-ink)]">
+              Coletando do Google Maps… {contadorLeads}/{TOTAL_LEADS}
+            </span>
+            <div className="h-2 w-28 overflow-hidden rounded-full bg-[var(--w-border)]">
+              <div
+                className="h-full origin-left rounded-full bg-[var(--w-positive)] transition-transform duration-500 ease-out"
+                style={{ transform: `scaleX(${progresso})` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Barra de fórmula */}
+        <div className="flex items-center gap-3 border-b border-[var(--w-canvas-soft)] bg-white px-5 py-2 font-[family-name:var(--f-mono)] text-xs">
+          <span className="rounded bg-[var(--w-canvas-soft)] px-2 py-0.5 italic text-[var(--w-mute)]">fx</span>
+          <span className="text-[var(--w-ink)]">
+            =MORPHLEADS(&quot;Estética automotiva&quot;; &quot;São Paulo&quot;; {TOTAL_LEADS}; &quot;sem_site&quot;)
+          </span>
+          <span className="ml-auto text-[11px] text-[var(--w-positive-deep)]">
+            {foraDoAr
+              ? "Manutenção rápida"
+              : lotado
+                ? "Fila cheia agora"
+                : previsaoNovo
+                  ? `Entrega em ~${previsaoNovo} min`
+                  : "Pronto em minutos"}
+          </span>
+        </div>
+
+        {/* Grade da planilha sendo montada */}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/40 font-[family-name:var(--f-mono)] text-[11px] uppercase tracking-wider text-[var(--w-mute)]">
+                <th scope="col" className="w-10 px-4 py-2.5 text-center">
+                  #
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Prioridade
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Negócio (Google Maps)
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Região
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  WhatsApp
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Nota
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Site
+                </th>
+                <th scope="col" className="px-4 py-2.5 font-semibold">
+                  Ação
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--w-canvas-soft)]">
+              {LINHAS_HERO.map((l, idx) => {
+                const visivel = idx < linhasVisiveis;
+                const recemAdicionada = idx === linhasVisiveis - 1;
+                return (
+                  <tr
+                    key={l.nome}
+                    className={`transition-[opacity,transform,background-color] duration-500 ${
+                      visivel ? "translate-y-0 opacity-100" : "translate-y-2 opacity-20"
+                    } ${recemAdicionada ? "bg-[var(--w-primary-pale)]/55" : "bg-white"}`}
+                  >
+                    <td className="px-4 py-3 text-center font-[family-name:var(--f-mono)] text-xs text-[var(--w-mute)]">{idx + 1}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          l.prio === "Alta"
+                            ? "bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]"
+                            : "bg-[var(--w-warning)] text-[var(--w-warning-content)]"
+                        }`}
+                      >
+                        {l.prio}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-[var(--w-ink)]">{l.nome}</td>
+                    <td className="px-4 py-3 text-[var(--w-body)]">{l.regiao}</td>
+                    <td className="whitespace-nowrap px-4 py-3 font-[family-name:var(--f-mono)] text-xs tabular-nums text-[var(--w-ink)]">{l.tel}</td>
+                    <td className="whitespace-nowrap px-4 py-3 tabular-nums text-[var(--w-ink)]">
+                      {l.nota} <span className="text-[var(--w-mute)]">({l.aval})</span>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <span className="rounded-full bg-[var(--w-ink)]/8 px-2.5 py-0.5 text-xs font-medium text-[var(--w-ink)]">Sem site</span>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--w-positive-deep)]">
+                        <FaWhatsapp className="h-3.5 w-3.5" aria-hidden />
+                        Abrir conversa
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Versão Mobile enxuta e bonita: 3 linhas animadas sem poluição */}
+      <div className="overflow-hidden rounded-[22px] border border-[var(--w-ink)]/12 bg-white shadow-[0_18px_40px_-20px_rgba(14,15,12,0.2)] lg:hidden">
+        <div className="flex items-center justify-between gap-2 border-b border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/70 px-4 py-2.5">
+          <span className="flex items-center gap-2 font-[family-name:var(--f-mono)] text-[11px] font-semibold text-[var(--w-ink)]">
+            <span className="grid h-5 w-5 place-items-center rounded bg-[var(--w-positive-deep)] text-[10px] font-bold text-white">X</span>
+            sua-planilha.xlsx
+          </span>
+          <span className="font-[family-name:var(--f-mono)] text-[11px] font-semibold tabular-nums text-[var(--w-positive-deep)]">
+            {contadorLeads}/{TOTAL_LEADS} leads
+          </span>
+        </div>
+
+        <div className="divide-y divide-[var(--w-canvas-soft)]">
+          {LINHAS_HERO.slice(0, 3).map((l, idx) => {
+            const ativo = idx === (linhasVisiveis - 1) % 3;
+            return (
+              <div
+                key={l.nome}
+                className={`flex items-center justify-between gap-3 px-4 py-3 transition-colors duration-300 ${
+                  ativo ? "bg-[var(--w-primary-pale)]/55" : "bg-white"
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-[var(--w-ink)]">{l.nome}</p>
+                  <p className="mt-0.5 font-[family-name:var(--f-mono)] text-[11px] text-[var(--w-mute)]">
+                    {l.tel} · ★ {l.nota} ({l.aval})
+                  </p>
+                </div>
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--w-primary-pale)] px-2.5 py-1 text-[11px] font-semibold text-[var(--w-positive-deep)]">
+                  <FaWhatsapp className="h-3 w-3" aria-hidden />
+                  WhatsApp
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -967,8 +1361,8 @@ function DemonstracaoPlanilha({ mensagem }: { mensagem: string }) {
   const [aba, setAba] = useState<"leads" | "resumo">("leads");
 
   return (
-    <section id="exemplo" aria-labelledby="exemplo-titulo" className="scroll-mt-20 bg-[var(--w-canvas)] py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="exemplo" aria-labelledby="exemplo-titulo" className="scroll-mt-20 border-t border-[var(--w-canvas-soft)] bg-[var(--w-canvas)] py-16 md:py-24">
+      <div data-revelar className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="max-w-2xl">
             <h2
@@ -983,7 +1377,6 @@ function DemonstracaoPlanilha({ mensagem }: { mensagem: string }) {
             </p>
           </div>
 
-          {/* Seletor das 2 abas do Excel */}
           <div role="tablist" aria-label="Abas da planilha" className="inline-flex w-fit rounded-full bg-[var(--w-canvas-soft)] p-1">
             <button
               id="tab-leads"
@@ -1014,7 +1407,6 @@ function DemonstracaoPlanilha({ mensagem }: { mensagem: string }) {
           </div>
         </div>
 
-        {/* Moldura limpa da planilha */}
         <div
           id="painel-planilha"
           role="tabpanel"
@@ -1095,13 +1487,10 @@ function DemonstracaoPlanilha({ mensagem }: { mensagem: string }) {
                       : "o WhatsApp abre direto no número do negócio (ou já com a mensagem que você escrever no passo 2)."}
                   </p>
                 </div>
-                <a
-                  href="#pedido"
-                  className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[var(--w-ink)] px-4 text-xs font-bold text-white transition-colors hover:bg-[var(--w-ink-deep)]"
-                >
-                  Quero para o meu nicho
+                <BotaoBrilho href="#pedido" variante="escuro" className="min-h-11 shrink-0 px-5 text-xs">
+                  <span>Quero para o meu nicho</span>
                   <LuArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </a>
+                </BotaoBrilho>
               </div>
             </>
           ) : (
@@ -1161,7 +1550,7 @@ const PERGUNTAS: { p: string; r: string }[] = [
 function Perguntas() {
   return (
     <section id="perguntas" aria-labelledby="faq-titulo" className="scroll-mt-20 bg-[var(--w-canvas-soft)] py-16 pb-24 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div data-revelar className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
           <div>
             <h2
@@ -1201,13 +1590,10 @@ function Perguntas() {
               R$&nbsp;{PRECO_TEXTO} uma única vez · entrega em minutos nesta página · garantia de {TOTAL_LEADS} leads.
             </p>
           </div>
-          <a
-            href="#pedido"
-            className="inline-flex min-h-13 shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-7 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-          >
-            Gerar minha planilha
+          <BotaoBrilho href="#pedido" className="min-h-13 shrink-0 px-7 text-base">
+            <span>Gerar minha planilha</span>
             <LuArrowRight className="h-4 w-4" aria-hidden />
-          </a>
+          </BotaoBrilho>
         </div>
       </div>
     </section>
@@ -1280,7 +1666,7 @@ function Carregando({
         {a.nicho} · {a.regiao}
       </p>
 
-      <div className="mt-6 grid place-items-center gap-5 rounded-2xl bg-[var(--w-canvas-soft)] px-4 py-9">
+      <div className="mt-6 grid place-items-center gap-5 rounded-2xl bg-white px-4 py-9">
         <div aria-hidden className="relative h-16 w-16">
           <span className="absolute inset-0 rounded-full border-[3px] border-[var(--w-ink)]/15" />
           <span data-g="orbita" className="absolute inset-0">
@@ -1349,7 +1735,7 @@ function Acompanhamento({
             <li
               key={e.rotulo}
               className={`flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm ${
-                feito ? "bg-[var(--w-primary-pale)] font-semibold text-[var(--w-ink-deep)]" : "bg-[var(--w-canvas-soft)] text-[var(--w-mute)]"
+                feito ? "bg-[var(--w-primary-pale)] font-semibold text-[var(--w-ink-deep)]" : "bg-white text-[var(--w-mute)]"
               }`}
             >
               <span className="flex items-center gap-3">
@@ -1363,7 +1749,7 @@ function Acompanhamento({
       </ol>
 
       {a.status === "aguardando_pagamento" && (
-        <p className="mt-5 rounded-xl bg-[var(--w-canvas-soft)] p-3.5 text-sm text-[var(--w-body)]">
+        <p className="mt-5 rounded-xl bg-white p-3.5 text-sm text-[var(--w-body)]">
           {a.pagamentoAtivo
             ? "Falta só confirmar o pagamento para o robô começar a coleta."
             : "O pagamento ainda está sendo ativado. Seu pedido ficou registrado e entramos em contato pelo WhatsApp informado."}
@@ -1382,22 +1768,15 @@ function Acompanhamento({
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         {a.status === "aguardando_pagamento" && a.pagamentoAtivo && (
-          <button
-            type="button"
-            onClick={onPagar}
-            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-          >
-            Pagar agora · R$ {PRECO_TEXTO}
-          </button>
+          <BotaoBrilho type="button" onClick={onPagar} className="min-h-12 flex-1 px-6 text-sm">
+            <span>Pagar agora · R$ {PRECO_TEXTO}</span>
+          </BotaoBrilho>
         )}
         {a.status === "pronto" && (
-          <a
-            href={`/api/gerador/arquivo/${a.id}`}
-            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
-          >
+          <BotaoBrilho href={`/api/gerador/arquivo/${a.id}`} className="min-h-12 flex-1 px-6 text-sm">
             <LuDownload aria-hidden className="h-4 w-4" />
-            Baixar planilha (.xlsx)
-          </a>
+            <span>Baixar planilha (.xlsx)</span>
+          </BotaoBrilho>
         )}
         <button
           type="button"
