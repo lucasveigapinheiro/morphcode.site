@@ -3,17 +3,50 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { LuCheck, LuDownload, LuLock, LuPlus } from "react-icons/lu";
+import {
+  LuArrowLeft,
+  LuArrowRight,
+  LuCheck,
+  LuChevronDown,
+  LuClock,
+  LuDownload,
+  LuFileSpreadsheet,
+  LuFilter,
+  LuLock,
+  LuMessageSquare,
+  LuPlus,
+  LuShieldCheck,
+  LuX,
+} from "react-icons/lu";
+import { FaWhatsapp } from "react-icons/fa6";
 import { trackMetaInitiateCheckout, trackMetaPurchase, trackMetaViewContent } from "@/components/MetaPixel";
-import { MAX_MENSAGEM, MSG_FORA_DO_AR, msgFilaCheia, NICHOS, PRECO_REAIS, PRECO_TEXTO, SERVICOS, SERVICO_OUTRO, TOTAL_LEADS, VARIAVEIS, type Status } from "@/lib/gerador";
+import {
+  MAX_MENSAGEM,
+  MSG_FORA_DO_AR,
+  msgFilaCheia,
+  NICHOS,
+  PRECO_REAIS,
+  PRECO_TEXTO,
+  SERVICOS,
+  SERVICO_OUTRO,
+  TOTAL_LEADS,
+  VARIAVEIS,
+  type Status,
+} from "@/lib/gerador";
 
 gsap.registerPlugin(useGSAP);
 
 const OUTRO = "Outro";
 const CHAVE = "gerador:pedido";
-// Marca no navegador que a compra deste pedido já foi contada no pixel, para não contar de novo ao voltar à página.
 const chaveCompra = (id: string) => `gerador:compra:${id}`;
-const PIXEL_PRODUTO = { value: PRECO_REAIS, currency: "BRL", content_name: `Planilha com ${TOTAL_LEADS} leads`, content_ids: "morph-leads", content_type: "product" };
+const PIXEL_PRODUTO = {
+  value: PRECO_REAIS,
+  currency: "BRL",
+  content_name: `Planilha com ${TOTAL_LEADS} leads`,
+  content_ids: "morph-leads",
+  content_type: "product",
+};
+const PRECO_POR_LEAD = (PRECO_REAIS / TOTAL_LEADS).toFixed(2).replace(".", ",");
 
 /** Resposta de /api/gerador/status. */
 type Estado = { online: boolean; aceita: boolean; fila: number; minPorPedido: number };
@@ -26,7 +59,6 @@ type Andamento = {
   leads?: number;
   erro?: string;
   pagamentoAtivo?: boolean;
-  /** O cliente escreveu uma mensagem de abordagem; define se a tela de carregamento fala dela. */
   comMensagem?: boolean;
 };
 
@@ -34,7 +66,7 @@ const ETAPAS: { status: Status[]; rotulo: string }[] = [
   { status: ["aguardando_pagamento", "pago", "gerando", "pronto"], rotulo: "Pedido recebido" },
   { status: ["pago", "gerando", "pronto"], rotulo: "Pagamento confirmado" },
   { status: ["gerando", "pronto"], rotulo: "Coletando os leads no Google Maps" },
-  { status: ["pronto"], rotulo: "Planilha pronta" },
+  { status: ["pronto"], rotulo: "Planilha pronta para baixar" },
 ];
 
 function mascaraWhatsapp(v: string) {
@@ -44,19 +76,17 @@ function mascaraWhatsapp(v: string) {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
-// Célula de entrada: sem borda própria; o anel de foco é a seleção da célula, como numa planilha.
-const entrada =
-  "w-full bg-transparent px-3 py-3 text-base text-[var(--tinta)] placeholder:text-[var(--suave)]/70 focus:outline-none";
-const celula = "relative min-w-0 border-l border-[var(--linha)] bg-white focus-within:z-10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-[var(--azul)]";
-const rotulo = "flex items-center border-l border-[var(--linha)] bg-[var(--cab)] px-3 font-[family-name:var(--f-mono)] text-[11px] font-medium uppercase tracking-wider text-[var(--suave)]";
-const gutter = "grid place-items-center bg-[var(--cab)] font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]";
+const inputBase =
+  "w-full rounded-xl border border-[var(--w-ink)]/25 bg-white px-4 py-3 text-base text-[var(--w-ink)] placeholder:text-[var(--w-mute)] transition-colors hover:border-[var(--w-ink)]/50 focus:border-[var(--w-ink)] focus:outline-none";
+
+const labelBase = "mb-1.5 block text-sm font-semibold text-[var(--w-ink)]";
 
 export default function Gerador() {
   const raiz = useRef<HTMLDivElement>(null);
-  const painel = useRef<HTMLFormElement>(null);
-  const banda = useRef<HTMLDivElement>(null);
+  const pedidoRef = useRef<HTMLDivElement>(null);
   const msgRef = useRef<HTMLTextAreaElement>(null);
 
+  const [etapa, setEtapa] = useState<1 | 2>(1);
   const [nicho, setNicho] = useState<string>(NICHOS[0]);
   const [outro, setOutro] = useState("");
   const [cidade, setCidade] = useState("");
@@ -64,7 +94,6 @@ export default function Gerador() {
   const [servico, setServico] = useState<string>(SERVICOS[0]);
   const [servicoOutro, setServicoOutro] = useState("");
   const [mensagem, setMensagem] = useState("");
-  // A mensagem é opcional: fica recolhida para o formulário ficar curto até o botão.
   const [comMsg, setComMsg] = useState(false);
   const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -72,66 +101,55 @@ export default function Gerador() {
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [andamento, setAndamento] = useState<Andamento | null>(null);
-  // O cliente acabou de voltar do checkout com pagamento aprovado: o webhook pode levar alguns segundos.
   const [confirmando, setConfirmando] = useState(false);
-  // Estado da operação (robô no ar, vaga livre, tamanho da fila). null = ainda não sabemos.
   const [estado, setEstado] = useState<Estado | null>(null);
+  const [mostrarSticky, setMostrarSticky] = useState(false);
+
   const foraDoAr = estado?.online === false;
   const lotado = estado ? estado.online && !estado.aceita : false;
   const avisoVenda = foraDoAr ? MSG_FORA_DO_AR : lotado ? msgFilaCheia(estado?.minPorPedido ?? 5) : "";
-  // Minutos até receber a planilha: quem já está na fila ganha de quem entra agora.
   const previsaoNovo = estado ? Math.ceil((estado.fila + 1) * estado.minPorPedido) : null;
 
   const nichoFinal = nicho === OUTRO ? outro.trim() : nicho;
-  const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
+  const regiaoFinal = [bairro.trim(), cidade.trim()].filter(Boolean).join(" — ");
+  const regiaoEnvio = [bairro.trim(), cidade.trim()].filter(Boolean).join(" ");
   const servicoFinal = servico === SERVICO_OUTRO ? servicoOutro.trim() : servico;
-  const textoMensagem = mensagem
-    .replaceAll("{nome}", "Nome do negócio")
-    .replaceAll("{nota}", "4,9")
-    .replaceAll("{avaliacoes}", "42")
-    .replaceAll("{regiao}", regiaoFinal || "sua região");
+  const filtraSemSite = servico === SERVICOS[0];
 
-  // Entrada da página: título, marca-texto, janela da planilha e linhas da prévia.
+  const textoMensagem = mensagem
+    .replaceAll("{nome}", "Box Detail Estética")
+    .replaceAll("{nota}", "4,9")
+    .replaceAll("{avaliacoes}", "416")
+    .replaceAll("{regiao}", regiaoEnvio || "sua região");
+
+  // Entrada limpa e contida da hero.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-        tl.from("[data-g='titulo']", { yPercent: 40, autoAlpha: 0, duration: 0.8, stagger: 0.1 })
-          .fromTo("[data-g='marca']", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "power2.inOut", transformOrigin: "left center" }, "-=0.35")
-          .from("[data-g='janela']", { y: 40, autoAlpha: 0, duration: 0.8 }, "-=0.55")
-          .from("[data-g='linha']", { autoAlpha: 0, x: -14, duration: 0.4, stagger: 0.06 }, "-=0.3");
+        tl.from("[data-hero='texto']", { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.08 })
+          .from("[data-hero='card']", { y: 24, autoAlpha: 0, duration: 0.65 }, "-=0.4");
       });
     },
     { scope: raiz },
   );
 
-  // A barra de fórmula acende quando nicho ou região mudam.
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo("[data-g='formula']", { backgroundColor: "#D8F24A" }, { backgroundColor: "rgba(216,242,74,0)", duration: 0.9, ease: "power2.out" });
-      });
-    },
-    { scope: raiz, dependencies: [nichoFinal, regiaoFinal], revertOnUpdate: false },
-  );
+  // Mostra barra fixa no mobile só depois que o card do pedido sair da tela.
+  useEffect(() => {
+    const el = pedidoRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        setMostrarSticky(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      },
+      { threshold: 0.05 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
-  // Faixa de seleção: desliza até a linha do campo que recebeu o foco.
-  function moverBanda(e: React.FocusEvent<HTMLFormElement>) {
-    const linha = (e.target as HTMLElement).closest<HTMLElement>("[data-campo]");
-    const p = painel.current;
-    const b = banda.current;
-    if (!linha || !p || !b) return;
-    const a = linha.getBoundingClientRect();
-    const r = p.getBoundingClientRect();
-    gsap.to(b, { y: a.top - r.top, height: a.height, autoAlpha: 1, duration: 0.35, ease: "power3.out", overwrite: true });
-  }
-  function esconderBanda(e: React.FocusEvent<HTMLFormElement>) {
-    if (!painel.current?.contains(e.relatedTarget as Node | null)) gsap.to(banda.current, { autoAlpha: 0, duration: 0.25 });
-  }
-
-  // Confere se o robô está no ar, agora e a cada 30 s, para avisar antes de o cliente pagar.
+  // Confere status do robô a cada 30s.
   useEffect(() => {
     const checar = () =>
       fetch("/api/gerador/status", { cache: "no-store" })
@@ -143,7 +161,7 @@ export default function Gerador() {
     return () => clearInterval(t);
   }, []);
 
-  // Retoma o pedido salvo neste navegador.
+  // Retoma pedido salvo no navegador.
   useEffect(() => {
     let salvo: string | null = null;
     try {
@@ -155,7 +173,6 @@ export default function Gerador() {
       .then((p) => {
         if (!p) return;
         setAndamento(p);
-        // O Mercado Pago volta para /gerador?status=approved&...: mostra o carregamento e limpa a URL.
         const q = new URLSearchParams(window.location.search);
         if ((q.get("status") ?? q.get("collection_status")) === "approved") {
           setConfirmando(true);
@@ -166,13 +183,12 @@ export default function Gerador() {
       .catch(() => {});
   }, []);
 
-  // Quem abre a página viu o produto: ajuda o Meta a achar gente parecida.
+  // Meta Pixel: ViewContent.
   useEffect(() => {
     trackMetaViewContent({ content_name: "gerador", pagina: "/gerador" });
   }, []);
 
-  // Pagamento confirmado (pago, gerando ou pronto): conta a compra uma vez por pedido neste navegador.
-  // O eventID é o mesmo que o webhook manda pela API de Conversões, então o Meta conta uma compra só.
+  // Meta Pixel: Purchase deduplicado por pedido.
   useEffect(() => {
     if (!andamento || !["pago", "gerando", "pronto"].includes(andamento.status)) return;
     try {
@@ -182,7 +198,7 @@ export default function Gerador() {
     trackMetaPurchase({ ...PIXEL_PRODUTO, num_items: 1 }, `compra-${andamento.id}`);
   }, [andamento]);
 
-  // Acompanha o pedido até ficar pronto.
+  // Acompanha status até finalizar.
   useEffect(() => {
     if (!andamento || andamento.status === "pronto" || andamento.status === "falhou") return;
     const t = setInterval(() => {
@@ -205,8 +221,35 @@ export default function Gerador() {
     });
   }
 
+  function avancarEtapa() {
+    setErro("");
+    if (nichoFinal.length < 3) {
+      setErro("Escolha um nicho ou digite o seu.");
+      document.getElementById("g-outro")?.focus();
+      return;
+    }
+    if (cidade.trim().length < 3) {
+      setErro("Informe a cidade onde quer prospectar.");
+      document.getElementById("g-cidade")?.focus();
+      return;
+    }
+    if (servicoFinal.length < 3) {
+      setErro("Diga o que você vende.");
+      document.getElementById("g-servico")?.focus();
+      return;
+    }
+    setEtapa(2);
+    requestAnimationFrame(() => {
+      document.getElementById("g-nome")?.focus();
+    });
+  }
+
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
+    if (etapa === 1) {
+      avancarEtapa();
+      return;
+    }
     setErro("");
     const digitos = whatsapp.replace(/\D/g, "");
     const invalido =
@@ -217,12 +260,12 @@ export default function Gerador() {
           : servicoFinal.length < 3
             ? ["g-servico", "Diga o que você vende."]
             : nome.trim().length < 2
-            ? ["g-nome", "Informe seu nome."]
-            : digitos.length !== 11 || digitos[2] !== "9"
-              ? ["g-whats", "Informe o WhatsApp com DDD, 11 dígitos."]
-              : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
-                ? ["g-email", "Informe um e-mail válido."]
-                : null;
+              ? ["g-nome", "Informe seu nome."]
+              : digitos.length !== 11 || digitos[2] !== "9"
+                ? ["g-whats", "Informe o WhatsApp com DDD, 11 dígitos."]
+                : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
+                  ? ["g-email", "Informe um e-mail válido."]
+                  : null;
     if (invalido) {
       setErro(invalido[1]);
       document.getElementById(invalido[0])?.focus();
@@ -233,7 +276,17 @@ export default function Gerador() {
       const r = await fetch("/api/gerador/pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nicho: nichoFinal, regiao: regiaoFinal, cidade, bairro, servico: servicoFinal, nome, whatsapp, email, mensagem }),
+        body: JSON.stringify({
+          nicho: nichoFinal,
+          regiao: regiaoEnvio,
+          cidade,
+          bairro,
+          servico: servicoFinal,
+          nome,
+          whatsapp,
+          email,
+          mensagem,
+        }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.erro ?? "Não foi possível registrar o pedido.");
@@ -244,7 +297,7 @@ export default function Gerador() {
         id: d.id,
         status: d.status,
         nicho: nichoFinal,
-        regiao: regiaoFinal,
+        regiao: regiaoEnvio,
         pagamentoAtivo: d.pagamentoAtivo,
         comMensagem: mensagem.trim().length > 0,
       });
@@ -256,7 +309,6 @@ export default function Gerador() {
     }
   }
 
-  // Pede o link do Mercado Pago e leva o cliente ao checkout; ao voltar, o acompanhamento retoma pelo localStorage.
   async function irParaPagamento(id: string) {
     try {
       const r = await fetch("/api/gerador/pagar", {
@@ -278,102 +330,142 @@ export default function Gerador() {
       localStorage.removeItem(CHAVE);
     } catch {}
     setAndamento(null);
+    setEtapa(1);
+    setErro("");
   }
 
   return (
     <div ref={raiz}>
-      <section className="mx-auto grid max-w-6xl items-end gap-8 px-4 pb-10 pt-12 sm:px-6 md:pt-20 lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div>
-        <p data-g="titulo" className="font-[family-name:var(--f-mono)] text-xs uppercase tracking-[0.18em] text-[var(--verde)]">
-          Gerador de planilha de leads
-        </p>
-        <h1 className="mt-4 text-[clamp(2.2rem,5.6vw,4.6rem)] font-extrabold leading-[0.98] tracking-[-0.035em]">
-          <span data-g="titulo" className="block">
-            {TOTAL_LEADS} clientes do seu nicho,
-          </span>
-          <span data-g="titulo" className="block">
-            numa{" "}
-            <span className="relative inline-block">
-              <span data-g="marca" aria-hidden className="absolute -inset-x-2 bottom-[0.06em] top-[0.2em] -z-0 bg-[var(--lime)]" />
-              <span className="relative">planilha pronta.</span>
-            </span>
-          </span>
-        </h1>
-        <p data-g="titulo" className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--suave)]">
-          Pare de copiar número do Google Maps. Escolha o nicho e a região e receba {TOTAL_LEADS} negócios com WhatsApp, nota e funil de vendas. Quem vende sites
-          recebe só os que não têm site.
-        </p>
-        <p data-g="titulo" className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--suave)]">
-          Para quem vende site, tráfego pago, social media ou sistemas para negócios locais.
-        </p>
-        </div>
-        <div
-          data-g="titulo"
-          className="w-fit -rotate-2 rounded-xl border-2 border-[var(--tinta)] bg-[var(--lime)] px-6 py-5 shadow-[5px_5px_0_0_var(--tinta)]"
-        >
-          <p className="font-[family-name:var(--f-mono)] text-[11px] font-semibold uppercase tracking-wider">Pagamento único · sem mensalidade</p>
-          <p className="text-5xl font-extrabold leading-none tracking-tight">R$ {PRECO_TEXTO}</p>
-          <p className="mt-1 text-sm font-medium">{TOTAL_LEADS} leads na sua região</p>
-        </div>
-      </section>
+      {/* HERO BAND (Sage Canvas — assinatura visual Wise) */}
+      <section className="bg-[var(--w-canvas-soft)] pb-14 pt-10 md:pb-20 md:pt-14">
+        <div className="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-12">
+          {/* Coluna esquerda: promessa clara, ancoragem de preço e garantias reais */}
+          <div className="lg:pt-4">
+            <h1
+              data-hero="texto"
+              className="font-[family-name:var(--f-display)] text-[clamp(2.35rem,5.2vw,4.1rem)] font-extrabold leading-[1.01] tracking-[-0.035em] text-[var(--w-ink)]"
+            >
+              {TOTAL_LEADS} clientes locais prontos pro seu WhatsApp, em minutos.
+            </h1>
 
-      <section id="pedido" aria-label="Pedido" className="mx-auto max-w-6xl scroll-mt-6 px-4 pb-20 sm:px-6">
-        <div data-g="janela" className="overflow-hidden rounded-xl border border-[var(--tinta)]/80 bg-white shadow-[8px_8px_0_0_var(--tinta)]">
-          <div className="flex items-center justify-between gap-3 border-b border-[var(--linha)] bg-[var(--cab)] px-4 py-2.5">
-            <span className="flex items-center gap-2 font-[family-name:var(--f-mono)] text-xs">
-              <span aria-hidden className="grid h-4 w-4 place-items-center rounded-[3px] bg-[var(--verde)] text-[9px] font-semibold text-white">
-                X
+            <p data-hero="texto" className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--w-body)]">
+              Pare de passar a tarde copiando número do Google Maps. Escolha o nicho e a cidade e baixe um Excel organizado com telefone, nota, prioridade e
+              funil de vendas.
+            </p>
+
+            {/* Destaque de preço transparente (Wise style: clareza total) */}
+            <div data-hero="texto" className="mt-7 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="font-[family-name:var(--f-display)] text-4xl font-extrabold tracking-tight tabular-nums text-[var(--w-ink)] sm:text-5xl">
+                R$&nbsp;{PRECO_TEXTO}
               </span>
-              pedido-de-leads.xlsx
-            </span>
-            <span className="font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]">
-              {TOTAL_LEADS} leads · R$ {PRECO_TEXTO}
-            </span>
-          </div>
+              <span className="rounded-full bg-[var(--w-primary-pale)] px-3 py-1 text-sm font-semibold text-[var(--w-positive-deep)]">
+                R$&nbsp;{PRECO_POR_LEAD} por lead · pagamento único
+              </span>
+            </div>
 
-          <div className="flex items-stretch border-b border-[var(--linha)] font-[family-name:var(--f-mono)] text-xs">
-            <span className="grid w-10 place-items-center border-r border-[var(--linha)] bg-[var(--cab)] italic text-[var(--suave)]">fx</span>
-            <span data-g="formula" className="min-w-0 flex-1 truncate px-3 py-2.5">
-              =LEADS(&quot;{nichoFinal || "…"}&quot;; &quot;{regiaoFinal || "…"}&quot;; {TOTAL_LEADS})
-            </span>
-          </div>
+            {/* 3 garantias reais e verificáveis antes do CTA */}
+            <ul data-hero="texto" className="mt-7 space-y-3 text-sm text-[var(--w-ink)] sm:text-base">
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
+                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
+                </span>
+                <span>
+                  <strong className="font-semibold">Vende sites?</strong> Filtramos automaticamente só os negócios que ainda não têm site.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
+                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
+                </span>
+                <span>
+                  <strong className="font-semibold">Garantia de {TOTAL_LEADS} leads:</strong> veio menos na sua região? Completamos com vizinhos sem custo.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--w-primary)] text-[var(--w-ink-deep)]">
+                  <LuCheck className="h-3.5 w-3.5 stroke-[2.75]" aria-hidden />
+                </span>
+                <span>
+                  <strong className="font-semibold">Sem mensalidade:</strong> pague uma vez no Pix ou cartão pelo Mercado Pago e baixe aqui mesmo.
+                </span>
+              </li>
+            </ul>
 
-          <div className="grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-            {andamento ? (
-              <Acompanhamento a={andamento} onNovo={novoPedido} onPagar={() => irParaPagamento(andamento.id)} erro={erro} confirmando={confirmando} foraDoAr={foraDoAr} estado={estado} />
-            ) : (
-              <form ref={painel} onSubmit={enviar} noValidate onFocus={moverBanda} onBlur={esconderBanda} className="relative border-b border-[var(--linha)] lg:border-b-0 lg:border-r">
-                <div
-                  ref={banda}
+            {/* Indicador vivo de fila/operação (transparência gera confiança) */}
+            {estado && (
+              <div
+                data-hero="texto"
+                className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-[var(--w-canvas)] px-4 py-2 text-xs font-medium text-[var(--w-body)]"
+              >
+                <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-[var(--azul)]/[0.07]"
-                  style={{ height: 0, opacity: 0, visibility: "hidden" }}
+                  className={`h-2.5 w-2.5 rounded-full ${foraDoAr ? "bg-[var(--w-negative)]" : lotado ? "bg-amber-500" : "bg-[var(--w-positive)]"}`}
                 />
-                <div className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
-                  <span className={gutter} aria-hidden />
-                  <span className="border-l border-[var(--linha)] bg-[var(--cab)] px-3 py-1.5 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]">
-                    Preencha as células
+                {foraDoAr ? (
+                  <span>Sistema em manutenção rápida — tente em instantes</span>
+                ) : lotado ? (
+                  <span>Fila cheia agora — libera em ~{Math.max(1, Math.ceil(estado.minPorPedido))} min</span>
+                ) : (
+                  <span className="tabular-nums">
+                    Robô ativo agora · entrega em cerca de {previsaoNovo} min após o pagamento
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Coluna direita: Card Interativo de 2 Etapas (estilo Converter Card da Wise) */}
+          <div
+            id="pedido"
+            ref={pedidoRef}
+            data-hero="card"
+            className="scroll-mt-20 rounded-[24px] bg-[var(--w-canvas)] p-6 shadow-[0_20px_50px_-24px_rgba(14,15,12,0.18)] sm:p-7"
+          >
+            {andamento ? (
+              <Acompanhamento
+                a={andamento}
+                onNovo={novoPedido}
+                onPagar={() => irParaPagamento(andamento.id)}
+                erro={erro}
+                confirmando={confirmando}
+                foraDoAr={foraDoAr}
+                estado={estado}
+              />
+            ) : (
+              <form onSubmit={enviar} noValidate>
+                {/* Cabeçalho com indicador de 2 etapas */}
+                <div className="mb-6 flex items-center justify-between gap-3 border-b border-[var(--w-canvas-soft)] pb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--w-ink)] font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                      {etapa}/2
+                    </span>
+                    <h2 className="text-base font-bold text-[var(--w-ink)]">
+                      {etapa === 1 ? "Monte sua planilha" : "Onde entregamos a lista?"}
+                    </h2>
+                  </div>
+                  <span className="font-[family-name:var(--f-mono)] text-xs font-medium tabular-nums text-[var(--w-mute)]">
+                    R$&nbsp;{PRECO_TEXTO}
                   </span>
                 </div>
 
-                <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
-                  <span className={gutter}>1</span>
-                  <div className="min-w-0">
-                    <p className={`${rotulo} h-8 border-b border-[var(--linha)]`} id="g-nicho-r">
-                      Nicho
-                    </p>
-                    <div className={`${celula} px-2 py-2`} role="group" aria-labelledby="g-nicho-r">
-                      <div className="flex flex-wrap gap-1.5">
+                {etapa === 1 ? (
+                  <div className="space-y-5">
+                    {/* 1. Nicho */}
+                    <div>
+                      <p id="g-nicho-r" className={labelBase}>
+                        1. Qual nicho você quer prospectar?
+                      </p>
+                      <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-nicho-r">
                         {[...NICHOS, OUTRO].map((n) => (
                           <button
                             key={n}
                             type="button"
                             aria-pressed={nicho === n}
                             onClick={() => setNicho(n)}
-                            className={`min-h-11 rounded-md border px-3 text-sm sm:min-h-9 sm:px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] ${
+                            className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
                               nicho === n
-                                ? "border-[var(--tinta)] bg-[var(--tinta)] text-white"
-                                : "border-[var(--linha)] bg-white text-[var(--suave)] hover:border-[var(--tinta)] hover:text-[var(--tinta)]"
+                                ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
+                                : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
                             }`}
                           >
                             {n}
@@ -386,42 +478,65 @@ export default function Gerador() {
                           name="nicho-outro"
                           autoComplete="off"
                           aria-label="Qual nicho?"
-                          className={`${entrada} mt-2 rounded-md border border-[var(--linha)]`}
+                          className={`${inputBase} mt-2.5`}
                           value={outro}
                           onChange={(e) => setOutro(e.target.value)}
                           maxLength={60}
-                          placeholder="Ex.: loja de bicicletas…"
+                          placeholder="Ex.: loja de bicicletas, hamburgueria…"
                         />
                       )}
                     </div>
-                  </div>
-                </div>
 
-                <Linha n={2} data="Cidade" htmlFor="g-cidade">
-                  <input id="g-cidade" name="cidade" className={entrada} value={cidade} onChange={(e) => setCidade(e.target.value)} maxLength={50} placeholder="São Paulo…" autoComplete="address-level2" />
-                </Linha>
-                <Linha n={3} data="Bairro (opcional)" htmlFor="g-bairro">
-                  <input id="g-bairro" name="bairro" autoComplete="off" className={entrada} value={bairro} onChange={(e) => setBairro(e.target.value)} maxLength={50} placeholder="Mooca…" />
-                </Linha>
+                    {/* 2. Cidade e Bairro */}
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label htmlFor="g-cidade" className={labelBase}>
+                          2. Cidade
+                        </label>
+                        <input
+                          id="g-cidade"
+                          name="cidade"
+                          className={inputBase}
+                          value={cidade}
+                          onChange={(e) => setCidade(e.target.value)}
+                          maxLength={50}
+                          placeholder="Ex.: São Paulo"
+                          autoComplete="address-level2"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="g-bairro" className={labelBase}>
+                          Bairro <span className="font-normal text-[var(--w-mute)]">(opcional)</span>
+                        </label>
+                        <input
+                          id="g-bairro"
+                          name="bairro"
+                          autoComplete="off"
+                          className={inputBase}
+                          value={bairro}
+                          onChange={(e) => setBairro(e.target.value)}
+                          maxLength={50}
+                          placeholder="Ex.: Mooca"
+                        />
+                      </div>
+                    </div>
 
-                <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
-                  <span className={gutter}>4</span>
-                  <div className="min-w-0">
-                    <p className={`${rotulo} h-8 border-b border-[var(--linha)]`} id="g-servico-r">
-                      O que você vende?
-                    </p>
-                    <div className={`${celula} px-2 py-2`} role="group" aria-labelledby="g-servico-r">
-                      <div className="flex flex-wrap gap-1.5">
+                    {/* 3. O que você vende */}
+                    <div>
+                      <p id="g-servico-r" className={labelBase}>
+                        3. O que você vende?
+                      </p>
+                      <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="g-servico-r">
                         {[...SERVICOS, SERVICO_OUTRO].map((s) => (
                           <button
                             key={s}
                             type="button"
                             aria-pressed={servico === s}
                             onClick={() => setServico(s)}
-                            className={`min-h-11 rounded-md border px-3 text-sm sm:min-h-9 sm:px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] ${
+                            className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition-colors sm:min-h-10 ${
                               servico === s
-                                ? "border-[var(--tinta)] bg-[var(--tinta)] text-white"
-                                : "border-[var(--linha)] bg-white text-[var(--suave)] hover:border-[var(--tinta)] hover:text-[var(--tinta)]"
+                                ? "border-[var(--w-ink)] bg-[var(--w-ink)] text-white"
+                                : "border-[var(--w-border)] bg-white text-[var(--w-body)] hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
                             }`}
                           >
                             {s}
@@ -434,177 +549,588 @@ export default function Gerador() {
                           name="servico-outro"
                           autoComplete="off"
                           aria-label="Qual serviço você vende?"
-                          className={`${entrada} mt-2 rounded-md border border-[var(--linha)]`}
+                          className={`${inputBase} mt-2.5`}
                           value={servicoOutro}
                           onChange={(e) => setServicoOutro(e.target.value)}
                           maxLength={60}
-                          placeholder="Ex.: contabilidade, seguros…"
+                          placeholder="Ex.: contabilidade, energia solar…"
                         />
                       )}
-                      <p aria-live="polite" className="mt-2 text-xs leading-relaxed text-[var(--suave)]">
-                        {servico === SERVICOS[0]
-                          ? "Para quem vende sites, a lista traz só negócios sem site."
-                          : "A lista traz negócios com ou sem site: o que importa é o nicho e a região."}
+                      <p
+                        aria-live="polite"
+                        className={`mt-2.5 flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium ${
+                          filtraSemSite
+                            ? "bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]"
+                            : "bg-[var(--w-canvas-soft)] text-[var(--w-body)]"
+                        }`}
+                      >
+                        <LuFilter className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {filtraSemSite
+                          ? "Filtro ativo: a planilha trará só negócios que ainda não têm site."
+                          : "A planilha trará os melhores negócios do nicho, com ou sem site."}
                       </p>
                     </div>
-                  </div>
-                </div>
 
-                <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
-                  <span className={gutter}>5</span>
-                  <div className="min-w-0">
-                    {!comMsg ? (
+                    {/* Resumo dinâmico do que será montado */}
+                    <div className="rounded-2xl bg-[var(--w-canvas-soft)] p-4">
+                      <div className="flex items-center justify-between gap-2 text-xs font-medium text-[var(--w-body)]">
+                        <span>Sua planilha (.xlsx)</span>
+                        <span className="font-[family-name:var(--f-mono)] tabular-nums text-[var(--w-ink)]">{TOTAL_LEADS} leads</span>
+                      </div>
+                      <p className="mt-1 truncate text-sm font-bold text-[var(--w-ink)]">
+                        {nichoFinal || "Escolha um nicho"} · {regiaoFinal || "Digite a cidade"}
+                      </p>
+                    </div>
+
+                    {erro && (
+                      <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
+                        {erro}
+                      </p>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={avancarEtapa}
+                      className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 py-3.5 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
+                    >
+                      <span>Continuar para entrega</span>
+                      <LuArrowRight className="h-4 w-4" aria-hidden />
+                    </button>
+
+                    <p className="text-center text-xs text-[var(--w-mute)]">
+                      Sem cadastro longo · pagamento só no próximo passo
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Resumo editável da Etapa 1 */}
+                    <div className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--w-canvas-soft)] px-4 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold text-[var(--w-ink)]">
+                          {TOTAL_LEADS} leads · {nichoFinal}
+                        </p>
+                        <p className="truncate text-xs text-[var(--w-body)]">
+                          {regiaoFinal} · {servicoFinal}
+                        </p>
+                      </div>
                       <button
                         type="button"
                         onClick={() => {
-                          setComMsg(true);
-                          requestAnimationFrame(() => msgRef.current?.focus());
+                          setEtapa(1);
+                          setErro("");
                         }}
-                        className="flex min-h-11 w-full items-center gap-2 border-l border-[var(--linha)] bg-white px-3 text-left text-sm text-[var(--suave)] transition-colors hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--azul)]"
+                        className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-xs font-semibold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-pale)]"
                       >
-                        <LuPlus aria-hidden className="h-4 w-4 shrink-0" />
-                        Escrever a mensagem do WhatsApp (opcional)
+                        <LuArrowLeft className="h-3.5 w-3.5" aria-hidden />
+                        Alterar
                       </button>
-                    ) : (
-                    <>
-                    <label htmlFor="g-msg" className={`${rotulo} h-8 border-b border-[var(--linha)]`}>
-                      Mensagem do WhatsApp (opcional)
-                    </label>
-                    <div className={celula}>
-                      <textarea
-                        id="g-msg"
-                        name="mensagem"
-                        ref={msgRef}
-                        rows={4}
-                        maxLength={MAX_MENSAGEM}
-                        autoComplete="off"
-                        value={mensagem}
-                        onChange={(e) => setMensagem(e.target.value)}
-                        placeholder="Oi, tudo bem? Vi a {nome} e…"
-                        className={`${entrada} resize-none`}
+                    </div>
+
+                    <div>
+                      <label htmlFor="g-nome" className={labelBase}>
+                        Seu nome
+                      </label>
+                      <input
+                        id="g-nome"
+                        name="nome"
+                        className={inputBase}
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        maxLength={80}
+                        autoComplete="name"
+                        placeholder="Como podemos te chamar?"
                       />
-                      <div className="flex flex-wrap items-center gap-1.5 border-t border-[var(--linha)] px-2 py-2">
-                        {VARIAVEIS.map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            onClick={() => inserirVariavel(v)}
-                            className="min-h-10 rounded border border-[var(--linha)] px-2 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)] transition-colors hover:border-[var(--tinta)] hover:text-[var(--tinta)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)]"
-                          >
-                            {v}
-                          </button>
-                        ))}
-                        <span className="ml-auto font-[family-name:var(--f-mono)] text-[11px] tabular-nums text-[var(--suave)]">
-                          {mensagem.length}/{MAX_MENSAGEM}
-                        </span>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label htmlFor="g-whats" className={labelBase}>
+                          WhatsApp
+                        </label>
+                        <input
+                          id="g-whats"
+                          name="whatsapp"
+                          type="tel"
+                          inputMode="numeric"
+                          className={inputBase}
+                          value={whatsapp}
+                          onChange={(e) => setWhatsapp(mascaraWhatsapp(e.target.value))}
+                          autoComplete="tel-national"
+                          placeholder="(11) 90000-0000"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="g-email" className={labelBase}>
+                          E-mail
+                        </label>
+                        <input
+                          id="g-email"
+                          name="email"
+                          type="email"
+                          spellCheck={false}
+                          className={inputBase}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          maxLength={120}
+                          autoComplete="email"
+                          placeholder="voce@empresa.com"
+                        />
                       </div>
                     </div>
-                    </>
+
+                    {/* Mensagem personalizada do WhatsApp (opcional e recolhida) */}
+                    <div>
+                      {!comMsg ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setComMsg(true);
+                            requestAnimationFrame(() => msgRef.current?.focus());
+                          }}
+                          className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-dashed border-[var(--w-border)] bg-[var(--w-canvas-soft)]/50 px-3.5 py-2.5 text-left text-sm font-medium text-[var(--w-body)] transition-colors hover:border-[var(--w-ink)] hover:text-[var(--w-ink)]"
+                        >
+                          <LuPlus className="h-4 w-4 shrink-0" aria-hidden />
+                          <span>Personalizar mensagem do WhatsApp (opcional)</span>
+                        </button>
+                      ) : (
+                        <div className="rounded-2xl border border-[var(--w-border)] p-3.5">
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <label htmlFor="g-msg" className="text-xs font-semibold text-[var(--w-ink)]">
+                              Mensagem automática ao clicar em &ldquo;Abrir conversa&rdquo;
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => setComMsg(false)}
+                              aria-label="Recolher campo de mensagem"
+                              className="rounded-full p-1 text-[var(--w-mute)] hover:bg-[var(--w-canvas-soft)] hover:text-[var(--w-ink)]"
+                            >
+                              <LuX className="h-4 w-4" aria-hidden />
+                            </button>
+                          </div>
+                          <textarea
+                            id="g-msg"
+                            name="mensagem"
+                            ref={msgRef}
+                            rows={3}
+                            maxLength={MAX_MENSAGEM}
+                            autoComplete="off"
+                            value={mensagem}
+                            onChange={(e) => setMensagem(e.target.value)}
+                            placeholder="Oi! Vi a {nome} no Google ({nota} estrelas) e…"
+                            className={`${inputBase} resize-none text-sm`}
+                          />
+                          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                            {VARIAVEIS.map((v) => (
+                              <button
+                                key={v}
+                                type="button"
+                                onClick={() => inserirVariavel(v)}
+                                className="min-h-8 rounded-full border border-[var(--w-border)] bg-[var(--w-canvas-soft)] px-2.5 font-[family-name:var(--f-mono)] text-[11px] font-medium text-[var(--w-ink)] transition-colors hover:border-[var(--w-ink)]"
+                              >
+                                {v}
+                              </button>
+                            ))}
+                            <span className="ml-auto font-[family-name:var(--f-mono)] text-[11px] tabular-nums text-[var(--w-mute)]">
+                              {mensagem.length}/{MAX_MENSAGEM}
+                            </span>
+                          </div>
+                          {mensagem.trim() && (
+                            <div className="mt-3 rounded-xl rounded-tl-sm bg-[#DCF8C6] px-3 py-2 text-xs leading-relaxed text-[#163300]">
+                              <span className="mb-0.5 block font-semibold">Prévia no WhatsApp:</span>
+                              <span className="whitespace-pre-line">{textoMensagem}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {(avisoVenda || erro) && (
+                      <p role="alert" className="rounded-xl bg-[var(--w-negative-bg)] px-3.5 py-2.5 text-sm font-medium text-[var(--w-negative)]">
+                        {avisoVenda || erro}
+                      </p>
                     )}
+
+                    <button
+                      type="submit"
+                      disabled={enviando || Boolean(avisoVenda)}
+                      className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 py-3.5 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)] disabled:opacity-60"
+                    >
+                      {enviando ? "Abrindo pagamento…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
+                    </button>
+
+                    <div className="space-y-1.5 pt-1 text-xs text-[var(--w-body)]">
+                      <p className="flex items-center justify-center gap-1.5 font-semibold text-[var(--w-ink)]">
+                        <LuLock className="h-3.5 w-3.5 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                        Pagamento seguro pelo Mercado Pago · Pix ou cartão
+                      </p>
+                      {previsaoNovo !== null && !avisoVenda && (
+                        <p className="text-center font-[family-name:var(--f-mono)] text-[11px] text-[var(--w-mute)]">
+                          Previsão de entrega: ~{previsaoNovo} min após confirmação
+                        </p>
+                      )}
+                      <p className="text-center text-[11px] leading-relaxed text-[var(--w-mute)]">
+                        Usamos seus dados só para entregar a planilha e avisar sobre o pedido.
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                <Linha n={6} data="Seu nome" htmlFor="g-nome">
-                  <input id="g-nome" name="nome" className={entrada} value={nome} onChange={(e) => setNome(e.target.value)} maxLength={80} autoComplete="name" />
-                </Linha>
-                <Linha n={7} data="WhatsApp" htmlFor="g-whats">
-                  <input id="g-whats" name="whatsapp" type="tel" className={entrada} value={whatsapp} onChange={(e) => setWhatsapp(mascaraWhatsapp(e.target.value))} autoComplete="tel-national" placeholder="(11) 90000-0000…" />
-                </Linha>
-                <Linha n={8} data="E-mail" htmlFor="g-email">
-                  <input id="g-email" name="email" type="email" spellCheck={false} className={entrada} value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} autoComplete="email" placeholder="voce@empresa.com…" />
-                </Linha>
-
-                <div className="p-4">
-                  <p role="alert" className="mb-3 min-h-5 text-sm font-medium text-[var(--erro)]">
-                    {avisoVenda || erro}
-                  </p>
-                  <button
-                    type="submit"
-                    disabled={enviando || Boolean(avisoVenda)}
-                    className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[var(--verde)] px-5 text-base font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2 disabled:opacity-60"
-                  >
-                    {enviando ? "Registrando…" : `Gerar minha planilha · R$ ${PRECO_TEXTO}`}
-                  </button>
-                  <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--tinta)]">
-                    <LuLock aria-hidden className="h-3.5 w-3.5 shrink-0 text-[var(--verde)]" />
-                    Pagamento seguro pelo Mercado Pago · Pix ou cartão
-                  </p>
-                  <p className="mt-1.5 text-xs leading-relaxed text-[var(--suave)]">
-                    Vieram menos de {TOTAL_LEADS}? Completamos com bairros e cidades vizinhas, sem custo.
-                  </p>
-                  {previsaoNovo !== null && !avisoVenda && (
-                    <p className="mt-3 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
-                      Previsão: cerca de {previsaoNovo} min depois do pagamento.
-                    </p>
-                  )}
-                  <p className="mt-3 text-xs leading-relaxed text-[var(--suave)]">
-                    Usamos seus dados só para entregar a planilha e avisar sobre o pedido. Os dados dos negócios vêm de perfis públicos do Google Maps;
-                    confirme antes de abordar cada um.
-                  </p>
-                </div>
+                )}
               </form>
             )}
-
-            <Previa nicho={andamento?.nicho ?? nichoFinal} regiao={andamento?.regiao ?? regiaoFinal} mensagem={textoMensagem} />
           </div>
         </div>
       </section>
 
-      <Exemplo />
+      {/* FAIXA 2 (Branco puro): Demonstração real interativa — o que você baixa */}
+      <DemonstracaoPlanilha mensagem={textoMensagem} />
+
+      {/* FAIXA 3 (Sálvia): Antes x Depois + Conta de ROI (Card Dark Wise) */}
+      <section className="bg-[var(--w-canvas-soft)] py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="max-w-2xl">
+            <h2 className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]">
+              Menos tempo garimpando. Mais tempo fechando cliente.
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--w-body)]">
+              Prospectar no Google Maps funciona, mas fazer isso na mão come o dia inteiro. O robô faz o trabalho braçal em minutos.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            {/* Comparativo limpo em card branco */}
+            <div className="rounded-[24px] bg-[var(--w-canvas)] p-6 sm:p-8">
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm font-bold text-[var(--w-mute)]">Fazendo no Maps à mão</p>
+                  <ul className="mt-4 space-y-3.5 text-sm leading-relaxed text-[var(--w-body)]">
+                    <li className="flex items-start gap-2.5">
+                      <LuX className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-negative)]" aria-hidden />
+                      <span>Abre perfil por perfil para checar se tem telefone e site</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <LuX className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-negative)]" aria-hidden />
+                      <span>Copia número no bloco de notas e perde controle de quem já chamou</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <LuX className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-negative)]" aria-hidden />
+                      <span>Horas gastas antes de mandar a primeira mensagem</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="border-t border-[var(--w-canvas-soft)] pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+                  <p className="text-sm font-bold text-[var(--w-positive-deep)]">Com o Morph Leads</p>
+                  <ul className="mt-4 space-y-3.5 text-sm leading-relaxed text-[var(--w-ink)]">
+                    <li className="flex items-start gap-2.5">
+                      <LuCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                      <span>{TOTAL_LEADS} negócios reais da sua cidade coletados na hora</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <LuCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                      <span>Prioridade pronta (Alta, Média, Baixa) por nota e avaliações</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <LuCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                      <span>Link direto que abre o WhatsApp já com sua abordagem escrita</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Card escuro de ancoragem de ROI (assinatura Wise card-feature-dark) */}
+            <div className="flex flex-col justify-between rounded-[24px] bg-[var(--w-ink)] p-6 text-white sm:p-8">
+              <div>
+                <span className="inline-flex rounded-full bg-[var(--w-primary)]/15 px-3 py-1 font-[family-name:var(--f-mono)] text-xs font-semibold text-[var(--w-primary)]">
+                  R$&nbsp;{PRECO_POR_LEAD} por contato
+                </span>
+                <p className="mt-5 font-[family-name:var(--f-display)] text-3xl font-extrabold leading-[1.08] tracking-tight text-[var(--w-primary)] sm:text-4xl">
+                  1 cliente fechado paga a planilha dezenas de vezes.
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-[var(--w-canvas-soft)]/80">
+                  Você paga R$&nbsp;{PRECO_TEXTO} uma única vez. Sem mensalidade, sem fidelidade, sem ferramenta complicada pra configurar.
+                </p>
+              </div>
+              <a
+                href="#pedido"
+                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 text-sm font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
+              >
+                Montar minha lista agora
+                <LuArrowRight className="h-4 w-4" aria-hidden />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAIXA 4 (Branco puro): Para quem serve + honestidade sobre limitações */}
+      <section className="bg-[var(--w-canvas)] py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
+            <div>
+              <h2 className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]">
+                Feito para quem vende serviço para negócios locais.
+              </h2>
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-[var(--w-body)]">
+                Se o seu cliente ideal tem ficha no Google Maps — clínica, oficina, barbearia, estética, pet shop, academia — a lista já vem no ponto de
+                abordar.
+              </p>
+
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                {[
+                  { titulo: "Criação de sites", desc: "Filtro exclusivo: entrega só negócios sem site cadastrado." },
+                  { titulo: "Tráfego pago e social media", desc: "Negócios ativos na sua região com nota e volume de avaliações." },
+                  { titulo: "Sistemas e automações", desc: "Estabelecimentos com movimento real para oferecer gestão." },
+                  { titulo: "Serviços B2B locais", desc: "Contabilidade, foto/vídeo, consultoria ou fornecedores." },
+                ].map((item) => (
+                  <div key={item.titulo} className="rounded-2xl bg-[var(--w-canvas-soft)] p-4">
+                    <p className="text-sm font-bold text-[var(--w-ink)]">{item.titulo}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--w-body)]">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Transparência / Limitações (Ogilvy/Halbert: admitir limites gera confiança) */}
+            <div className="rounded-[24px] border border-[var(--w-border)] bg-[var(--w-canvas)] p-6 sm:p-8">
+              <div className="flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]">
+                  <LuShieldCheck className="h-5 w-5" aria-hidden />
+                </span>
+                <h3 className="text-lg font-bold text-[var(--w-ink)]">Sem surpresas antes de pagar</h3>
+              </div>
+
+              <ul className="mt-6 space-y-4 text-sm leading-relaxed text-[var(--w-body)]">
+                <li className="flex items-start gap-3">
+                  <LuClock className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-ink)]" aria-hidden />
+                  <span>
+                    <strong className="font-semibold text-[var(--w-ink)]">Coleta em tempo real:</strong> não vendemos lista velha ou reciclada. O robô busca
+                    no Google Maps assim que o pagamento confirma.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <LuFileSpreadsheet className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-ink)]" aria-hidden />
+                  <span>
+                    <strong className="font-semibold text-[var(--w-ink)]">Abre em qualquer lugar:</strong> arquivo <code className="font-[family-name:var(--f-mono)] text-xs">.xlsx</code> pronto
+                    para Excel, Google Planilhas ou LibreOffice.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <LuMessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-[var(--w-ink)]" aria-hidden />
+                  <span>
+                    <strong className="font-semibold text-[var(--w-ink)]">O que a planilha não faz:</strong> não dispara mensagens em massa sozinha e não
+                    traz e-mails privados de grandes indústrias. Os dados são de perfis públicos do Google Maps; confirme antes de abordar.
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAIXA 5 (Sálvia): FAQ + Fechamento */}
       <Perguntas />
+
+      {/* Barra sticky no mobile quando o formulário saiu da tela */}
+      {!andamento && mostrarSticky && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--w-ink)]/10 bg-[var(--w-canvas)]/95 px-4 py-3 backdrop-blur-sm lg:hidden">
+          <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+            <div>
+              <p className="font-[family-name:var(--f-display)] text-lg font-extrabold leading-none tabular-nums text-[var(--w-ink)]">
+                R$&nbsp;{PRECO_TEXTO}
+              </p>
+              <p className="mt-0.5 text-xs text-[var(--w-mute)]">{TOTAL_LEADS} leads · pagamento único</p>
+            </div>
+            <a
+              href="#pedido"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[var(--w-primary)] px-5 text-sm font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
+            >
+              Montar lista
+              <LuArrowRight className="h-4 w-4" aria-hidden />
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// Trecho de uma planilha que o robô gerou de verdade (Estética automotiva, SP e ABC). Os dados são de perfis públicos
-// do Google Maps; aqui o telefone fica parcialmente oculto, na planilha do cliente ele vem completo.
-const EXEMPLO: { nome: string; regiao: string; tel: string; nota: string; aval: number }[] = [
-  { nome: "Box Detail - Estética Automotiva", regiao: "Vila Mariana", tel: "(11) 9••••-3850", nota: "4,9", aval: 416 },
-  { nome: "Uehara Estética Automotiva", regiao: "Zona Norte (Santana)", tel: "(11) 9••••-5209", nota: "4,9", aval: 254 },
-  { nome: "3° Millenium Estética Automotiva", regiao: "Penha", tel: "(11) 9••••-8974", nota: "4,9", aval: 171 },
-  { nome: "WA Estética Automotiva", regiao: "São Caetano do Sul", tel: "(11) 9••••-5796", nota: "4,9", aval: 161 },
-  { nome: "RS17 Estetica Automotiva", regiao: "Santo Amaro", tel: "(11) 9••••-8186", nota: "5,0", aval: 140 },
+// Exemplo real gerado pelo robô (Estética automotiva, SP e ABC).
+const EXEMPLO: { nome: string; regiao: string; tel: string; nota: string; aval: number; prio: "Alta" | "Média" }[] = [
+  { nome: "Box Detail - Estética Automotiva", regiao: "Vila Mariana", tel: "(11) 9••••-3850", nota: "4,9", aval: 416, prio: "Alta" },
+  { nome: "Uehara Estética Automotiva", regiao: "Zona Norte (Santana)", tel: "(11) 9••••-5209", nota: "4,9", aval: 254, prio: "Alta" },
+  { nome: "3° Millenium Estética Automotiva", regiao: "Penha", tel: "(11) 9••••-8974", nota: "4,9", aval: 171, prio: "Alta" },
+  { nome: "WA Estética Automotiva", regiao: "São Caetano do Sul", tel: "(11) 9••••-5796", nota: "4,9", aval: 161, prio: "Alta" },
+  { nome: "RS17 Estetica Automotiva", regiao: "Santo Amaro", tel: "(11) 9••••-8186", nota: "5,0", aval: 140, prio: "Alta" },
 ];
 
-function Exemplo() {
+function DemonstracaoPlanilha({ mensagem }: { mensagem: string }) {
+  const [aba, setAba] = useState<"leads" | "resumo">("leads");
+
   return (
-    <section aria-labelledby="exemplo-titulo" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <p className="font-[family-name:var(--f-mono)] text-xs uppercase tracking-[0.18em] text-[var(--verde)]">Exemplo real</p>
-      <h2 id="exemplo-titulo" className="mt-3 text-balance text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight tracking-[-0.02em]">
-        Trecho de uma planilha que o robô gerou
-      </h2>
-      <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--suave)]">
-        Estética automotiva em São Paulo e ABC. Os telefones estão ocultos aqui; na sua planilha eles vêm completos, com o botão que abre a conversa no WhatsApp.
-      </p>
-      <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--tinta)]/80 bg-white shadow-[6px_6px_0_0_var(--tinta)]">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="bg-[var(--verde)] text-white">
-              <th scope="col" className="px-3 py-2.5 font-semibold">Prioridade</th>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Nome</th>
-              <th scope="col" className="hidden px-3 py-2.5 font-semibold sm:table-cell">Região</th>
-              <th scope="col" className="px-3 py-2.5 font-semibold">Telefone</th>
-              <th scope="col" className="hidden px-3 py-2.5 font-semibold sm:table-cell">Nota</th>
-            </tr>
-          </thead>
-          <tbody>
-            {EXEMPLO.map((l) => (
-              <tr key={l.nome} className="border-t border-[var(--linha)]">
-                <td className="px-3 py-3">
-                  <span className="rounded bg-[#C6EFCE] px-2 py-0.5 text-xs font-semibold text-[#0B5A2F]">Alta</span>
-                </td>
-                <td className="px-3 py-3 font-medium">{l.nome}</td>
-                <td className="hidden px-3 py-3 text-[var(--suave)] sm:table-cell">{l.regiao}</td>
-                <td className="whitespace-nowrap px-3 py-3 font-[family-name:var(--f-mono)] text-xs tabular-nums">{l.tel}</td>
-                <td className="hidden whitespace-nowrap px-3 py-3 tabular-nums sm:table-cell">
-                  {l.nota} <span className="text-[var(--suave)]">({l.aval})</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <section id="exemplo" aria-labelledby="exemplo-titulo" className="scroll-mt-20 bg-[var(--w-canvas)] py-16 md:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div className="max-w-2xl">
+            <h2
+              id="exemplo-titulo"
+              className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]"
+            >
+              Veja exatamente o que vem dentro da planilha.
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--w-body)]">
+              Trecho real gerado pelo robô para Estética Automotiva em São Paulo e ABC. Aqui ocultamos parte do número por privacidade; no seu arquivo ele vem
+              completo, com o botão que abre o WhatsApp.
+            </p>
+          </div>
+
+          {/* Seletor das 2 abas do Excel */}
+          <div role="tablist" aria-label="Abas da planilha" className="inline-flex w-fit rounded-full bg-[var(--w-canvas-soft)] p-1">
+            <button
+              id="tab-leads"
+              type="button"
+              role="tab"
+              aria-selected={aba === "leads"}
+              aria-controls="painel-planilha"
+              onClick={() => setAba("leads")}
+              className={`min-h-11 rounded-full px-4 text-sm font-semibold transition-colors sm:min-h-10 ${
+                aba === "leads" ? "bg-[var(--w-ink)] text-white" : "text-[var(--w-body)] hover:text-[var(--w-ink)]"
+              }`}
+            >
+              Aba 1: Leads ({TOTAL_LEADS})
+            </button>
+            <button
+              id="tab-resumo"
+              type="button"
+              role="tab"
+              aria-selected={aba === "resumo"}
+              aria-controls="painel-planilha"
+              onClick={() => setAba("resumo")}
+              className={`min-h-11 rounded-full px-4 text-sm font-semibold transition-colors sm:min-h-10 ${
+                aba === "resumo" ? "bg-[var(--w-ink)] text-white" : "text-[var(--w-body)] hover:text-[var(--w-ink)]"
+              }`}
+            >
+              Aba 2: Resumo &amp; Funil
+            </button>
+          </div>
+        </div>
+
+        {/* Moldura limpa da planilha */}
+        <div
+          id="painel-planilha"
+          role="tabpanel"
+          aria-labelledby={aba === "leads" ? "tab-leads" : "tab-resumo"}
+          className="mt-8 overflow-hidden rounded-[24px] border border-[var(--w-border)] bg-white"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/60 px-5 py-3">
+            <span className="flex items-center gap-2 font-[family-name:var(--f-mono)] text-xs font-medium text-[var(--w-ink)]">
+              <span aria-hidden className="grid h-5 w-5 place-items-center rounded bg-[var(--w-positive-deep)] text-[10px] font-bold text-white">
+                X
+              </span>
+              leads-estetica-automotiva.xlsx
+            </span>
+            <span className="font-[family-name:var(--f-mono)] text-xs text-[var(--w-mute)]">
+              {aba === "leads" ? `5 de ${TOTAL_LEADS} linhas reais` : "Estrutura da aba Resumo"}
+            </span>
+          </div>
+
+          {aba === "leads" ? (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/40 font-[family-name:var(--f-mono)] text-[11px] uppercase tracking-wider text-[var(--w-mute)]">
+                      <th scope="col" className="px-5 py-3 font-semibold">
+                        Prioridade
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-semibold">
+                        Negócio
+                      </th>
+                      <th scope="col" className="hidden px-4 py-3 font-semibold md:table-cell">
+                        Região
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-semibold">
+                        Telefone
+                      </th>
+                      <th scope="col" className="hidden px-4 py-3 font-semibold sm:table-cell">
+                        Nota
+                      </th>
+                      <th scope="col" className="px-5 py-3 font-semibold">
+                        Ação
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--w-canvas-soft)]">
+                    {EXEMPLO.map((l) => (
+                      <tr key={l.nome} className="transition-colors hover:bg-[var(--w-canvas-soft)]/35">
+                        <td className="px-5 py-3.5">
+                          <span className="inline-flex rounded-full bg-[var(--w-primary-pale)] px-2.5 py-0.5 text-xs font-semibold text-[var(--w-positive-deep)]">
+                            {l.prio}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5 font-semibold text-[var(--w-ink)]">{l.nome}</td>
+                        <td className="hidden px-4 py-3.5 text-[var(--w-body)] md:table-cell">{l.regiao}</td>
+                        <td className="whitespace-nowrap px-4 py-3.5 font-[family-name:var(--f-mono)] text-xs tabular-nums text-[var(--w-ink)]">{l.tel}</td>
+                        <td className="hidden whitespace-nowrap px-4 py-3.5 tabular-nums text-[var(--w-ink)] sm:table-cell">
+                          {l.nota} <span className="text-[var(--w-mute)]">({l.aval})</span>
+                        </td>
+                        <td className="whitespace-nowrap px-5 py-3.5">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--w-positive-deep)]">
+                            <FaWhatsapp className="h-3.5 w-3.5" aria-hidden />
+                            Abrir conversa
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-col justify-between gap-4 border-t border-[var(--w-canvas-soft)] bg-[var(--w-canvas-soft)]/30 px-5 py-4 sm:flex-row sm:items-center">
+                <div className="flex items-start gap-3">
+                  <FaWhatsapp className="mt-0.5 h-5 w-5 shrink-0 text-[var(--w-positive-deep)]" aria-hidden />
+                  <p className="text-xs leading-relaxed text-[var(--w-body)]">
+                    <strong className="font-semibold text-[var(--w-ink)]">Ao clicar em &ldquo;Abrir conversa&rdquo;:</strong>{" "}
+                    {mensagem.trim()
+                      ? `o WhatsApp já abre preenchido com: “${mensagem.trim().slice(0, 110)}${mensagem.trim().length > 110 ? "…" : ""}”`
+                      : "o WhatsApp abre direto no número do negócio (ou já com a mensagem que você escrever no passo 2)."}
+                  </p>
+                </div>
+                <a
+                  href="#pedido"
+                  className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[var(--w-ink)] px-4 text-xs font-bold text-white transition-colors hover:bg-[var(--w-ink-deep)]"
+                >
+                  Quero para o meu nicho
+                  <LuArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </a>
+              </div>
+            </>
+          ) : (
+            <div className="p-6 sm:p-8">
+              <p className="text-sm text-[var(--w-body)]">
+                Conforme você atualiza o status de cada lead na aba 1 (<strong className="font-semibold text-[var(--w-ink)]">Novo</strong>,{" "}
+                <strong className="font-semibold text-[var(--w-ink)]">Contatado</strong>,{" "}
+                <strong className="font-semibold text-[var(--w-ink)]">Proposta</strong>,{" "}
+                <strong className="font-semibold text-[var(--w-ink)]">Fechado</strong>), a aba Resumo calcula automaticamente seu funil:
+              </p>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-4">
+                {[
+                  { rotulo: "Total da lista", valor: `${TOTAL_LEADS} leads`, detalhe: "Separados por prioridade" },
+                  { rotulo: "Contatados", valor: "Fórmula automática", detalhe: "Acompanhe seu ritmo diário" },
+                  { rotulo: "Taxa de fechamento", valor: "% em tempo real", detalhe: "Calculada sobre os contatos" },
+                  { rotulo: "Receita fechada", valor: "Soma dos contratos", detalhe: "Veja o retorno da lista" },
+                ].map((m) => (
+                  <div key={m.rotulo} className="rounded-2xl bg-[var(--w-canvas-soft)] p-4">
+                    <p className="font-[family-name:var(--f-mono)] text-[11px] uppercase tracking-wider text-[var(--w-mute)]">{m.rotulo}</p>
+                    <p className="mt-2 font-[family-name:var(--f-display)] text-lg font-extrabold text-[var(--w-ink)]">{m.valor}</p>
+                    <p className="mt-1 text-xs text-[var(--w-body)]">{m.detalhe}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      <p className="mt-3 font-[family-name:var(--f-mono)] text-[11px] text-[var(--suave)]">5 de {TOTAL_LEADS} linhas · dados de perfis públicos do Google Maps</p>
     </section>
   );
 }
@@ -616,60 +1142,75 @@ const PERGUNTAS: { p: string; r: string }[] = [
   },
   {
     p: `E se o meu nicho tiver menos de ${TOTAL_LEADS} negócios na região?`,
-    r: `Completamos a planilha com bairros e cidades vizinhas, sem custo. Fale com a gente pelo WhatsApp em “Dúvidas”, no topo da página.`,
+    r: "Completamos a planilha com bairros e cidades vizinhas, sem custo. É só chamar a gente pelo botão de WhatsApp no topo da página.",
   },
   {
     p: "Como eu recebo a planilha?",
-    r: "Nesta mesma página. Depois do pagamento, o botão de download aparece aqui quando a planilha fica pronta, em alguns minutos. Se fechar a página, é só voltar neste navegador: o pedido fica salvo.",
+    r: "Nesta mesma página. Depois do pagamento, o botão de download aparece aqui em alguns minutos. Se fechar a aba, é só voltar neste navegador: o pedido fica salvo.",
   },
   {
     p: "E se der erro na geração?",
-    r: "Você vê o aviso nesta página e a gente é avisado na hora. Resolvemos o pedido ou devolvemos o valor pelo Mercado Pago.",
+    r: "Você vê o aviso nesta página e a gente é notificado na hora. Resolvemos o seu pedido ou devolvemos 100% do valor pelo Mercado Pago.",
   },
   {
     p: "Como funciona o pagamento?",
-    r: `Pagamento único de R$00A0${PRECO_TEXTO}, sem mensalidade, por Pix ou cartão no Mercado Pago.`,
+    r: `Pagamento único de R$\u00A0${PRECO_TEXTO}, sem mensalidade e sem cobrança recorrente, por Pix ou cartão no Mercado Pago.`,
   },
 ];
 
 function Perguntas() {
   return (
-    <section aria-labelledby="faq-titulo" className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-      <h2 id="faq-titulo" className="text-balance text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight tracking-[-0.02em]">
-        Perguntas frequentes
-      </h2>
-      <div className="mt-6 divide-y divide-[var(--linha)] border-y border-[var(--linha)]">
-        {PERGUNTAS.map((q) => (
-          <details key={q.p} className="group py-1">
-            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-base font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] [&::-webkit-details-marker]:hidden">
-              {q.p}
-              <LuPlus aria-hidden className="h-4 w-4 shrink-0 transition-transform group-open:rotate-45" />
-            </summary>
-            <p className="max-w-3xl pb-4 text-base leading-relaxed text-[var(--suave)]">{q.r}</p>
-          </details>
-        ))}
-      </div>
-      <a
-        href="#pedido"
-        className="mt-8 inline-flex min-h-12 items-center rounded-lg bg-[var(--verde)] px-5 font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2"
-      >
-        Gerar minha planilha · R$ {PRECO_TEXTO}
-      </a>
-    </section>
-  );
-}
+    <section id="perguntas" aria-labelledby="faq-titulo" className="scroll-mt-20 bg-[var(--w-canvas-soft)] py-16 pb-24 md:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+          <div>
+            <h2
+              id="faq-titulo"
+              className="font-[family-name:var(--f-display)] text-[clamp(1.85rem,3.6vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--w-ink)]"
+            >
+              Perguntas frequentes
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--w-body)]">
+              Tudo o que você precisa saber antes de gerar sua lista. Ficou alguma dúvida específica? Fale direto no WhatsApp.
+            </p>
+          </div>
 
-function Linha({ n, data, htmlFor, children }: { n: number; data: string; htmlFor: string; children: React.ReactNode }) {
-  return (
-    <div data-campo className="grid grid-cols-[2.25rem_1fr] border-b border-[var(--linha)]">
-      <span className={gutter}>{n}</span>
-      <div className="min-w-0">
-        <label htmlFor={htmlFor} className={`${rotulo} h-8 border-b border-[var(--linha)]`}>
-          {data}
-        </label>
-        <div className={celula}>{children}</div>
+          <div className="space-y-3">
+            {PERGUNTAS.map((q) => (
+              <details key={q.p} className="group rounded-2xl bg-[var(--w-canvas)] px-5 py-1">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-base font-bold text-[var(--w-ink)] [&::-webkit-details-marker]:hidden">
+                  <span>{q.p}</span>
+                  <LuChevronDown
+                    aria-hidden
+                    className="h-5 w-5 shrink-0 text-[var(--w-mute)] transition-transform duration-200 group-open:rotate-180"
+                  />
+                </summary>
+                <p className="pb-4 pr-6 text-sm leading-relaxed text-[var(--w-body)] sm:text-base">{q.r}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* Bloco final de fechamento */}
+        <div className="mt-14 flex flex-col items-start justify-between gap-6 rounded-[24px] bg-[var(--w-ink)] p-7 text-white sm:p-10 md:flex-row md:items-center">
+          <div className="max-w-xl">
+            <h3 className="font-[family-name:var(--f-display)] text-2xl font-extrabold leading-tight tracking-tight text-[var(--w-primary)] sm:text-3xl">
+              Comece a prospectar hoje com {TOTAL_LEADS} contatos organizados.
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--w-canvas-soft)]/80">
+              R$&nbsp;{PRECO_TEXTO} uma única vez · entrega em minutos nesta página · garantia de {TOTAL_LEADS} leads.
+            </p>
+          </div>
+          <a
+            href="#pedido"
+            className="inline-flex min-h-13 shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-7 text-base font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
+          >
+            Gerar minha planilha
+            <LuArrowRight className="h-4 w-4" aria-hidden />
+          </a>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -681,9 +1222,17 @@ const FRASES_GERANDO = (comMensagem: boolean) => [
   "Dando os últimos detalhes…",
 ];
 
-// Bolinha em órbita (lima com borda de tinta, como o selo de preço) e frases que avançam até a última.
-function Carregando({ a, fase, foraDoAr, estado }: { a: Andamento; fase: "confirmando" | "pago" | "gerando"; foraDoAr: boolean; estado: Estado | null }) {
-  // Pedido pago já conta na fila: quem está na frente e quanto falta, pelo tempo médio real dos pedidos.
+function Carregando({
+  a,
+  fase,
+  foraDoAr,
+  estado,
+}: {
+  a: Andamento;
+  fase: "confirmando" | "pago" | "gerando";
+  foraDoAr: boolean;
+  estado: Estado | null;
+}) {
   const naFrente = estado && fase !== "confirmando" ? Math.max(0, estado.fila - 1) : 0;
   const previsao = estado && fase !== "confirmando" ? Math.ceil(Math.max(1, estado.fila) * estado.minPorPedido) : null;
   const raiz = useRef<HTMLDivElement>(null);
@@ -696,7 +1245,6 @@ function Carregando({ a, fase, foraDoAr, estado }: { a: Andamento; fase: "confir
   const [i, setI] = useState(0);
   const atual = frases[Math.min(i, frases.length - 1)];
 
-  // Avança uma frase a cada 5 s e para na última.
   useEffect(() => {
     if (i >= frases.length - 1) return;
     const t = setTimeout(() => setI((n) => n + 1), 5000);
@@ -713,7 +1261,6 @@ function Carregando({ a, fase, foraDoAr, estado }: { a: Andamento; fase: "confir
     { scope: raiz },
   );
 
-  // Cada frase nova entra de baixo.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -725,39 +1272,40 @@ function Carregando({ a, fase, foraDoAr, estado }: { a: Andamento; fase: "confir
   );
 
   return (
-    <div ref={raiz} className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r">
-      <h2 className="text-2xl font-extrabold tracking-tight">Estamos montando sua planilha</h2>
-      <p className="mt-1 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
+    <div ref={raiz}>
+      <h2 className="font-[family-name:var(--f-display)] text-2xl font-extrabold tracking-tight text-[var(--w-ink)]">
+        Estamos montando sua planilha
+      </h2>
+      <p className="mt-1 font-[family-name:var(--f-mono)] text-xs text-[var(--w-mute)]">
         {a.nicho} · {a.regiao}
       </p>
 
-      <div className="mt-6 grid place-items-center gap-5 border border-[var(--linha)] bg-white px-4 py-9">
+      <div className="mt-6 grid place-items-center gap-5 rounded-2xl bg-[var(--w-canvas-soft)] px-4 py-9">
         <div aria-hidden className="relative h-16 w-16">
-          <span className="absolute inset-0 rounded-full border-[3px] border-[var(--tinta)]/15" />
+          <span className="absolute inset-0 rounded-full border-[3px] border-[var(--w-ink)]/15" />
           <span data-g="orbita" className="absolute inset-0">
-            <span className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--tinta)] bg-[var(--lime)]" />
+            <span className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--w-ink)] bg-[var(--w-primary)]" />
           </span>
         </div>
-        {/* A frase visível troca sozinha; o leitor de tela recebe só um aviso fixo. */}
         <p role="status" className="sr-only">
           Gerando sua planilha. Isso leva alguns minutos.
         </p>
-        <p aria-hidden data-g="frase" className="min-h-[1.75rem] text-center text-lg font-bold leading-snug">
+        <p aria-hidden data-g="frase" className="min-h-[1.75rem] text-center text-base font-bold leading-snug text-[var(--w-ink)]">
           {atual}
         </p>
       </div>
 
       {foraDoAr && (
-        <p role="alert" className="mt-4 rounded-md border border-[var(--linha)] bg-[var(--cab)] p-3 text-sm leading-relaxed">
-          Nosso sistema está fora do ar por um tempo. Seu pagamento está confirmado e a planilha sai assim que voltarmos. Pode fechar esta página: o pedido
-          fica salvo neste navegador.
+        <p role="alert" className="mt-4 rounded-xl bg-[var(--w-warning)] p-3.5 text-sm leading-relaxed text-[var(--w-warning-content)]">
+          Nosso sistema está fora do ar por um tempo. Seu pagamento está confirmado e a planilha sai assim que voltarmos. Pode fechar esta página: o pedido fica
+          salvo neste navegador.
         </p>
       )}
 
-      <p className="mt-4 text-sm leading-relaxed text-[var(--suave)]">
+      <p className="mt-4 text-sm leading-relaxed text-[var(--w-body)]">
         {previsao !== null ? `Previsão: cerca de ${previsao} min.` : "Leva só alguns minutos."}
-        {naFrente > 0 && ` Há ${naFrente} ${naFrente === 1 ? "pedido" : "pedidos"} na sua frente.`} Pode deixar esta página aberta: o botão de download aparece aqui quando a planilha ficar pronta. Se fechar, é só voltar neste
-        navegador, o pedido fica salvo.
+        {naFrente > 0 && ` Há ${naFrente} ${naFrente === 1 ? "pedido" : "pedidos"} na sua frente.`} Pode deixar esta página aberta: o botão de download aparece
+        aqui quando ficar pronta.
       </p>
     </div>
   );
@@ -780,42 +1328,54 @@ function Acompanhamento({
   foraDoAr: boolean;
   estado: Estado | null;
 }) {
-  const fase = a.status === "gerando" ? "gerando" : a.status === "pago" ? "pago" : a.status === "aguardando_pagamento" && confirmando ? "confirmando" : null;
+  const fase =
+    a.status === "gerando" ? "gerando" : a.status === "pago" ? "pago" : a.status === "aguardando_pagamento" && confirmando ? "confirmando" : null;
   if (fase) return <Carregando key={fase} a={a} fase={fase} foraDoAr={foraDoAr && fase !== "confirmando"} estado={estado} />;
   const falhou = a.status === "falhou";
+
   return (
-    <div className="border-b border-[var(--linha)] p-5 sm:p-6 lg:border-b-0 lg:border-r" aria-live="polite">
-      <h2 className="text-2xl font-extrabold tracking-tight">
+    <div aria-live="polite">
+      <h2 className="font-[family-name:var(--f-display)] text-2xl font-extrabold tracking-tight text-[var(--w-ink)]">
         {a.status === "pronto" ? "Sua planilha está pronta." : falhou ? "Não conseguimos gerar a planilha." : "Pedido em andamento"}
       </h2>
-      <p className="mt-1 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">
+      <p className="mt-1 font-[family-name:var(--f-mono)] text-xs text-[var(--w-mute)]">
         {a.nicho} · {a.regiao}
       </p>
-      <ol className="mt-6 divide-y divide-[var(--linha)] border-y border-[var(--linha)]">
+
+      <ol className="mt-6 space-y-2.5">
         {ETAPAS.map((e, i) => {
           const feito = !falhou && e.status.includes(a.status);
           return (
-            <li key={e.rotulo} className="grid grid-cols-[2.25rem_1fr_2rem] items-center">
-              <span className={`${gutter} h-11`}>{i + 1}</span>
-              <span className={`px-3 text-sm ${feito ? "font-semibold" : "text-[var(--suave)]"}`}>{e.rotulo}</span>
-              <span className={`grid h-11 place-items-center ${feito ? "text-[var(--verde)]" : "text-transparent"}`}>
-                <LuCheck aria-hidden className="h-4 w-4" />
+            <li
+              key={e.rotulo}
+              className={`flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm ${
+                feito ? "bg-[var(--w-primary-pale)] font-semibold text-[var(--w-ink-deep)]" : "bg-[var(--w-canvas-soft)] text-[var(--w-mute)]"
+              }`}
+            >
+              <span className="flex items-center gap-3">
+                <span className="font-[family-name:var(--f-mono)] text-xs">{i + 1}</span>
+                <span>{e.rotulo}</span>
               </span>
+              {feito && <LuCheck aria-hidden className="h-4 w-4 shrink-0 text-[var(--w-positive-deep)]" />}
             </li>
           );
         })}
       </ol>
 
       {a.status === "aguardando_pagamento" && (
-        <p className="mt-5 rounded-md border border-[var(--linha)] bg-[var(--cab)] p-3 text-sm">
+        <p className="mt-5 rounded-xl bg-[var(--w-canvas-soft)] p-3.5 text-sm text-[var(--w-body)]">
           {a.pagamentoAtivo
-            ? "Falta só o pagamento para começarmos."
+            ? "Falta só confirmar o pagamento para o robô começar a coleta."
             : "O pagamento ainda está sendo ativado. Seu pedido ficou registrado e entramos em contato pelo WhatsApp informado."}
         </p>
       )}
-      {falhou && <p className="mt-5 text-sm font-medium text-[var(--erro)]">{a.erro ?? "Tente de novo ou fale com a gente."}</p>}
+      {falhou && (
+        <p className="mt-5 rounded-xl bg-[var(--w-negative-bg)] p-3.5 text-sm font-medium text-[var(--w-negative)]">
+          {a.erro ?? "Tente de novo ou fale com a gente no WhatsApp."}
+        </p>
+      )}
       {erro && a.status === "aguardando_pagamento" && (
-        <p role="alert" className="mt-3 text-sm font-medium text-[var(--erro)]">
+        <p role="alert" className="mt-3 text-sm font-medium text-[var(--w-negative)]">
           {erro}
         </p>
       )}
@@ -825,7 +1385,7 @@ function Acompanhamento({
           <button
             type="button"
             onClick={onPagar}
-            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[var(--verde)] px-5 font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2"
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
           >
             Pagar agora · R$ {PRECO_TEXTO}
           </button>
@@ -833,99 +1393,20 @@ function Acompanhamento({
         {a.status === "pronto" && (
           <a
             href={`/api/gerador/arquivo/${a.id}`}
-            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[var(--verde)] px-5 font-bold text-white transition-colors hover:bg-[var(--verde-esc)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--azul)] focus-visible:ring-offset-2"
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--w-primary)] px-6 font-bold text-[var(--w-ink)] transition-colors hover:bg-[var(--w-primary-hover)]"
           >
-            <LuDownload aria-hidden /> Baixar planilha
+            <LuDownload aria-hidden className="h-4 w-4" />
+            Baixar planilha (.xlsx)
           </a>
         )}
-        <button type="button" onClick={onNovo} className="min-h-11 rounded-md px-3 text-sm underline underline-offset-4 hover:text-[var(--verde)]">
+        <button
+          type="button"
+          onClick={onNovo}
+          className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-[var(--w-body)] underline underline-offset-4 hover:text-[var(--w-ink)]"
+        >
           Fazer outro pedido
         </button>
       </div>
     </div>
-  );
-}
-
-const COLUNAS = ["Prioridade", "Nome", "Região", "WhatsApp", "Nota", "Status"];
-const LETRAS = ["A", "B", "C", "D", "E", "F"];
-const PRIORIDADES: [string, string][] = [
-  ["Alta", "bg-[#C6EFCE] text-[#0B5A2F]"],
-  ["Alta", "bg-[#C6EFCE] text-[#0B5A2F]"],
-  ["Alta", "bg-[#C6EFCE] text-[#0B5A2F]"],
-  ["Média", "bg-[#FFEB9C] text-[#7A5A00]"],
-  ["Média", "bg-[#FFEB9C] text-[#7A5A00]"],
-  ["Baixa", "bg-[#E4E4E4] text-[#444]"],
-];
-// Colunas Região e Nota somem no celular para a tabela caber sem rolar.
-const ESCONDE_MOBILE = [2, 4];
-const LARGURAS = [62, 48, 70, 55, 66, 44];
-
-// Estrutura da planilha, sem dados inventados: barras no lugar dos nomes.
-function Previa({ nicho, regiao, mensagem }: { nicho: string; regiao: string; mensagem: string }) {
-  return (
-    <aside aria-label="Prévia da estrutura da planilha" className="min-w-0 self-start bg-white lg:sticky lg:top-4">
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--linha)] px-4 py-2.5 text-sm">
-        <span className="truncate font-bold">{nicho || "Seu nicho"}</span>
-        <span className="shrink-0 font-[family-name:var(--f-mono)] text-xs text-[var(--suave)]">{regiao || "Sua região"}</span>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse sm:min-w-[560px] text-left text-xs">
-          <thead>
-            <tr aria-hidden className="bg-[var(--cab)] font-[family-name:var(--f-mono)] text-[10px] text-[var(--suave)]">
-              <th className="w-9 border-b border-[var(--linha)]" />
-              {LETRAS.map((l, i) => (
-                <th key={l} className={`border-b border-l border-[var(--linha)] py-1 text-center font-normal ${ESCONDE_MOBILE.includes(i) ? "hidden sm:table-cell" : ""}`}>
-                  {l}
-                </th>
-              ))}
-            </tr>
-            <tr>
-              <th className="bg-[var(--cab)] text-center font-[family-name:var(--f-mono)] text-[10px] font-normal text-[var(--suave)]">1</th>
-              {COLUNAS.map((c, i) => (
-                <th key={c} scope="col" className={`border-l border-white/20 bg-[var(--verde)] px-3 py-2.5 font-semibold text-white ${ESCONDE_MOBILE.includes(i) ? "hidden sm:table-cell" : ""}`}>
-                  {c}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {PRIORIDADES.map(([p, cor], i) => (
-              <tr key={i} data-g="linha" className="border-b border-[var(--linha)]">
-                <td className="bg-[var(--cab)] text-center font-[family-name:var(--f-mono)] text-[10px] text-[var(--suave)]">{i + 2}</td>
-                <td className="border-l border-[var(--linha)] px-3 py-3">
-                  <span className={`rounded px-2 py-0.5 font-semibold ${cor}`}>{p}</span>
-                </td>
-                <td className="border-l border-[var(--linha)] px-3 py-3">
-                  <span className="block h-2 rounded-sm bg-[var(--tinta)]/15" style={{ width: `${LARGURAS[i]}%` }} />
-                </td>
-                <td className="hidden border-l border-[var(--linha)] px-3 py-3 sm:table-cell">
-                  <span className="block h-2 w-14 rounded-sm bg-[var(--tinta)]/15" />
-                </td>
-                <td className="border-l border-[var(--linha)] px-3 py-3 text-[var(--azul)] underline underline-offset-2">Abrir conversa</td>
-                <td className="hidden border-l border-[var(--linha)] px-3 py-3 sm:table-cell">
-                  <span className="block h-2 w-8 rounded-sm bg-[var(--tinta)]/15" />
-                </td>
-                <td className="border-l border-[var(--linha)] px-3 py-3 text-[var(--suave)]">Novo</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="grid gap-4 p-4 sm:grid-cols-[1fr_auto] sm:items-end">
-        <div>
-          <p className="font-[family-name:var(--f-mono)] text-[11px] uppercase tracking-wider text-[var(--suave)]">Ao clicar em &ldquo;Abrir conversa&rdquo;</p>
-          <p className="mt-2 max-w-md whitespace-pre-line rounded-lg rounded-tl-sm bg-[#DCF8C6] px-3.5 py-2.5 text-sm leading-snug text-[#1b2b17]">
-            {mensagem.trim() || "Sem mensagem: o WhatsApp abre a conversa vazia."}
-          </p>
-        </div>
-        <p className="font-[family-name:var(--f-mono)] text-[11px] leading-relaxed text-[var(--suave)] sm:text-right">
-          + aba Resumo:
-          <br />
-          funil, taxa de fechamento
-          <br />e receita
-        </p>
-      </div>
-    </aside>
   );
 }
