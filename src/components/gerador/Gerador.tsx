@@ -75,15 +75,6 @@ const ETAPAS: { status: Status[]; rotulo: string }[] = [
   { status: ["pronto"], rotulo: "Planilha pronta para baixar" },
 ];
 
-// Eventos ilustrativos de atividade ao vivo (urgência / prova social dinâmica)
-const ATIVIDADES_RECENTES = [
-  { pessoa: "Mariana S.", cidade: "São Paulo", nicho: "Clínica de estética", tempo: "há 2 min" },
-  { pessoa: "Rafael M.", cidade: "Curitiba", nicho: "Barbearia", tempo: "há 4 min" },
-  { pessoa: "Lucas P.", cidade: "Belo Horizonte", nicho: "Estética automotiva", tempo: "há 6 min" },
-  { pessoa: "Camila R.", cidade: "Porto Alegre", nicho: "Clínica odontológica", tempo: "há 8 min" },
-  { pessoa: "Thiago A.", cidade: "Campinas", nicho: "Oficina mecânica", tempo: "há 11 min" },
-];
-
 // Linhas fictícias/demonstrativas que vão sendo montadas na hero
 const LINHAS_HERO = [
   { prio: "Alta", nome: "Box Detail Estética Automotiva", regiao: "Vila Mariana, SP", tel: "(11) 9••••-3850", nota: "4,9", aval: 416, semSite: true },
@@ -162,12 +153,6 @@ export default function Gerador() {
   const [estado, setEstado] = useState<Estado | null>(null);
   const [mostrarSticky, setMostrarSticky] = useState(false);
 
-  // Urgência ao vivo + toast discreto no desktop
-  const [pessoasAgora, setPessoasAgora] = useState(5);
-  const [atividadeIdx, setAtividadeIdx] = useState(0);
-  const [toastVisivel, setToastVisivel] = useState(true);
-  const [toastFechado, setToastFechado] = useState(false);
-
   const foraDoAr = estado?.online === false;
   const lotado = estado ? estado.online && !estado.aceita : false;
   const avisoVenda = foraDoAr ? MSG_FORA_DO_AR : lotado ? msgFilaCheia(estado?.minPorPedido ?? 5) : "";
@@ -184,30 +169,6 @@ export default function Gerador() {
     .replaceAll("{nota}", "4,9")
     .replaceAll("{avaliacoes}", "416")
     .replaceAll("{regiao}", regiaoEnvio || "sua região");
-
-  // Oscilação natural do contador "X pessoas montando lista agora" e rotação do toast
-  useEffect(() => {
-    const tCount = setInterval(() => {
-      setPessoasAgora((atual) => {
-        const opcoes = [4, 5, 6, 7, 5, 6];
-        const prox = opcoes[(opcoes.indexOf(atual) + 1) % opcoes.length];
-        return prox ?? 5;
-      });
-    }, 11000);
-
-    const tToast = setInterval(() => {
-      setToastVisivel(false);
-      setTimeout(() => {
-        setAtividadeIdx((i) => (i + 1) % ATIVIDADES_RECENTES.length);
-        setToastVisivel(true);
-      }, 450);
-    }, 9000);
-
-    return () => {
-      clearInterval(tCount);
-      clearInterval(tToast);
-    };
-  }, []);
 
   // Animações GSAP de entrada + ScrollTrigger (somente transform e opacity, com reduced-motion)
   useGSAP(
@@ -438,8 +399,6 @@ export default function Gerador() {
     setErro("");
   }
 
-  const atividadeAtual = ATIVIDADES_RECENTES[atividadeIdx];
-
   return (
     <div ref={raiz} className="overflow-x-clip">
       {/* HERO SECTION: 3D + Planilha fictícia sendo montada ao vivo no desktop; limpa e rápida no celular */}
@@ -448,25 +407,8 @@ export default function Gerador() {
         <HeroLeads3D />
 
         <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
-          {/* Topo da Hero: Pílula ao vivo de atividade + oferta */}
+          {/* Topo da Hero: oferta */}
           <div className="mx-auto max-w-4xl text-left lg:text-center">
-            <div
-              data-hero="item"
-              className="inline-flex items-center gap-2.5 rounded-full border border-[var(--w-ink)]/10 bg-white/95 px-4 py-2 text-xs font-semibold text-[var(--w-ink)] shadow-[0_8px_24px_-12px_rgba(14,15,12,0.18)] backdrop-blur-sm sm:text-sm"
-            >
-              <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden>
-                <span className="ml-ping absolute inline-flex h-full w-full rounded-full bg-[var(--w-positive)]" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--w-positive)]" />
-              </span>
-              <span className="tabular-nums">
-                <strong>{pessoasAgora} pessoas</strong> montando planilha agora
-              </span>
-              <span className="hidden text-[var(--w-mute)] sm:inline">·</span>
-              <span className="hidden text-[var(--w-body)] sm:inline">
-                Última lista: {atividadeAtual.nicho} ({atividadeAtual.cidade})
-              </span>
-            </div>
-
             <h1
               data-hero="item"
               className="mt-5 font-[family-name:var(--f-display)] text-[clamp(2.3rem,5.4vw,4.5rem)] font-extrabold leading-[0.99] tracking-[-0.035em] text-[var(--w-ink)]"
@@ -1193,37 +1135,6 @@ export default function Gerador() {
 
       {/* FAQ + FECHAMENTO */}
       <Perguntas />
-
-      {/* Toast discreto de prova social ao vivo no desktop (pode ser fechado) */}
-      {!toastFechado && (
-        <div
-          aria-live="polite"
-          className={`fixed bottom-5 left-5 z-40 hidden max-w-xs items-center gap-3 rounded-2xl border border-[var(--w-ink)]/10 bg-white/95 p-3.5 shadow-[0_18px_40px_-16px_rgba(14,15,12,0.28)] backdrop-blur-sm transition-[opacity,transform] duration-300 lg:flex ${
-            toastVisivel ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-          }`}
-        >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--w-primary-pale)] text-[var(--w-positive-deep)]">
-            <LuFileSpreadsheet className="h-4 w-4" aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1 text-xs">
-            <p className="truncate font-bold text-[var(--w-ink)]">
-              {atividadeAtual.pessoa} · {atividadeAtual.cidade}
-            </p>
-            <p className="truncate text-[var(--w-body)]">
-              Gerou {TOTAL_LEADS} leads de {atividadeAtual.nicho}
-            </p>
-            <p className="mt-0.5 font-[family-name:var(--f-mono)] text-[10px] text-[var(--w-mute)]">{atividadeAtual.tempo}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setToastFechado(true)}
-            aria-label="Fechar aviso"
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-[var(--w-mute)] hover:bg-[var(--w-canvas-soft)] hover:text-[var(--w-ink)]"
-          >
-            <LuX className="h-3.5 w-3.5" aria-hidden />
-          </button>
-        </div>
-      )}
 
       {/* Barra sticky no mobile quando o formulário não está na tela */}
       {!andamento && mostrarSticky && (

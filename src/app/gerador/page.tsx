@@ -124,20 +124,10 @@ export default function Page() {
           animation-play-state: paused;
         }
 
-        /* Pulso suave do indicador ao vivo */
-        @keyframes ml-ping-soft {
-          0%, 100% { transform: scale(1); opacity: 0.85; }
-          50% { transform: scale(1.7); opacity: 0; }
-        }
-        .ml-ping {
-          animation: ml-ping-soft 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-
         /* Respeito total a prefers-reduced-motion */
         @media (prefers-reduced-motion: reduce) {
           .ml-marquee-track,
-          .ml-marquee-track-rev,
-          .ml-ping {
+          .ml-marquee-track-rev {
             animation: none !important;
           }
           .ml-btn-glow::after,
